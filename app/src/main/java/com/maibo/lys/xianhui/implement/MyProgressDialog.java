@@ -29,9 +29,9 @@ public class MyProgressDialog extends Dialog {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
+        // first
         imagLoading = (ImageView)findViewById(R.id.loading);
         operatingAnim = AnimationUtils.loadAnimation(context, R.anim.cirle);
         LinearInterpolator lin = new LinearInterpolator();
