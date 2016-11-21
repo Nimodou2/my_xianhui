@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" >
+
+    <gradient
+        android:centerColor="@color/weixin_lianxiren_gray"
+        android:endColor="@color/weixin_lianxiren_gray"
+        android:startColor="@color/weixin_lianxiren_gray"
+        android:type="linear" />
+    <size android:height="0.8dp" android:width="0.8dp"/>
+
+</shape>

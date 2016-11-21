@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:background="@color/bar_color"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:drawableLeft="@mipmap/black_right_arrow"
+            android:gravity="center|left"
+            android:paddingLeft="5dp"
+            android:textColor="#fff"
+            android:drawablePadding="10dp"
+            android:textSize="18dp"
+            android:text="返回"/>
+        <TextView
+            android:id="@+id/cus_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:text="日报表"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:background="@color/radar_bg"
+        android:gravity="center">
+        <com.github.mikephil.charting.charts.RadarChart
+            android:id="@+id/chart1"
+            android:layout_marginTop="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="现金"
+            android:clickable="true"
+            android:id="@+id/btn_money"
+            android:paddingTop="7dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="工时"
+            android:clickable="true"
+            android:id="@+id/btn_yuangong"
+            android:layout_marginLeft="30dp"
+            android:layout_marginStart="33dp"
+            android:layout_marginTop="78dp"
+            android:layout_below="@+id/btn_money"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="客流"
+            android:clickable="true"
+            android:id="@+id/btn_keliu"
+            android:layout_marginLeft="34dp"
+            android:layout_marginStart="34dp"
+            android:layout_alignTop="@+id/btn_product"
+            android:layout_toRightOf="@+id/btn_yuangong"
+            android:layout_toEndOf="@+id/btn_yuangong" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="产品"
+            android:clickable="true"
+            android:id="@+id/btn_product"
+            android:layout_marginBottom="28dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/btn_caozuo"
+            android:layout_toStartOf="@+id/btn_caozuo"
+            android:layout_marginRight="38dp"
+            android:layout_marginEnd="38dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="实操"
+            android:clickable="true"
+            android:id="@+id/btn_caozuo"
+            android:layout_marginRight="29dp"
+            android:layout_alignTop="@+id/btn_yuangong"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:background="#FFFFFF"
+        android:orientation="vertical">
+       <ListView
+           android:id="@+id/lv_detail"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent">
+       </ListView>
+
+    </LinearLayout>
+</LinearLayout>

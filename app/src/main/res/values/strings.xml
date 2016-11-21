@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">闲惠企业版</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="square">广场</string>
+    <string name="talk">会话</string>
+    <string name="people">联系人</string>
+    <string name="setting">设置</string>
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="#fff"
+    android:gravity="center">
+<LinearLayout
+    android:id="@+id/ll_choose_adviser"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tv_adviser_name"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="50dp"
+        android:textColor="#88000000"
+        android:paddingLeft="10dp"
+        android:textSize="16dp"
+        android:gravity="center|left"
+        android:text="吕永生"/>
+    <FrameLayout
+        android:paddingRight="10dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp">
+        <ImageView
+            android:id="@+id/iv_checked"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/checkbox_checked"/>
+        <ImageView
+            android:id="@+id/iv_uncheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/checkbox_uncheck"/>
+    </FrameLayout>
+</LinearLayout>
+</LinearLayout>

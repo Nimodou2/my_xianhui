@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="5dp"
+    android:gravity="center"
+    android:layout_height="50dp">
+    <CheckBox
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:button="@drawable/check_box_style"
+        android:id="@+id/checkBox" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="6"
+        android:layout_height="wrap_content"
+        android:id="@+id/groupExpand">
+        <TextView
+            android:id="@+id/tv_project_name"
+            android:layout_toRightOf="@+id/iv_head"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="水养"/>
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_times"
+        android:padding="6dp"
+        android:clickable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="invisible"
+        android:layout_marginRight="5dp"
+        android:textColor="#ffffff"
+        android:background="@drawable/rect_text_blue_bg"
+        android:text="3次"/>
+
+</LinearLayout>

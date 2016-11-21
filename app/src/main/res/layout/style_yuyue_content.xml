@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="#fff">
+<TextView
+    android:id="@+id/tv_yuyue_name"
+    android:layout_width="0dp"
+    android:layout_weight="1"
+    android:layout_height="match_parent"
+    android:drawableLeft="@drawable/green_circle"
+    android:drawablePadding="10dp"
+    android:gravity="center|left"
+    android:paddingLeft="15dp"
+    android:textSize="16dp"
+
+    android:text="排"/>
+    <TextView
+        android:id="@+id/tv_start_end_time"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="50dp"
+        android:paddingRight="15dp"
+        android:textSize="16dp"
+        android:gravity="center|right"
+        android:text="15:00-18:00"/>
+</LinearLayout>

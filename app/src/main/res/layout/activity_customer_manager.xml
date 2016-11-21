@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/weixin_lianxiren_gray">
+    <LinearLayout
+        android:background="@color/bar_color"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:drawableLeft="@mipmap/black_right_arrow"
+            android:gravity="center|left"
+            android:paddingLeft="5dp"
+            android:textColor="#fff"
+            android:drawablePadding="10dp"
+            android:textSize="18dp"
+            android:text="返回"/>
+        <TextView
+            android:id="@+id/cus_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:textSize="18dp"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:text="顾问选择"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/weixin_lianxiren_gray"/>
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fff">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="6"
+        android:layout_height="50dp"
+        android:paddingLeft="10dp"
+        android:textSize="16dp"
+        android:gravity="center|left"
+        android:text="变更日期"/>
+    <TextView
+        android:id="@+id/tv_update_time"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:layout_height="40dp"
+        android:paddingRight="10dp"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:text="2018/08/09"/>
+</LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/weixin_lianxiren_gray"/>
+<ListView
+    android:background="#fff"
+    android:id="@+id/lv_guwen"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+</ListView>
+</LinearLayout>

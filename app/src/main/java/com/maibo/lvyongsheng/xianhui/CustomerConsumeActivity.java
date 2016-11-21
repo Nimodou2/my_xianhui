@@ -21,6 +21,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.Call;
@@ -52,10 +53,12 @@ public class CustomerConsumeActivity extends Activity implements RefreshListView
             currentPageNum=msg.arg1;
             totalPage=msg.arg2;
             if (isLoadingMore&&listss!=null){
+                Collections.reverse(listss);
                 list22.addAll(0,listss);
                 myAdapter.notifyDataSetChanged();
                 lv_cards.setSelection(list22.size()-list33.size());
             }else{
+                Collections.reverse(listss);
                 list22.clear();
                 list22=listss;
                 lv_cards.setAdapter(myAdapter=new ConsumRecordAdapter(CustomerConsumeActivity.this,list22));

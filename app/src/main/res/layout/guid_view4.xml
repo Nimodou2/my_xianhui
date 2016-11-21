@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:src="@mipmap/arrow" />-->
+<!-- android:background="@drawable/button_shape"-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.6"/>
+
+    <ImageView
+        android:layout_width="115dp"
+        android:layout_height="115dp"
+        android:src="@mipmap/single_four"
+        android:id="@+id/imageView2" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="30dp"
+        android:text="云储存"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:textColor="#000"
+        android:textSize="18dp"
+        android:text="所有资料会在云端备份"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#000"
+        android:textSize="18dp"
+        android:text="不必担心资料丢失"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:layout_weight="4">
+        <TextView
+            android:id="@+id/btn_login"
+            android:layout_width="140dp"
+            android:layout_height="40dp"
+            android:background="@drawable/blue_soild"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="开 始"
+            android:textColor="#1980DF"
+            android:textSize="20dp"
+            android:visibility="visible"/>
+    </LinearLayout>
+<!--    <TextView
+        android:id="@+id/btn_login"
+        android:layout_width="160dp"
+        android:layout_height="42dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="70dp"
+        android:background="#FCFCFC"
+        android:gravity="center"
+        android:text="开始"
+        android:textColor="#1980DF"
+        android:textSize="18sp"
+        android:visibility="visible" />-->
+
+</LinearLayout>

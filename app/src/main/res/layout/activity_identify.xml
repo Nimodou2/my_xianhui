@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+    <LinearLayout
+        android:background="@color/colorLightYellow"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:drawableLeft="@mipmap/black_right_arrow"
+            android:gravity="center|left"
+            android:paddingLeft="5dp"
+            android:textColor="#fff"
+            android:drawablePadding="10dp"
+            android:textSize="18dp"
+            android:text="返回"/>
+        <TextView
+            android:id="@+id/cus_name"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:text="手机号码"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <EditText
+        android:id="@+id/et_phone_number"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:background="@drawable/shap_all_gray_text_bg"
+        android:layout_height="50dp"
+        android:inputType="phone"
+        android:hint="请输入手机号码"/>
+    <TextView
+        android:id="@+id/tv_get_identy"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textSize="18dp"
+        android:gravity="center"
+        android:textColor="@color/lcim_common_blue"
+        android:text="获取验证码"/>
+
+
+</LinearLayout>
