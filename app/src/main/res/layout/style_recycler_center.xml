@@ -2,25 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="@drawable/shap_all_fenhong_bg"
-    android:id="@+id/ll_bg"
-    android:layout_height="wrap_content">
+    android:background="#fff"
+    android:layout_height="40dp">
     <FrameLayout
+        android:id="@+id/ll_bg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/shap_all_fenhong_bg">
         <TextView
             android:id="@+id/tv_little"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="28dp"
             android:gravity="center"
             android:textSize="12sp"
-            android:padding="5dp"
             android:lines="1"
             android:ellipsize="end"
             android:text="会所"/>
         <ImageView
             android:id="@+id/iv_tag"
-            android:visibility="gone"
+            android:visibility="visible"
             android:paddingLeft="1dp"
             android:paddingTop="1dp"
             android:layout_width="wrap_content"

@@ -32,10 +32,6 @@ public class ImageAdapter extends BaseAdapter {
         this.data=data;
         this.position=position;
         this.values1=values1;
-    }
-
-    @Override
-    public int getCount() {
 
         for(int i=0;i<7;i++){
             //找出最大值
@@ -65,7 +61,7 @@ public class ImageAdapter extends BaseAdapter {
             if (num[i]!=0) {
                 //避免柱状图过长
                 int heights= ((screenHight / 3) * num[i]) / (value[position]);
-                if (heights>screenHight/3-140){
+                if (heights>screenHight/5){
                     height[i]=screenHight/5;
                 }else{
                     height[i] = heights;
@@ -73,13 +69,19 @@ public class ImageAdapter extends BaseAdapter {
             }else{
                 height[i]=0;
             }
-        if (height[i]<screenHight/3){
-            y[i]=screenHight/3-height[i]-140;
-        }else{
-            y[i]=0;
-        }
+            if (height[i]<screenHight/3){
+                y[i]=screenHight/3-height[i]-140;
+            }else{
+                y[i]=0;
+            }
 
         }
+
+
+    }
+
+    @Override
+    public int getCount() {
         return 7;
     }
 

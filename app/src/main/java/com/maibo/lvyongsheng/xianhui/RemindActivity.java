@@ -165,6 +165,7 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
                                 int status =0;
                                 String extra_id ="";
                                 String org_name="";
+                                String org_id="";
                                 if (!jsonObject.get("notice_id").isJsonNull())
                                     notice_id = jsonObject.get("notice_id").getAsInt();
                                 if (!jsonObject.get("notice_type").isJsonNull())
@@ -181,7 +182,9 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
                                     extra_id = jsonObject.get("extra_id").getAsString();
                                 if (!jsonObject.get("org_name").isJsonNull())
                                     org_name=jsonObject.get("org_name").getAsString();
-                                data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id,org_name));
+                                if (!jsonObject.get("org_id").isJsonNull())
+                                    org_id=jsonObject.get("org_id").getAsString();
+                                data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id,org_name,org_id));
                             }
                             Message msg = Message.obtain();
                             msg.what = 1;

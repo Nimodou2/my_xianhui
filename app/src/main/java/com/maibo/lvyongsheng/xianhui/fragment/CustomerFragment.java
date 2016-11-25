@@ -354,7 +354,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
 
                     @Override
                     public void onResponse(String response, int id) {
-                       // Log.e("choose:",response);
                         JsonObject jsonObject=new JsonParser().parse(response).getAsJsonObject();
                         JsonArray data=jsonObject.get("data").getAsJsonArray();
                         List<SelectEntitys> entitys_list=new ArrayList<SelectEntitys>();
@@ -499,7 +498,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         popupWindow.setBackgroundDrawable(dw);
         //显示位置
         //宽度
-        popupWindow.setWidth(width*4/5);
+        popupWindow.setWidth(width*6/7);
         //高度
         popupWindow.setHeight(height-getStatusBarHeight());
         popupWindow.showAtLocation(getLayoutInflater(getArguments()).inflate(R.layout.fragment_customer, null), Gravity.RIGHT, 0,0);
@@ -725,6 +724,10 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         });
         Button reset= (Button) popupWindowView.findViewById(R.id.reset);
         Button certain= (Button) popupWindowView.findViewById(R.id.certain);
+        //判断是否显示展开
+        if (ses.get(1).getList().size()>6){
+            tv_open_close.setVisibility(View.VISIBLE);
+        }
         tv_open_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

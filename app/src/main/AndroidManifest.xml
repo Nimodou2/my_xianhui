@@ -42,6 +42,7 @@
         <activity android:name="com.maibo.lvyongsheng.xianhui.AddTabActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.AddProductActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.ListDetailActivity"/>
+        <activity android:name=".SearchPeopleActivity"/>
         <!--<activity android:name=".ConversationListFragment"-->
             <!--android:launchMode="singleTop"/>-->
         <!--<activity android:name=".LianXiRenFragment"-->
@@ -78,6 +79,10 @@
         <activity android:name="com.maibo.lvyongsheng.xianhui.QuitPCActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.ClipPictureActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.MySelfInformationActivity"/>
+        <activity android:name=".TaskActivity"/>
+        <activity android:name=".NewBuildTaskActivity"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".TaskChooseDetailActivity"/>
 
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>

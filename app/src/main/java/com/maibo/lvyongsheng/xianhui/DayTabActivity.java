@@ -10,7 +10,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -65,8 +65,11 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
     //传递给饼状图的数据
     List<List<List<List<Card>>>> pie_data;
     String chartData;
-    TextView btn_product,btn_caozuo,btn_keliu,btn_yuangong,btn_money;
+    TextView btn_product,btn_caozuo,btn_keliu,btn_yuangong,btn_money,tv_club_name,tv_time;
     ProgressDialog dialog;
+
+    String org_id;
+    String org_name;
 
 
     Handler handler = new Handler() {
@@ -133,9 +136,6 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         /*getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
 
-        Intent intent3=getIntent();
-        notice_id = intent3.getIntExtra("notice_id",-1);
-
         initView();
         getServiceData();
 
@@ -145,6 +145,13 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
+
+        Intent intent3=getIntent();
+        notice_id = intent3.getIntExtra("notice_id",-1);
+        org_name=intent3.getStringExtra("org_name");
+        org_id=intent3.getStringExtra("org_id");
+        String create_time=intent3.getStringExtra("create_time");
+
         lv_detail = (ListView)findViewById(R.id.lv_detail);
 
         btn_product = (TextView)findViewById(R.id.btn_product);
@@ -153,12 +160,21 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         btn_yuangong = (TextView)findViewById(R.id.btn_yuangong);
         btn_money = (TextView)findViewById(R.id.btn_money);
         backs= (TextView) findViewById(R.id.back);
+        tv_club_name= (TextView) findViewById(R.id.tv_club_name);
+        tv_time= (TextView) findViewById(R.id.tv_time);
         backs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                finish();
             }
         });
+
+        if (!TextUtils.isEmpty(org_name))
+            tv_club_name.setText(org_name);
+        if (!TextUtils.isEmpty(create_time)){
+            tv_time.setText(create_time.substring(5,10));
+        }
+
 
         btn_product.setOnClickListener(this);
         btn_caozuo.setOnClickListener(this);
@@ -239,6 +255,8 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         entries1.add(new RadarEntry(ra1.get(4).getScore()));
         btn_yuangong.setText(ra1.get(4).getName());
 
+
+
         List<Radar> ra2=ra.get("今日");
         entries2.add(new RadarEntry(ra2.get(0).getScore()));
         btn_money.setText(ra2.get(0).getName());
@@ -262,10 +280,11 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         set1.setColor(Color.rgb(218,182,133));
         set1.setFillColor(Color.rgb(218,182,133));
         set1.setDrawFilled(true);
-        set1.setFillAlpha(180);
+        set1.setFillAlpha(255);
         set1.setLineWidth(0f);
         set1.setDrawHighlightCircleEnabled(true);
         set1.setDrawHighlightIndicators(false);
+
         RadarDataSet set2 = new RadarDataSet(entries2, "今日");
         set2.setColor(Color.rgb(118,74,55));
         set2.setFillColor(Color.rgb(118,74,55));
@@ -274,6 +293,7 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         set2.setLineWidth(0f);
         set2.setDrawHighlightCircleEnabled(true);
         set2.setDrawHighlightIndicators(false);
+
         RadarDataSet set3 = new RadarDataSet(entries3, "");
         set3.setColor(Color.rgb(221,205,180));
         set3.setFillColor(Color.rgb(221,205,180));
@@ -314,7 +334,7 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
                     }
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("DayTabActivity:",response);
+//                        Log.e("DayTabActivity:",response);
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status=object.get("status").getAsString();
                         String message=object.get("message").getAsString();
@@ -532,11 +552,21 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
     public void startActivitys(int position){
         Intent intent=new Intent(this, ItemDetailActivity.class);
         Bundle bundle=new Bundle();
+        //柱状图数据
         bundle.putSerializable("zhuzhuangtu",(Serializable) zhuList1);
+        //饼状图数据
         bundle.putSerializable("pie",(Serializable) pie_data);
+        //七日平均值
         intent.putExtra("monthAvg",monthAvg);
+        //七日当前总量
         intent.putExtra("monthTal",monthTal);
+        //点击位置
         intent.putExtra("position",position);
+        //会所名称
+        intent.putExtra("org_name",org_name);
+        //会所ID
+        intent.putExtra("org_id",org_id);
+
         intent.putExtras(bundle);
         startActivity(intent);
     }

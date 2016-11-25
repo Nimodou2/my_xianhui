@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="#fff"
     android:layout_height="match_parent"
     >
     <TextView
@@ -40,7 +41,7 @@
             android:text="111"/>
         <com.maibo.lvyongsheng.xianhui.implement.MyGridView
             android:id="@+id/gd_list"
-            android:verticalSpacing="15dp"
+            android:verticalSpacing="3dp"
             android:horizontalSpacing="10dp"
             android:layout_width="match_parent"
             android:numColumns="3"
@@ -69,6 +70,7 @@
                 android:text="222"/>
             <TextView
                 android:id="@+id/tv_open_close"
+                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:gravity="center"
@@ -80,7 +82,7 @@
 
         <com.maibo.lvyongsheng.xianhui.implement.MyGridView
             android:id="@+id/gd_list2"
-            android:verticalSpacing="15dp"
+            android:verticalSpacing="3dp"
             android:horizontalSpacing="10dp"
             android:layout_width="match_parent"
             android:numColumns="3"
@@ -104,7 +106,7 @@
             android:text="222"/>
         <com.maibo.lvyongsheng.xianhui.implement.MyGridView
             android:id="@+id/gd_list3"
-            android:verticalSpacing="15dp"
+            android:verticalSpacing="3dp"
             android:horizontalSpacing="10dp"
             android:layout_width="match_parent"
             android:numColumns="3"
@@ -128,7 +130,7 @@
             android:text="222"/>
         <com.maibo.lvyongsheng.xianhui.implement.MyGridView
             android:id="@+id/gd_list4"
-            android:verticalSpacing="15dp"
+            android:verticalSpacing="3dp"
             android:horizontalSpacing="10dp"
             android:layout_width="match_parent"
             android:numColumns="3"

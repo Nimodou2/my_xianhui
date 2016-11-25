@@ -392,7 +392,7 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
         popupWindow.setBackgroundDrawable(dw);
         //显示位置
         //宽度
-        popupWindow.setWidth(width*4/5);
+        popupWindow.setWidth(width*6/7);
         //高度
         popupWindow.setHeight(height-getStatusBarHeight());
         popupWindow.showAtLocation(getLayoutInflater(getArguments()).inflate(R.layout.fragment_customer, null), Gravity.RIGHT, 0,0);
@@ -556,6 +556,10 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
         });
         Button reset= (Button) popupWindowView.findViewById(R.id.reset);
         Button certain= (Button) popupWindowView.findViewById(R.id.certain);
+        //判断是否显示展开
+        if (ses.get(1).getList().size()>6){
+            tv_open_close.setVisibility(View.VISIBLE);
+        }
         tv_open_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -689,26 +693,6 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
             return view;
         }
     }
-    //设置头像
-//    public void setHead(Employee employee,final ImageView iv_avator){
-//        //下载头像
-//        OkHttpUtils
-//                .get()
-//                .url(employee.getAvator_url())
-//                .build()
-//                .execute(new BitmapCallback() {
-//                    @Override
-//                    public void onError(Call call, Exception e, int id) {
-//
-//                    }
-//                    @Override
-//                    public void onResponse(Bitmap response, int id) {
-//                        Bitmap bm= DrawRoundCorner.makeRoundCorner(response,63);
-//                        Drawable drawable =new BitmapDrawable(bm);
-//                        iv_avator.setImageDrawable(drawable);
-//                    }
-//                });
-//    }
 
     class ViewHolder{
         CircleImageView iv_avator;

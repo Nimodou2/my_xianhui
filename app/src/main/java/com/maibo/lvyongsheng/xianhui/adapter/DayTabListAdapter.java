@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.R;
@@ -43,9 +44,10 @@ public class DayTabListAdapter extends BaseAdapter {
         ViewHolder holder ;
         if(view==null){
             holder = new ViewHolder();
-            view = View.inflate(context, R.layout.style_day_table_list,null);
+            view = View.inflate(context, R.layout.style_have_right_arrow_image,null);
             holder.name=(TextView) view.findViewById(R.id.name);
             holder.number=(TextView) view.findViewById(R.id.numbers);
+            holder.iv_arrow= (ImageView) view.findViewById(R.id.iv_arrow);
             view.setTag(holder);
 
         }else{
@@ -54,9 +56,15 @@ public class DayTabListAdapter extends BaseAdapter {
         BTabList bTab=bt.get(i);
         holder.name.setText(bTab.getName());
         holder.number.setText(bTab.getAmount()+"");
+        if (bTab.getAmount().equals("0")){
+            holder.iv_arrow.setVisibility(View.GONE);
+        }else{
+            holder.iv_arrow.setVisibility(View.VISIBLE);
+        }
         return view;
     }
     class ViewHolder{
         TextView name , number;
+        ImageView iv_arrow;
     }
 }

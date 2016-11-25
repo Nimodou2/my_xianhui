@@ -108,6 +108,34 @@
             android:layout_alignTop="@+id/btn_yuangong"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/tv_club_name"
+            android:textSize="10sp"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:gravity="left"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/btn_money"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="21dp"
+            android:layout_marginStart="21dp"
+            android:text="会所1"
+            />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:textSize="10sp"
+            android:text="11.12"
+            android:paddingTop="5dp"
+            android:gravity="left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_club_name"
+            android:layout_alignRight="@+id/tv_club_name"
+            android:layout_alignEnd="@+id/tv_club_name"
+           />
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"

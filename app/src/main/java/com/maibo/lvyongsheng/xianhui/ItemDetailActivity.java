@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Gallery;
@@ -66,6 +65,9 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
     float[] values;
     int position;
     ImageAdapter imageAdapter;
+
+    String org_id;
+    String org_name;
 
 
     public int test=0;
@@ -141,6 +143,9 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
         Bundle bundle=intent.getExtras();
         monthAvg=intent.getIntArrayExtra("monthAvg");
         monthTal=intent.getIntArrayExtra("monthTal");
+        org_name=intent.getStringExtra("org_name");
+        org_id=intent.getStringExtra("org_id");
+
         //柱状图数据
         zhuList1=(List<List<Radar>>) bundle.get("zhuzhuangtu");
         //饼状图数据
@@ -275,6 +280,8 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
         Intent intent = new Intent(ItemDetailActivity.this, MaxSettingActivity.class);
         Bundle bundle= new Bundle();
         bundle.putSerializable("maxList",(Serializable) list1);
+        bundle.putString("org_name",org_name);
+        bundle.putString("org_id",org_id);
         intent.putExtras(bundle);
         startActivity(intent);
     }
@@ -292,7 +299,6 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
                     }
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("Item:",response);
                         JsonObject  jsonObject=new JsonParser().parse(response).getAsJsonObject();
                         JsonObject data=jsonObject.get("data").getAsJsonObject();
                         List<TabMax> list=new ArrayList<>();

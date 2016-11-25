@@ -55,13 +55,14 @@
         android:layout_weight="4">
         <TextView
             android:id="@+id/btn_login"
-            android:layout_width="140dp"
+            android:layout_width="120dp"
             android:layout_height="40dp"
-            android:background="@drawable/blue_soild"
+            android:background="@drawable/shap_all_yellow_edittext_bg"
             android:gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="24dp"
             android:text="开 始"
-            android:textColor="#1980DF"
+            android:textColor="#fff"
             android:textSize="20dp"
             android:visibility="visible"/>
     </LinearLayout>

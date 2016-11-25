@@ -424,7 +424,7 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
         popupWindow.setBackgroundDrawable(dw);
         //显示位置
         //宽度
-        popupWindow.setWidth(width*4/5);
+        popupWindow.setWidth(width*6/7);
         //高度
         popupWindow.setHeight(height-getStatusBarHeight());
         popupWindow.showAtLocation(getLayoutInflater(getArguments()).inflate(R.layout.fragment_customer, null), Gravity.RIGHT, 0,0);
@@ -650,6 +650,10 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
                 }
             }
         });
+        //判断是否显示展开
+        if (ses.get(1).getList().size()>6){
+            tv_open_close.setVisibility(View.VISIBLE);
+        }
         //展开获收起
         tv_open_close.setOnClickListener(new View.OnClickListener() {
             @Override

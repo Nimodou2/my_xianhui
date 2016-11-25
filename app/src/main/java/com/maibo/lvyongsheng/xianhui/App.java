@@ -1,7 +1,6 @@
 package com.maibo.lvyongsheng.xianhui;
 
 import android.app.Application;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
@@ -27,7 +26,6 @@ public class App extends Application {
   // 专用ID和KEY
   private final String APP_ID  = "wciU4iW0lEVmc9EJ9WzmhyGw-gzGzoHsz";
   private final String APP_KEY = "eXUtSMYSxVCJhE4IHOiGWabv";
-  static ProgressDialog dialog;
   String TAG="Application:";
   @Override
   public void onCreate() {

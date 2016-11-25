@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -32,9 +33,11 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
     SeekBar sb_cash, sb_project, sb_product, sb_customer, sb_times;
     TextView tv_cash, tv_mcash, tv_project, tv_mproject, tv_product, tv_mproduct,
             tv_customer, tv_mcustomer, tv_times, tv_mtimes,tv_cash_over,tv_project_over,tv_product_over;
-    TextView tv_a,tv_b,tv_c,tv_d,tv_certain,back;
+    TextView tv_a,tv_b,tv_c,tv_d,tv_certain,back,tv_setting;
     List<TabMax> list;
     float cash,project,product,customer,times;
+    String org_id;
+    String org_name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +49,9 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
         Intent intent=getIntent();
         Bundle bundle=intent.getExtras();
         list=(List<TabMax>) bundle.get("maxList");
+        org_name=bundle.getString("org_name");
+        org_id=bundle.getString("org_id");
+
 
         sb_cash = (SeekBar) findViewById(R.id.sb_cash);
         sb_project = (SeekBar) findViewById(R.id.sb_project);
@@ -68,7 +74,11 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
         tv_cash_over= (TextView) findViewById(R.id.tv_cash_over);
         tv_project_over= (TextView) findViewById(R.id.tv_project_over);
         tv_product_over= (TextView) findViewById(R.id.tv_product_over);
+        tv_setting= (TextView) findViewById(R.id.tv_setting);
         back= (TextView) findViewById(R.id.back);
+        if (!TextUtils.isEmpty(org_name)){
+            tv_setting.setText("设置"+" ("+org_name+")");
+        }
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,17 +164,6 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
                     product=list.get(2).getDefaults()[what];
                     customer=list.get(3).getDefaults()[what];
                     times=list.get(4).getDefaults()[what];
-
-                /*for (int i=0;i<5;i++){
-                    TabMax tm=list.get(i);
-                    if (i==3){
-                        seekBars[i].setProgress((int)tm.getDefaults()[what]*2);
-                    }else{
-                        seekBars[i].setProgress((int)tm.getDefaults()[what]);
-                    }
-
-                    textViewRight[i].setText(tm.getDefaults()[what]+tm.getUnit());
-                }*/
                 for (int i=0;i<3;i++){
                     TabMax tm=list.get(i);
                     seekBars[i].setProgress((int)tm.getDefaults()[what]);
@@ -186,6 +185,7 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
                 .post()
                 .url(apiURL+"/rest/employee/setdailyreportsetting")
                 .addParams("token",token)
+                .addParams("org_id",org_id)
                 .addParams("cash_amount",cash+"")
                 .addParams("project_amount",project+"")
                 .addParams("product_amount",product+"")

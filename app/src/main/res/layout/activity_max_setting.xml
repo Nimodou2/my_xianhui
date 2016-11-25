@@ -22,6 +22,7 @@
             android:textSize="18dp"
             android:text="返回"/>
         <TextView
+            android:id="@+id/tv_setting"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

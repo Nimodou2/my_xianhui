@@ -36,6 +36,8 @@
     <color name="dan_lan">#017AFF</color>
     <color name="bar_bg">#CFB68E</color>
     <color name="bg_color">#EDEDED</color>
+    <color name="white">#fff</color>
+    <color name="searchView_bg">#CAC9CE</color>
 
     <color name="cc">#59a9ff</color>
     <color name="contents_text">#ff000000</color>
@@ -64,5 +66,6 @@
     <color name="viewfinder_frame">#ff000000</color>
     <color name="viewfinder_laser">#ffff0000</color>
     <color name="viewfinder_mask">#60000000</color>
+    <color name="progress_black_green">#236C51</color>
 
 </resources>

@@ -4,8 +4,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.R;
@@ -44,7 +44,7 @@ public class MyGridViewAdapter extends BaseAdapter {
         View v=View.inflate(context, R.layout.style_recycler_center,null);
         TextView tv= (TextView) v.findViewById(R.id.tv_little);
         ImageView iv_tag= (ImageView) v.findViewById(R.id.iv_tag);
-        LinearLayout ll_bg= (LinearLayout) v.findViewById(R.id.ll_bg);
+        FrameLayout ll_bg= (FrameLayout) v.findViewById(R.id.ll_bg);
         tv.setText(data.get(i).getText());
         if (data.get(i).getDisabled()){
             ll_bg.setBackgroundResource(R.drawable.shap_all_gray_bg);

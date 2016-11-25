@@ -84,6 +84,36 @@ public class ZhuShouActivity extends Activity implements RefreshListView.OnRefre
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initView();
+        initData(1);
+        lv_zhushou.setOnRefreshListener(this);
+        lv_zhushou.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        //将notice_id和position传递到下一个Activity
+                        //加上header和footer会是适配器的条目数增加两项
+                        whatItem=i;
+                        whatNotice=data2.get(i-1);
+                        if (i>0&&i<data2.size()+1){
+                        if (data2.get(i-1).getNotice_type().equals("daily_report")){
+                         //跳到日报表
+                            Intent intent=new Intent(ZhuShouActivity.this,DayTabActivity.class);
+                            intent.putExtra("notice_id",data2.get(i-1).getNotice_id());
+                            intent.putExtra("org_id",data2.get(i-1).getOrg_id());
+                            intent.putExtra("org_name",data2.get(i-1).getOrg_name());
+                            intent.putExtra("create_time",data2.get(i-1).getCreat_time());
+                            startActivity(intent);
+                        }else if (data2.get(i-1).getNotice_type().equals("project_plan")){
+                        //跳到项目计划
+                            startActivity(new Intent(getApplicationContext(),WorkActivity.class));
+                        }
+                        }
+            }
+        });
+
+    }
+
+    private void initView() {
         setContentView(R.layout.activity_zhu_shou);
 
         //记录之前的Activity
@@ -107,29 +137,6 @@ public class ZhuShouActivity extends Activity implements RefreshListView.OnRefre
                 finish();
             }
         });
-        initData(1);
-        lv_zhushou.setOnRefreshListener(this);
-        lv_zhushou.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        //将notice_id和position传递到下一个Activity
-                        //加上header和footer会是适配器的条目数增加两项
-                        whatItem=i;
-                        whatNotice=data2.get(i-1);
-                        if (i>0&&i<data2.size()+1){
-                        if (data2.get(i-1).getNotice_type().equals("daily_report")){
-                         //跳到日报表
-                            Intent intent=new Intent(ZhuShouActivity.this,DayTabActivity.class);
-                            intent.putExtra("notice_id",data2.get(i-1).getNotice_id());
-                            startActivity(intent);
-                        }else if (data2.get(i-1).getNotice_type().equals("project_plan")){
-                        //跳到项目计划
-                            startActivity(new Intent(getApplicationContext(),WorkActivity.class));
-                        }
-                        }
-            }
-        });
-
     }
 
     @Override
@@ -142,7 +149,7 @@ public class ZhuShouActivity extends Activity implements RefreshListView.OnRefre
 //            data2=new ArrayList<>();
             data2.clear();
             Notice notice=new Notice(whatNotice.getNotice_id(),whatNotice.getNotice_type(),whatNotice.getSubject(),whatNotice.getBody(),
-                    whatNotice.getCreat_time(),1,whatNotice.getExtra_id(),whatNotice.getOrg_name());
+                    whatNotice.getCreat_time(),1,whatNotice.getExtra_id(),whatNotice.getOrg_name(),whatNotice.getOrg_id());
             for (int i=0;i<data3.size();i++){
                 if (i==whatItem-1){
                     data2.add(notice);
@@ -173,7 +180,7 @@ public class ZhuShouActivity extends Activity implements RefreshListView.OnRefre
 
                     @Override
                     public void onResponse(String response, int id) {
-                       // Log.e("助手：", response);
+                      // Log.e("助手：", response);
                         List<Notice> data1 = new ArrayList<Notice>();
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status = object.get("status").getAsString();
@@ -201,6 +208,7 @@ public class ZhuShouActivity extends Activity implements RefreshListView.OnRefre
                             int status =-1;
                             String extra_id ="";
                             String org_name="";
+                            String org_id="";
                             if (!jsonObject.get("notice_id").isJsonNull())
                                 notice_id = jsonObject.get("notice_id").getAsInt();
                             if (!jsonObject.get("notice_type").isJsonNull())
@@ -217,7 +225,9 @@ public class ZhuShouActivity extends Activity implements RefreshListView.OnRefre
                                 extra_id = jsonObject.get("extra_id").getAsString();
                             if (!jsonObject.get("org_name").isJsonNull())
                                 org_name=jsonObject.get("org_name").getAsString();
-                            data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id,org_name));
+                            if (!jsonObject.get("org_id").isJsonNull())
+                                org_id=jsonObject.get("org_id").getAsString();
+                            data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id,org_name,org_id));
                         }
                         Message msg = Message.obtain();
                         msg.obj = data1;

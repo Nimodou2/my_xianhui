@@ -12,10 +12,11 @@ public class Notice {
     private int status;
     private String extra_id;
     private String org_name;
+    private String org_id;
     public Notice() {}
 
     public Notice(int notice_id, String notice_type, String subject, String body,
-                  String creat_time, int status, String extra_id,String org_name) {
+                  String creat_time, int status, String extra_id,String org_name,String org_id) {
         this.notice_id = notice_id;
         this.notice_type = notice_type;
         this.subject = subject;
@@ -24,6 +25,15 @@ public class Notice {
         this.status = status;
         this.extra_id = extra_id;
         this.org_name=org_name;
+        this.org_id=org_id;
+    }
+
+    public String getOrg_id() {
+        return org_id;
+    }
+
+    public void setOrg_id(String org_id) {
+        this.org_id = org_id;
     }
 
     public String getOrg_name() {

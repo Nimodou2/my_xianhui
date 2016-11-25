@@ -42,7 +42,7 @@
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:paddingTop="5dp"
+            android:paddingTop="64dp"
             android:paddingBottom="5dp"
             android:paddingLeft="8dp"
             android:layout_alignParentRight="true">

@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
+import com.maibo.lvyongsheng.xianhui.TaskActivity;
 import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.RemindActivity;
+import com.maibo.lvyongsheng.xianhui.SearchPeopleActivity;
 import com.maibo.lvyongsheng.xianhui.WorkActivity;
 import com.maibo.lvyongsheng.xianhui.ZhuShouActivity;
 import com.maibo.lvyongsheng.xianhui.entity.NewLCChatKitUser;
@@ -50,6 +52,7 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ZHU_SHOU,
         REMIND,
         WORK,
+        TASK,
         ITEM_TYPE_CHARACTER,
         ITEM_TYPE_CONTACT
     }
@@ -108,15 +111,16 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//        if (viewType==ITEM_TYPE.SEARCH.ordinal()){
-//            return null;
-//        }else
-        if (viewType==ITEM_TYPE.ZHU_SHOU.ordinal()){
+        if (viewType==ITEM_TYPE.SEARCH.ordinal()){
+            return new SearchHolder(mLayoutInflater.inflate(R.layout.style_lianxiren_search,parent,false));
+        }else if (viewType==ITEM_TYPE.ZHU_SHOU.ordinal()){
             return new ZhuShouHolder(mLayoutInflater.inflate(R.layout.style_lianxiren_zhushou, parent, false));
         }else if (viewType==ITEM_TYPE.REMIND.ordinal()){
             return new RemindHolder(mLayoutInflater.inflate(R.layout.style_lianxiren_remind, parent, false));
         }else if (viewType==ITEM_TYPE.WORK.ordinal()){
             return new WorkHolder(mLayoutInflater.inflate(R.layout.style_lianxiren_work, parent, false));
+        }else if(viewType==ITEM_TYPE.TASK.ordinal()){
+            return new TaskHolder(mLayoutInflater.inflate(R.layout.style_lianxiren_task,parent,false));
         }else if (viewType == ITEM_TYPE.ITEM_TYPE_CHARACTER.ordinal()) {
             return new CharacterHolder(mLayoutInflater.inflate(R.layout.item_character, parent, false));
         } else {
@@ -126,7 +130,16 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if (holder instanceof ZhuShouHolder){
+        if (holder instanceof SearchHolder){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //跳转到查询界面
+                    Intent intent=new Intent(mContext, SearchPeopleActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
+        }else if (holder instanceof ZhuShouHolder){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -150,17 +163,26 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     mContext.startActivity(intent);
                 }
             });
+        }else if (holder instanceof TaskHolder){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent=new Intent(mContext, TaskActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
+
         }else if (holder instanceof CharacterHolder) {
-            ((CharacterHolder) holder).mTextView.setText(resultList.get(position-3).getFirstName());
+            ((CharacterHolder) holder).mTextView.setText(resultList.get(position-5).getFirstName());
             num++;
         } else if (holder instanceof ContactHolder) {
-            ((ContactHolder) holder).mTextView.setText(resultList.get(position-3).getLCCKUser().getUserName());
-            Picasso.with(mContext).load(resultList.get(position-3).getLCCKUser().getAvatarUrl()).into(((ContactHolder) holder).img_friend_avatar);
+            ((ContactHolder) holder).mTextView.setText(resultList.get(position-5).getLCCKUser().getUserName());
+            Picasso.with(mContext).load(resultList.get(position-5).getLCCKUser().getAvatarUrl()).into(((ContactHolder) holder).img_friend_avatar);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(mContext, LCIMConversationActivity.class);
-                    intent.putExtra(LCIMConstants.PEER_ID, resultList.get(position-3).getLCCKUser().getUserId());
+                    intent.putExtra(LCIMConstants.PEER_ID, resultList.get(position-5).getLCCKUser().getUserId());
                     mContext.startActivity(intent);
                 }
             });
@@ -170,33 +192,26 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        if (position==0){
-            return ITEM_TYPE.ZHU_SHOU.ordinal();
-        }else if (position==1){
-            return ITEM_TYPE.REMIND.ordinal();
-        }else if (position==2){
-            return ITEM_TYPE.WORK.ordinal();
-        }else{
-            return resultList.get(position-3).getType();
-        }
 
-//        if (position==0){
-//            return ITEM_TYPE.SEARCH.ordinal();
-//        }else if (position==1){
-//            return ITEM_TYPE.ZHU_SHOU.ordinal();
-//        }else if (position==2){
-//            return ITEM_TYPE.REMIND.ordinal();
-//        }else if (position==3){
-//            return ITEM_TYPE.WORK.ordinal();
-//        }else{
-//            return resultList.get(position-3).getType();
-//        }
+        if (position==0){
+            return ITEM_TYPE.SEARCH.ordinal();
+        }else if (position==1){
+            return ITEM_TYPE.ZHU_SHOU.ordinal();
+        }else if (position==2){
+            return ITEM_TYPE.REMIND.ordinal();
+        }else if (position==3){
+            return ITEM_TYPE.WORK.ordinal();
+        }else if(position==4){
+            return ITEM_TYPE.TASK.ordinal();
+        }else{
+            return resultList.get(position-5).getType();
+        }
 
     }
 
     @Override
     public int getItemCount() {
-        return resultList == null ? 0 : resultList.size()+3;
+        return resultList == null ? 0 : resultList.size()+5;
     }
 
     public class CharacterHolder extends RecyclerView.ViewHolder {
@@ -210,7 +225,6 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public class SearchHolder extends RecyclerView.ViewHolder{
-
         SearchHolder(View view){
             super(view);
         }
@@ -240,6 +254,14 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    public class TaskHolder extends RecyclerView.ViewHolder{
+        LinearLayout ll_task_all;
+        TaskHolder(View view){
+            super(view);
+            ll_task_all= (LinearLayout) view.findViewById(R.id.ll_task_all);
+        }
+    }
+
     public class ContactHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
         CircleImageView img_friend_avatar;
@@ -254,7 +276,7 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (characterList.contains(character)) {
             for (int i = 0; i < resultList.size(); i++) {
                 if (resultList.get(i).getFirstName().equals(character)) {
-                    return i+3;
+                    return i+5;
                 }
             }
         }
