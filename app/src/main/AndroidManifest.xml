@@ -83,6 +83,8 @@
         <activity android:name=".NewBuildTaskActivity"
             android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".TaskChooseDetailActivity"/>
+        <activity android:name=".TaskProgressDetailActivity"/>
+        <activity android:name=".TaskPeopleDetailActivity"/>
 
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>

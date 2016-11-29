@@ -1,7 +1,6 @@
 package com.maibo.lvyongsheng.xianhui;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ public class CustomUserProvider implements LCChatProfileProvider {
 
     if (null == customUserProvider) {
       customUserProvider = new CustomUserProvider();
-      Log.e("CustomerProvider:","为空");
     }
     return customUserProvider;
   }

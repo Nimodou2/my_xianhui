@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:state_checked="true"
-        android:drawable="@drawable/msg_yes"></item>
-    <item android:drawable="@drawable/msg_no"></item>
+        android:drawable="@drawable/task_btn_green_center_bg"></item>
+    <item android:drawable="@drawable/task_btn_white_center_bg"></item>
 </selector>
