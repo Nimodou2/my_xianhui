@@ -11,10 +11,10 @@ import android.widget.TextView;
 
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
-import com.maibo.lvyongsheng.xianhui.TaskActivity;
 import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.RemindActivity;
 import com.maibo.lvyongsheng.xianhui.SearchPeopleActivity;
+import com.maibo.lvyongsheng.xianhui.TaskActivity;
 import com.maibo.lvyongsheng.xianhui.WorkActivity;
 import com.maibo.lvyongsheng.xianhui.ZhuShouActivity;
 import com.maibo.lvyongsheng.xianhui.entity.NewLCChatKitUser;
@@ -23,7 +23,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,6 +32,8 @@ import cn.leancloud.chatkit.LCChatKitUser;
 import cn.leancloud.chatkit.activity.LCIMConversationActivity;
 import cn.leancloud.chatkit.utils.LCIMConstants;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.maibo.lvyongsheng.xianhui.R.id.character;
 
 /**
  * Created by LYS on 2016/10/25.
@@ -76,14 +78,18 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     private void handleContact() {
+        //将姓名转成拼音后存放的集合
         mContactList = new ArrayList<>();
-        Map<String, LCChatKitUser> map = new HashMap<>();
+        Map<String, LCChatKitUser> map = new IdentityHashMap<>();
+        //user_id具有唯一性，而名字可能出现重复
+
         for (int i = 0; i < mContactNames.length; i++) {
             //将汉字转化成拼音
             String pinyin=PinyinHelper.convertToPinyinString(mContactNames[i],"", PinyinFormat.WITHOUT_TONE);
             map.put(pinyin, datas.get(i));
             mContactList.add(pinyin);
         }
+        //从A-Z排序
         Collections.sort(mContactList, new ContactComparator());
 
         resultList = new ArrayList<>();
@@ -220,7 +226,7 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         CharacterHolder(View view) {
             super(view);
 
-            mTextView = (TextView) view.findViewById(R.id.character);
+            mTextView = (TextView) view.findViewById(character);
         }
     }
 
@@ -303,28 +309,5 @@ public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
     }
-//    public void setHead(String avator_url,final ImageView iv_avator){
-//        //下载头像
-//        OkHttpUtils
-//                .get()
-//                .url(avator_url)
-//                .build()
-//                .execute(new BitmapCallback() {
-//                    @Override
-//                    public void onError(Call call, Exception e, int id) {
-//
-//                    }
-//                    @Override
-//                    public void onResponse(Bitmap response, int id) {
-//                        Bitmap bn= DrawRoundCorner.makeRoundCorner(response);
-//                        //Bitmap bm= DrawRoundCorner.makeRoundCorner(response,63);
-//                        //Bitmap bm= DrawRoundCorner2.getRoundedCornerBitmap(response);
-//                        Drawable drawable =new BitmapDrawable(bn);
-//                        iv_avator.setImageDrawable(drawable);
-//                        App.dissmissDialog();
-//
-//                    }
-//                });
-//    }
 }
 
