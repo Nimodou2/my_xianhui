@@ -1,7 +1,6 @@
 package com.maibo.lvyongsheng.xianhui;
 
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.gson.JsonArray;
@@ -21,19 +21,22 @@ import com.maibo.lvyongsheng.xianhui.entity.Card;
 import com.maibo.lvyongsheng.xianhui.entity.Consume;
 import com.maibo.lvyongsheng.xianhui.entity.CustemProducts;
 import com.maibo.lvyongsheng.xianhui.entity.Product;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/9/14.
  */
 
-public class AddProductActivity extends Activity{
+public class AddProductActivity extends BaseActivity{
 
     SharedPreferences sp,sp2;
     String apiURL;
@@ -45,6 +48,8 @@ public class AddProductActivity extends Activity{
     int cusId;
     private ProductAddListViewExpandAdapter adapter;
     ProgressDialog dialog;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
 
     Handler handler = new Handler() {
 
@@ -102,6 +107,8 @@ public class AddProductActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
+        setSingleViewHeightAndWidth(ll_head,viewHeight*15/255,0);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         dialog=new ProgressDialog(this);
         dialog.setMessage("加载中...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -117,7 +124,7 @@ public class AddProductActivity extends Activity{
     private void initView() {
         sp2 = getSharedPreferences("checkBoxProduct", MODE_PRIVATE);
         lv_add_product = (ExpandableListView) findViewById(R.id.lv_add_product);
-        adapter = new ProductAddListViewExpandAdapter(AddProductActivity.this, pro1, sel,lv_add_product);
+        adapter = new ProductAddListViewExpandAdapter(AddProductActivity.this, pro1, sel,lv_add_product,viewHeight);
         lv_add_product.setAdapter(adapter);
         lv_add_product.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
@@ -252,5 +259,10 @@ public class AddProductActivity extends Activity{
         editor.putString("bufferProduct",buffer);
         editor.putInt("tag",1);
         editor.commit();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

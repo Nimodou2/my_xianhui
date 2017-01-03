@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,28 +21,31 @@ import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.adapter.CommonAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.ViewHolder;
 import com.maibo.lvyongsheng.xianhui.entity.TaskInfomation;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/11/23.
  */
 
-public class TaskActivity extends Activity implements View.OnClickListener{
+public class TaskActivity extends BaseActivity implements View.OnClickListener{
     TextView back,tv_new_build;
     ListView lv_progress;
     SharedPreferences sp;
     String apiURL;
     String token;
     ProgressDialog dialog;
-
-
     List<TaskInfomation> list_task_info;
+
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
 
     Handler handler=new Handler(){
         @Override
@@ -63,6 +68,16 @@ public class TaskActivity extends Activity implements View.OnClickListener{
         lv_progress.setAdapter(new CommonAdapter<TaskInfomation>(TaskActivity.this,list_task_info, R.layout.style_task_progress) {
             @Override
             public void convert(ViewHolder holder, final TaskInfomation tkInfor, int position, View convertView) {
+                LinearLayout ll_all=holder.getView(R.id.ll_all);
+                ViewGroup.LayoutParams params=ll_all.getLayoutParams();
+                params.height=viewHeight/9;
+                ll_all.setLayoutParams(params);
+
+                ImageView iv_left_task=holder.getView(R.id.iv_left_task);
+                ViewGroup.LayoutParams params1=iv_left_task.getLayoutParams();
+                params1.height=viewHeight/9;
+                iv_left_task.setLayoutParams(params1);
+
                 String values="范围:"+tkInfor.getRange_name()+"  类型:"+tkInfor.getType_name()+"  截止:"+tkInfor.getEnd_date().substring(5);
                 holder.setText(R.id.tv_progress_cotent,values);
                 int progress=Integer.parseInt(tkInfor.getPercentage());
@@ -80,6 +95,11 @@ public class TaskActivity extends Activity implements View.OnClickListener{
 
                     }
                 });
+                if (tkInfor.getIs_update().equals("0")){
+                    holder.setVisible(R.id.tv_isupdate,false);
+                }else if (tkInfor.getIs_update().equals("1")){
+                    holder.setVisible(R.id.tv_isupdate,true);
+                }
 
                 //点击置顶
                 final String task_id=tkInfor.getTask_id();
@@ -104,6 +124,9 @@ public class TaskActivity extends Activity implements View.OnClickListener{
     }
     private void initView(){
         setContentView(R.layout.activity_progress);
+        adapterLitterBar(ll_head);
+
+        CloseAllActivity.getScreenManager().pushActivity(this);
 
         dialog=new ProgressDialog(this);
         dialog.setMessage("加载中...");
@@ -134,7 +157,7 @@ public class TaskActivity extends Activity implements View.OnClickListener{
                 Intent intent=new Intent(this,NewBuildTaskActivity.class);
                 startActivityForResult(intent,6);
                 //控制Activity出现方式
-                //overridePendingTransition(android.R.anim.slide_out_right,android.R.anim.slide_in_left);
+//                overridePendingTransition(R.anim.slide_right_in,R.anim.slide_left_out);
                 break;
         }
     }
@@ -234,6 +257,15 @@ public class TaskActivity extends Activity implements View.OnClickListener{
             case 12:
                 getTaskListFromService();
                 break;
+            case  17:
+                //首先判断有没有update为一的值
+                for (int i=0;i<list_task_info.size();i++){
+                    if (list_task_info.get(i).getIs_update().equals("1")){
+                        getTaskListFromService();
+                        return;
+                    }
+                }
+                break;
         }
     }
 
@@ -271,5 +303,11 @@ public class TaskActivity extends Activity implements View.OnClickListener{
                         }
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

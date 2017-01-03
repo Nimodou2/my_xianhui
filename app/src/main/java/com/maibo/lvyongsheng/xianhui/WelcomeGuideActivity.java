@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,6 +47,11 @@ public class WelcomeGuideActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_guide);
+		View view0=View.inflate(this,R.layout.guid_view1,null);
+		ImageView iv0= (ImageView) view0.findViewById(R.id.imageView2);
+		ViewGroup.LayoutParams params=iv0.getLayoutParams();
+		params.height=20;
+		iv0.setLayoutParams(params);
 
 		views = new ArrayList<View>();
 

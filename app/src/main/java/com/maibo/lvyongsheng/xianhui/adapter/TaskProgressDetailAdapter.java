@@ -27,10 +27,15 @@ public class TaskProgressDetailAdapter extends BaseAdapter{
     List<People> data;
     Context context;
     Activity activity;
-    public TaskProgressDetailAdapter(Context context, Activity activity, List<People> people_list){
+    int viewHeight;
+    //区分跳转过来的对象:-1、进度详情页面所用 0、顾问 1、技师 2、客人
+    int tag;
+    public TaskProgressDetailAdapter(Context context, Activity activity, List<People> people_list,int tag,int viewHeight){
         this.data=people_list;
         this.context=context;
         this.activity=activity;
+        this.tag=tag;
+        this.viewHeight=viewHeight;
     }
     @Override
     public int getCount() {
@@ -57,10 +62,16 @@ public class TaskProgressDetailAdapter extends BaseAdapter{
             holder.number= (TextView) view.findViewById(R.id.numbers);
             holder.iv_arrow= (ImageView) view.findViewById(R.id.iv_arrow);
             holder.ll_cards_type= (LinearLayout) view.findViewById(R.id.ll_cards_type);
+            holder.ll_all= (LinearLayout) view.findViewById(R.id.ll_all);
             view.setTag(holder);
         }else{
             holder= (ViewHolder) view.getTag();
         }
+        //设置Item高度
+        ViewGroup.LayoutParams params=holder.ll_all.getLayoutParams();
+        params.height=viewHeight*20/255;
+        holder.ll_all.setLayoutParams(params);
+
         final People peo=data.get(i);
         holder.name.setText(peo.getName());
         holder.number.setText(peo.getAmount());
@@ -76,6 +87,8 @@ public class TaskProgressDetailAdapter extends BaseAdapter{
                     Bundle bundle=new Bundle();
                     bundle.putString("name",peo.getName());
                     bundle.putSerializable("details", (Serializable) peo.getDetail());
+                    bundle.putString("customer_id",peo.getId());
+                    bundle.putInt("tag",tag);
                     intent.putExtras(bundle);
                     activity.startActivity(intent);
                 }
@@ -86,7 +99,7 @@ public class TaskProgressDetailAdapter extends BaseAdapter{
     }
 
     class ViewHolder{
-        LinearLayout ll_cards_type;
+        LinearLayout ll_cards_type,ll_all;
         TextView name,number;
         ImageView iv_arrow;
     }

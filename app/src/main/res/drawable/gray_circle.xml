@@ -11,8 +11,8 @@
     <solid
         android:color="#BCC2C2" />
     <stroke
-        android:width="0.8dp"
+        android:width="0dp"
         android:color="#F6F7F7" />
-    <size android:width="15dp"
-        android:height="15dp" />
+    <size android:width="13dp"
+        android:height="13dp" />
 </shape>

@@ -5,6 +5,7 @@
               android:background="#fff"
               android:orientation="vertical">
     <LinearLayout
+        android:id="@+id/ll_content_title"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/bar_color">
@@ -37,17 +38,25 @@
         </LinearLayout>
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <com.maibo.lvyongsheng.xianhui.implement.LetterView
-            android:id="@+id/lv_letterview"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
+        <TextView
+            android:id="@+id/tv_dialog"
+            android:layout_width="90dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/shap_all_gray_letter_bg"
             android:gravity="center"
-            android:paddingTop="64dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="8dp"
-            android:layout_alignParentRight="true">
+            android:textColor="@android:color/white"
+            android:alpha="0.7"
+            android:textSize="38sp"
+            android:visibility="gone" />
 
-        </com.maibo.lvyongsheng.xianhui.implement.LetterView>
+        <com.maibo.lvyongsheng.xianhui.utils.ZzLetterSideBar
+            android:id="@+id/sidebar"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="60dp"  />
     </RelativeLayout>
 
 </LinearLayout>

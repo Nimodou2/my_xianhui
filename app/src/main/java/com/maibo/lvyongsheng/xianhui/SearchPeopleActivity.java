@@ -1,23 +1,27 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.entity.SearchPeople;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import cn.leancloud.chatkit.LCChatKitUser;
 import cn.leancloud.chatkit.activity.LCIMConversationActivity;
 import cn.leancloud.chatkit.utils.LCIMConstants;
@@ -27,12 +31,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by LYS on 2016/11/21.
  */
 
-public class SearchPeopleActivity extends Activity {
+public class SearchPeopleActivity extends BaseActivity {
+
+    List<LCChatKitUser> users;
     SearchView search_people;
     ListView lv_seached_people;
-    List<LCChatKitUser> users;
-    List<String> names;
     TextView back;
+    List<String> names;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +49,17 @@ public class SearchPeopleActivity extends Activity {
 
     private void initView() {
         setContentView(R.layout.activity_search_people);
+
+        ViewGroup.LayoutParams params=ll_head.getLayoutParams();
+        params.height=((Util.getScreenHeight(this)-getStatusBarHeight())/35)*3;
+        ll_head.setLayoutParams(params);
+
+        CloseAllActivity.getScreenManager().pushActivity(this);
         search_people= (SearchView) findViewById(R.id.search_people);
             int id = search_people.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
             TextView hintText= (TextView) findViewById(id);
-            hintText.setTextSize(14);
-            hintText.setTextColor(getResources().getColor(R.color.gray_weixin));
+            hintText.setTextSize(13);
+            hintText.setTextColor(Color.BLACK);
             Class<?> c=search_people.getClass();
             try {
                 Field f=c.getDeclaredField("mSearchPlate");//通过反射，获得类对象的一个属性对象
@@ -81,7 +94,7 @@ public class SearchPeopleActivity extends Activity {
         });
     }
     private void initData(){
-        users=CustomUserProvider.getInstance(this).getAllUsers();
+        users=CustomUserProvider.getInstance().getAllUsers();
         names=new ArrayList<>();
         for (LCChatKitUser lcChatKitUser:users){
             names.add(lcChatKitUser.getUserName());
@@ -174,9 +187,29 @@ public class SearchPeopleActivity extends Activity {
             TextView tv_name_search= (TextView) v.findViewById(R.id.tv_name_search);
             tv_name_search.setText(user.getUserName());
             startConversationActivity(tv_name_search,user);
+            LinearLayout ll_all= (LinearLayout) v.findViewById(R.id.ll_all);
+            setHeightAndWidth(img_head_search, ll_all);
+
             return v;
         }
     }
+
+    /**
+     * 设置条目的宽和高
+     * @param img_head_search
+     * @param ll_all
+     */
+    private void setHeightAndWidth(CircleImageView img_head_search, LinearLayout ll_all) {
+        ViewGroup.LayoutParams params=ll_all.getLayoutParams();
+        params.height=screenHeight/15;
+        ll_all.setLayoutParams(params);
+
+        ViewGroup.LayoutParams params1=img_head_search.getLayoutParams();
+        params1.height=screenHeight/15;
+        params1.width=screenHeight/15;
+        img_head_search.setLayoutParams(params1);
+    }
+
     /**
      * 跳转到聊天界面
      */
@@ -190,5 +223,10 @@ public class SearchPeopleActivity extends Activity {
                 finish();
             }
         });
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

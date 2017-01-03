@@ -26,7 +26,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.R;
-import com.maibo.lvyongsheng.xianhui.XiangMuPlanActivity;
+import com.maibo.lvyongsheng.xianhui.ProjectPlanActivity;
 import com.maibo.lvyongsheng.xianhui.entity.Custemer;
 import com.maibo.lvyongsheng.xianhui.implement.DrawRoundCorner;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -117,13 +117,13 @@ public class PlanFragment extends Fragment {
                         if (i>0&&i<data3.size()+1){
                             Custemer cus=data3.get(i-1);
                             int cusId=cus.getCustomer_id();
-                            Intent intent=new Intent(getActivity(), XiangMuPlanActivity.class);
+                            Intent intent=new Intent(getActivity(), ProjectPlanActivity.class);
                             intent.putExtra("customer_id",cusId);
                             startActivity(intent);
                         }else if (i>data3.size()+1){
                             Custemer cus=data4.get(i-(data3.size()+2));
                             int cusId=cus.getCustomer_id();
-                            Intent intent=new Intent(getActivity(), XiangMuPlanActivity.class);
+                            Intent intent=new Intent(getActivity(), ProjectPlanActivity.class);
                             intent.putExtra("customer_id",cusId);
                             startActivity(intent);
                         }
@@ -131,7 +131,7 @@ public class PlanFragment extends Fragment {
                         if (i>0){
                             Custemer cus=data3.get(i-1);
                             int cusId=cus.getCustomer_id();
-                            Intent intent=new Intent(getActivity(), XiangMuPlanActivity.class);
+                            Intent intent=new Intent(getActivity(), ProjectPlanActivity.class);
                             intent.putExtra("customer_id",cusId);
                             startActivity(intent);
                         }
@@ -139,7 +139,7 @@ public class PlanFragment extends Fragment {
                         if (i>0){
                             Custemer cus=data4.get(i-1);
                             int cusId=cus.getCustomer_id();
-                            Intent intent=new Intent(getActivity(), XiangMuPlanActivity.class);
+                            Intent intent=new Intent(getActivity(), ProjectPlanActivity.class);
                             intent.putExtra("customer_id",cusId);
                             startActivity(intent);
                         }

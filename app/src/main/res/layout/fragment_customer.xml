@@ -6,7 +6,7 @@
         <com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView
             android:id="@+id/lv_customer_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
         </com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView>
 </LinearLayout>

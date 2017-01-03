@@ -4,34 +4,20 @@
     android:layout_height="match_parent"
     android:background="@color/weixin_lianxiren_gray">
     <LinearLayout
+        android:id="@+id/ll_head"
         android:background="@color/bar_color"
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <TextView
             android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:drawableLeft="@mipmap/black_right_arrow"
-            android:gravity="center|left"
-            android:paddingLeft="5dp"
-            android:drawablePadding="10dp"
-            android:textColor="#fff"
-            android:textSize="18dp"
+            style="@style/bar_left"
             android:text="返回"/>
         <TextView
             android:id="@+id/tv_item_name"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:textColor="#fff"
-            android:textSize="18dp"
-            android:gravity="center"
+            style="@style/bar_center"
             android:text=""/>
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent" />
+            style="@style/bar_right"/>
     </LinearLayout>
     <ListView
         android:id="@+id/lv_detail_list"

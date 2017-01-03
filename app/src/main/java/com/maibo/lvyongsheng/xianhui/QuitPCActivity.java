@@ -7,9 +7,13 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -27,6 +31,7 @@ public class QuitPCActivity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quit_pc);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
     }
     private void initView(){
@@ -81,7 +86,17 @@ public class QuitPCActivity extends Activity implements View.OnClickListener{
                                 SharedPreferences.Editor editor = sp.edit();
                                 editor.putString("webtoken",null);
                                 editor.commit();
-                                App.showToast(QuitPCActivity.this,"退出成功!");
+                                Log.e("QuitPCActivity:",response);
+
+                                JsonObject jsonObject=new JsonParser().parse(response).getAsJsonObject();
+                                String status="";
+                                String message="";
+                                if (!jsonObject.get("status").isJsonNull())
+                                    status=jsonObject.get("status").getAsString();
+                                if (!jsonObject.get("message").isJsonNull())
+                                    message=jsonObject.get("message").getAsString();
+
+                                App.showToast(QuitPCActivity.this,message);
                                 finish();
                             }
                         });
@@ -95,5 +110,10 @@ public class QuitPCActivity extends Activity implements View.OnClickListener{
             }
         });
         dialog.show();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

@@ -2,90 +2,56 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+
     <FrameLayout
         android:id="@+id/fl_frame"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/bar_color">
+
         <TextView
             android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="match_parent"
-            android:textSize="18dp"
-            android:textColor="#fff"
-            android:paddingLeft="5dp"
-            android:drawablePadding="10dp"
-            android:drawableLeft="@mipmap/black_right_arrow"
-            android:gravity="center|left"
+            style="@style/bar_left"
             android:text="返回"/>
+
         <TextView
             android:id="@+id/tv_head_work"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="40dp"
-            android:textColor="#fff"
+            style="@style/bar_center"
             android:text="工作"
-            android:textSize="18dp"
-            android:gravity="center"
             />
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:layout_height="match_parent"
             android:gravity="center">
             <ImageView
                 android:id="@+id/iv_search"
-                android:visibility="invisible"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
-                android:padding="10dp"
+                android:paddingLeft="30dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:src="@mipmap/search"/>
             <ImageView
                 android:id="@+id/iv_choose"
                 android:layout_width="0dp"
-                android:layout_weight="1.5"
-                android:padding="12dp"
+                android:layout_weight="1"
+                android:padding="11dp"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:src="@mipmap/choose"/>
         </LinearLayout>
 
     </LinearLayout>
-        <LinearLayout
-            android:id="@+id/ll_search"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal"
-            android:background="@color/bar_bg">
-            <android.support.v7.widget.SearchView
-                android:id="@+id/searchview"
-                android:layout_width="0dp"
-                android:layout_weight="6"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:layout_marginLeft="1dp"
-                android:background="@drawable/search_bg">
-
-            </android.support.v7.widget.SearchView>
-            <TextView
-                android:id="@+id/tv_quxiao"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:textColor="#fff"
-                android:textSize="18dp"
-                android:text="取消"/>
-        </LinearLayout>
     </FrameLayout>
+
     <LinearLayout
         android:id="@+id/tab"
         android:layout_below="@+id/fl_frame"
@@ -119,6 +85,7 @@
     <android.support.v4.view.ViewPager
         android:layout_below="@+id/iv_over"
         android:id="@+id/vp_mywork"
+        android:layout_marginTop="-1dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

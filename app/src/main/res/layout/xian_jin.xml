@@ -5,39 +5,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
     <LinearLayout
+        android:id="@+id/ll_head"
         android:background="@color/bar_color"
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <TextView
             android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:drawableLeft="@mipmap/black_right_arrow"
-            android:gravity="center|left"
-            android:paddingLeft="10dp"
-            android:drawablePadding="10dp"
-            android:textSize="18dp"
-            android:textColor="#fff"
+            style="@style/bar_left"
             android:text="返回"/>
         <TextView
             android:id="@+id/tv_item_name"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:textSize="18dp"
-            android:textColor="#fff"
-            android:gravity="center"
+            style="@style/bar_center"
             android:text=""/>
         <TextView
             android:id="@+id/tv_setting"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center|right"
-            android:textSize="18dp"
-            android:paddingRight="15dp"
-            android:textColor="#fff"
-            android:layout_height="match_parent"
+            style="@style/bar_right"
             android:text="设置"/>
     </LinearLayout>
     <LinearLayout
@@ -92,9 +74,11 @@
 
         <Gallery
             android:id="@+id/gallery"
+            android:background="#3ff0"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
+            android:gravity="bottom"
             android:unselectedAlpha="0.5" />
         <TextView
             android:id="@+id/tv_time"
@@ -106,21 +90,23 @@
             android:textSize="12sp"
             android:text="时间"/>
     </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_xianjing"
+        android:layout_width="match_parent"
+        android:layout_margin="5dp"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </android.support.v4.view.ViewPager>
     <LinearLayout
-       android:layout_margin="5dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/dot_layout"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal" >
     </LinearLayout>
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_xianjing"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-    </android.support.v4.view.ViewPager>
 
 </LinearLayout>

@@ -1,23 +1,26 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.adapter.OrderAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.Employee;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 
 import java.util.List;
+
+import butterknife.Bind;
 
 
 /**
  * Created by LYS on 2016/10/9.
  */
-public class OrderActivity extends Activity implements View.OnClickListener{
+public class OrderActivity extends BaseActivity implements View.OnClickListener{
     ListView lv_order;
     TextView cus_name,tv_files,tv_notdata,back;
     List<Order> productOrder,projectOrder,collOrder,customerOrder;
@@ -26,10 +29,14 @@ public class OrderActivity extends Activity implements View.OnClickListener{
     int item_id;
     Employee employee;
     int customer_id;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         lv_order=(ListView)findViewById(R.id.lv_order);
         cus_name=(TextView) findViewById(R.id.cus_name);
         tv_files=(TextView) findViewById(R.id.tv_files);
@@ -59,7 +66,7 @@ public class OrderActivity extends Activity implements View.OnClickListener{
             if(productOrder.size()>0){
                 cus_name.setText(productOrder.get(0).getItem_name());
 
-                lv_order.setAdapter(new OrderAdapter(this,productOrder,0));
+                lv_order.setAdapter(new OrderAdapter(this,productOrder,0,viewHeight));
             }else{
                 cus_name.setText(intent.getStringExtra("productName"));
                 tv_notdata.setVisibility(View.VISIBLE);
@@ -68,7 +75,7 @@ public class OrderActivity extends Activity implements View.OnClickListener{
         }else if(tag==1){
             if(projectOrder.size()>0){
                 cus_name.setText(projectOrder.get(0).getProject_name());
-                lv_order.setAdapter(new OrderAdapter(this,projectOrder,1));
+                lv_order.setAdapter(new OrderAdapter(this,projectOrder,1,viewHeight));
             }else{
                 cus_name.setText(intent.getStringExtra("projectName"));
                 tv_notdata.setVisibility(View.VISIBLE);
@@ -76,7 +83,7 @@ public class OrderActivity extends Activity implements View.OnClickListener{
         }else if (tag==2){
             if(collOrder.size()>0){
                 cus_name.setText(intent.getStringExtra("collName"));
-                lv_order.setAdapter(new OrderAdapter(this,collOrder,1));
+                lv_order.setAdapter(new OrderAdapter(this,collOrder,1,viewHeight));
             }else{
                 cus_name.setText(intent.getStringExtra("collName"));
                 tv_notdata.setVisibility(View.VISIBLE);
@@ -84,7 +91,7 @@ public class OrderActivity extends Activity implements View.OnClickListener{
         }else if(tag==3){
             if(customerOrder.size()>0){
                 cus_name.setText(bundle.getString("customer_name"));
-                lv_order.setAdapter(new OrderAdapter(this,customerOrder,1));
+                lv_order.setAdapter(new OrderAdapter(this,customerOrder,1,viewHeight));
             }else{
                 cus_name.setText(bundle.getString("customer_name"));
                 tv_notdata.setVisibility(View.VISIBLE);
@@ -129,5 +136,10 @@ public class OrderActivity extends Activity implements View.OnClickListener{
         }
 
 
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

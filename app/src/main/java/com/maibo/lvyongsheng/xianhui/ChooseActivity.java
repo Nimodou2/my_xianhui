@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+
 /**
  * Created by LYS on 2016/10/19.
  */
@@ -14,6 +16,7 @@ public class ChooseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN , WindowManager.LayoutParams. FLAG_FULLSCREEN);
         setContentView(R.layout.activity_choose);
     }
@@ -29,4 +32,11 @@ public class ChooseActivity extends Activity {
     {
         Toast.makeText(this, "点击弹出框外部关闭窗口~", Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
+    }
 }
+

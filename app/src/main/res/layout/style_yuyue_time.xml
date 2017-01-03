@@ -5,12 +5,13 @@
     android:layout_height="30dp"
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
+    android:id="@+id/ll_reservation_time"
     android:background="@color/weixin_lianxiren_gray">
 <TextView
     android:id="@+id/tv_datatimes"
     android:layout_width="0dp"
     android:layout_weight="2"
-    android:layout_height="30dp"
+    android:layout_height="match_parent"
     android:textSize="14dp"
     android:gravity="center|left"
     android:paddingLeft="10dp"
@@ -20,14 +21,14 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:layout_height="30dp"
+        android:layout_height="match_parent"
         android:textSize="14dp"
         android:text="预约信息"/>
     <TextView
         android:id="@+id/tv_shiji"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="30dp"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:drawableLeft="@drawable/green_circle"
         android:text="实际"/>
@@ -35,7 +36,7 @@
         android:id="@+id/tv_jihua"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="30dp"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:drawableLeft="@drawable/blue_circle"
         android:text="计划"/>

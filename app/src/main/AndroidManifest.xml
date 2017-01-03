@@ -32,12 +32,11 @@
         </activity>
         <activity android:name="com.maibo.lvyongsheng.xianhui.LoginActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.WelcomeGuideActivity"/>
-        <activity android:name="com.maibo.lvyongsheng.xianhui.BaoBiao"/>
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ZhuShouActivity"/>
+        <activity android:name="com.maibo.lvyongsheng.xianhui.HelperActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.DayTabActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.ItemDetailActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.PlanWorkActivity"/>
-        <activity android:name="com.maibo.lvyongsheng.xianhui.XiangMuPlanActivity" />
+        <activity android:name="com.maibo.lvyongsheng.xianhui.ProjectPlanActivity" />
         <activity android:name="com.maibo.lvyongsheng.xianhui.AddProjectActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.AddTabActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.AddProductActivity"/>
@@ -45,7 +44,7 @@
         <activity android:name=".SearchPeopleActivity"/>
         <!--<activity android:name=".ConversationListFragment"-->
             <!--android:launchMode="singleTop"/>-->
-        <!--<activity android:name=".LianXiRenFragment"-->
+        <!--<activity android:name=".ContactPersonFragment"-->
             <!--android:launchMode="singleTop"/>-->
         <!--<activity android:name=".SettingFragment"-->
             <!--android:launchMode="singleTop"/>-->
@@ -73,7 +72,7 @@
         <activity android:name="com.maibo.lvyongsheng.xianhui.ChooseActivity"
             android:theme="@style/MyDialogActivityRight"
             />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.YuyueMessageActivity"/>
+        <activity android:name="com.maibo.lvyongsheng.xianhui.ReservationInformationActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.CustomerConsumeActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.UpdataPasswordActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.QuitPCActivity"/>
@@ -85,6 +84,8 @@
         <activity android:name=".TaskChooseDetailActivity"/>
         <activity android:name=".TaskProgressDetailActivity"/>
         <activity android:name=".TaskPeopleDetailActivity"/>
+        <activity android:name=".SearchWorkActivity"/>
+        <activity android:name=".NewHandRemindActivity"/>
 
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>
@@ -94,15 +95,23 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.maibo.lvyongsheng.xianhui.receiver.MyCustomReceiver"  android:exported="false" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="com.avos.UPDATE_STATUS" />
-                <action android:name="com.lys.receiver"/>
-            </intent-filter>
-        </receiver>
+        //下面这个Activity用于接收到聊天推送后跳转所用，目前Leancloud正在完善。
+        <!--<activity android:name="cn.leancloud.chatkit.activity.LCIMConversationActivity">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="cn.leancloud.chatkit.chat_notification_action"/>-->
+                <!--<category android:name="android.intent.category.DEFAULT"/>-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+
+        <!--<receiver android:name="com.maibo.lvyongsheng.xianhui.receiver.MyCustomReceiver"  android:exported="false" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+                <!--<action android:name="android.intent.action.USER_PRESENT" />-->
+                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+                <!--<action android:name="com.avos.UPDATE_STATUS" />-->
+                <!--<action android:name="com.lys.receiver"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <!--<supports-screens-->
             <!--android:smallScreens="true"-->

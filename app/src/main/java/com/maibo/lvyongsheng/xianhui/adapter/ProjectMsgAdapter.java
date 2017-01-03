@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.R;
@@ -17,11 +18,13 @@ public class ProjectMsgAdapter extends BaseAdapter {
     private String[] left;
     private String[] right;
     private int what;
-    public ProjectMsgAdapter(Context context,String[] left,String[] right,int what){
+    private int viewHeight;
+    public ProjectMsgAdapter(Context context,String[] left,String[] right,int what,int viewHeight){
         this.context=context;
         this.left=left;
         this.right=right;
         this.what=what;
+        this.viewHeight=viewHeight;
     }
     @Override
     public int getCount() {
@@ -46,6 +49,8 @@ public class ProjectMsgAdapter extends BaseAdapter {
                 View v=View.inflate(context, R.layout.style_list_detail,null);
                 TextView name=(TextView) v.findViewById(R.id.name);
                 TextView numbers=(TextView)v.findViewById(R.id.numbers);
+                LinearLayout ll_all= (LinearLayout) v.findViewById(R.id.ll_all);
+                setViewHeight(ll_all);
                 name.setText(left[i]);
                 numbers.setText(right[i]);
                 return v;
@@ -53,6 +58,8 @@ public class ProjectMsgAdapter extends BaseAdapter {
                 View v=View.inflate(context,R.layout.style_day_table_list,null);
                 TextView name=(TextView) v.findViewById(R.id.name);
                 TextView numbers=(TextView)v.findViewById(R.id.numbers);
+                LinearLayout ll_item= (LinearLayout) v.findViewById(R.id.ll_item);
+                setViewHeight(ll_item);
                 name.setText(left[i]);
                 numbers.setText(right[i]);
                 return v;
@@ -62,6 +69,8 @@ public class ProjectMsgAdapter extends BaseAdapter {
             View v=View.inflate(context, R.layout.style_list_detail,null);
             TextView name=(TextView) v.findViewById(R.id.name);
             TextView numbers=(TextView)v.findViewById(R.id.numbers);
+            LinearLayout ll_all= (LinearLayout) v.findViewById(R.id.ll_all);
+            setViewHeight(ll_all);
             name.setText(left[i]);
             numbers.setText(right[i]);
             return v;
@@ -72,6 +81,8 @@ public class ProjectMsgAdapter extends BaseAdapter {
                     View v=View.inflate(context,R.layout.style_day_table_list,null);
                     TextView name=(TextView) v.findViewById(R.id.name);
                     TextView numbers=(TextView)v.findViewById(R.id.numbers);
+                    LinearLayout ll_item= (LinearLayout) v.findViewById(R.id.ll_item);
+                    setViewHeight(ll_item);
                     name.setText(left[i]);
                     numbers.setText(right[i]);
                     return v;
@@ -79,6 +90,8 @@ public class ProjectMsgAdapter extends BaseAdapter {
                     View v=View.inflate(context, R.layout.style_list_detail,null);
                     TextView name=(TextView) v.findViewById(R.id.name);
                     TextView numbers=(TextView)v.findViewById(R.id.numbers);
+                    LinearLayout ll_all= (LinearLayout) v.findViewById(R.id.ll_all);
+                    setViewHeight(ll_all);
                     name.setText(left[i]);
                     numbers.setText(right[i]);
                     return v;
@@ -89,6 +102,8 @@ public class ProjectMsgAdapter extends BaseAdapter {
                     View v=View.inflate(context,R.layout.style_day_table_list,null);
                     TextView name=(TextView) v.findViewById(R.id.name);
                     TextView numbers=(TextView)v.findViewById(R.id.numbers);
+                    LinearLayout ll_item= (LinearLayout) v.findViewById(R.id.ll_item);
+                    setViewHeight(ll_item);
                     name.setText(left[i]);
                     numbers.setText(right[i]);
                     return v;
@@ -96,6 +111,8 @@ public class ProjectMsgAdapter extends BaseAdapter {
                     View v=View.inflate(context,R.layout.style_day_table_list,null);
                     TextView name=(TextView) v.findViewById(R.id.name);
                     TextView numbers=(TextView)v.findViewById(R.id.numbers);
+                    LinearLayout ll_item= (LinearLayout) v.findViewById(R.id.ll_item);
+                    setViewHeight(ll_item);
                     name.setText(left[i]);
                     numbers.setText(right[i]);
                     return v;
@@ -105,5 +122,15 @@ public class ProjectMsgAdapter extends BaseAdapter {
 
         }
        return  null;
+    }
+
+    /**
+     * 动态设置条目的高度
+     * @param ll_all
+     */
+    private void setViewHeight(LinearLayout ll_all) {
+        ViewGroup.LayoutParams params=ll_all.getLayoutParams();
+        params.height=viewHeight*20/255;
+        ll_all.setLayoutParams(params);
     }
 }

@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,6 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.Custemer;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -28,12 +29,13 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/10/10.
  */
-public class CustomerManagerActivity extends Activity implements View.OnClickListener{
+public class CustomerManagerActivity extends BaseActivity implements View.OnClickListener {
     SharedPreferences sp;
     String token, apiURL;
     int customer_id;
@@ -44,17 +46,26 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
     TextView back, tv_update_time;
     MyProgressDialog myDialog;
 
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
+    @Bind(R.id.tv_spacing1)
+    TextView tv_spacing1;
+    @Bind(R.id.tv_spacing2)
+    TextView tv_spacing2;
+    @Bind(R.id.ll_change_date)
+    LinearLayout ll_change_date;
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             list1 = (List<Custemer>) msg.obj;
             //初始化buffer
-            buffer=new int[list1.size()];
-            for (int i=0 ; i<list1.size();i++){
+            buffer = new int[list1.size()];
+            for (int i = 0; i < list1.size(); i++) {
                 if (list1.get(i).getSelected())
-                    buffer[i]=1;
-                else buffer[i]=0;
+                    buffer[i] = 1;
+                else buffer[i] = 0;
             }
             adapter = new MyAdapter();
             lv_guwen.setAdapter(adapter);
@@ -64,21 +75,21 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                    ImageView tv_checked= (ImageView) view.findViewById(R.id.iv_checked);
-                    if (buffer[i]==0){
+                    ImageView tv_checked = (ImageView) view.findViewById(R.id.iv_checked);
+                    if (buffer[i] == 0) {
                         tv_checked.setVisibility(View.VISIBLE);
-                        for (int j=0;j<buffer.length;j++){
-                           if (buffer[j]==1){
-                               View v=adapterView.getChildAt(j);
-                               ImageView checked= (ImageView) v.findViewById(R.id.iv_checked);
-                               checked.setVisibility(View.INVISIBLE);
-                               buffer[j]=0;
-                           }
+                        for (int j = 0; j < buffer.length; j++) {
+                            if (buffer[j] == 1) {
+                                View v = adapterView.getChildAt(j);
+                                ImageView checked = (ImageView) v.findViewById(R.id.iv_checked);
+                                checked.setVisibility(View.INVISIBLE);
+                                buffer[j] = 0;
+                            }
 
                         }
-                        buffer[i]=1;
+                        buffer[i] = 1;
                     } else {
-                        if (buffer[i]!=1)
+                        if (buffer[i] != 1)
                             tv_checked.setVisibility(View.INVISIBLE);
 
                     }
@@ -91,6 +102,9 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_manager);
+        adapterLitterBar(ll_head);
+        initHeightAndWidth();
+        CloseAllActivity.getScreenManager().pushActivity(this);
         myDialog = new MyProgressDialog(this);
         myDialog.show();
 
@@ -106,6 +120,22 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
         customer_id = intent.getIntExtra("customer_id", -1);
         String name = intent.getStringExtra("customer_name");
         getAdviserList();
+    }
+
+    /**
+     * 初始化布局宽高
+     */
+    private void initHeightAndWidth() {
+        View views[]=new View[3];
+        views[0]=tv_spacing1;
+        views[1]=ll_change_date;
+        views[2]=tv_spacing2;
+        int height[]=new int[3];
+        height[0]=viewHeight*15/255;
+        height[1]=viewHeight*20/255;
+        height[2]=viewHeight*15/255;
+        int width[]=null;
+        setViewHeightAndWidth(views,height,width);
     }
 
     public void getAdviserList() {
@@ -189,6 +219,8 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
         public View getView(int i, View view, ViewGroup viewGroup) {
             View v = View.inflate(getApplicationContext(), R.layout.style_choose_adviser, null);
             TextView tv_adviser_name = (TextView) v.findViewById(R.id.tv_adviser_name);
+            LinearLayout ll_choose_adviser= (LinearLayout) v.findViewById(R.id.ll_choose_adviser);
+            setSingleViewHeightAndWidth(ll_choose_adviser,viewHeight*20/255,0);
             tv_adviser_name.setText(list1.get(i).getFullname());
             final ImageView iv_checked = (ImageView) v.findViewById(R.id.iv_checked);
             if (list1.get(i).getSelected()) {
@@ -203,12 +235,12 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
     protected void onPause() {
         super.onPause();
         //保存更改的顾问
-        int clickWhat=0;
-        for (int i=0;i<buffer.length;i++){
-            if (buffer[i]==1){
-                clickWhat=i;
-                SharedPreferences.Editor editor=sp.edit();
-                editor.putString("adviserName",list1.get(i).getFullname());
+        int clickWhat = 0;
+        for (int i = 0; i < buffer.length; i++) {
+            if (buffer[i] == 1) {
+                clickWhat = i;
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("adviserName", list1.get(i).getFullname());
                 editor.commit();
             }
         }
@@ -216,7 +248,7 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
         setCustomerAdviser(clickWhat);
     }
 
-    public void setCustomerAdviser(int clickWhat){
+    public void setCustomerAdviser(int clickWhat) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/setcustomeradviser")
@@ -235,5 +267,11 @@ public class CustomerManagerActivity extends Activity implements View.OnClickLis
                         Log.e("保存:", response);
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

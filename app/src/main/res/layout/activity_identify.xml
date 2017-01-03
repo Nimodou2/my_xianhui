@@ -4,29 +4,17 @@
     android:layout_height="match_parent"
     android:background="#fff">
     <LinearLayout
+        android:id="@+id/ll_head"
         android:background="@color/colorLightYellow"
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <TextView
             android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:drawableLeft="@mipmap/black_right_arrow"
-            android:gravity="center|left"
-            android:paddingLeft="5dp"
-            android:textColor="#fff"
-            android:drawablePadding="10dp"
-            android:textSize="18dp"
+            style="@style/bar_left"
             android:text="返回"/>
         <TextView
             android:id="@+id/cus_name"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:textSize="18dp"
-            android:gravity="center"
-            android:textColor="#fff"
+            style="@style/bar_center"
             android:text="手机号码"/>
         <TextView
             android:layout_width="0dp"
@@ -35,7 +23,7 @@
     </LinearLayout>
     <EditText
         android:id="@+id/et_phone_number"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:padding="10dp"
         android:background="@drawable/shap_all_gray_text_bg"

@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -37,21 +36,22 @@ import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.App;
 import com.maibo.lvyongsheng.xianhui.ProjectMessageActivity;
 import com.maibo.lvyongsheng.xianhui.R;
+import com.maibo.lvyongsheng.xianhui.WorkActivity;
 import com.maibo.lvyongsheng.xianhui.adapter.MyGridViewAdapter;
+import com.maibo.lvyongsheng.xianhui.adapter.ProjectAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.Project;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntity;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntitys;
 import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
+import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView;
-import com.squareup.picasso.Picasso;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 
 /**
@@ -62,7 +62,7 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
     SharedPreferences sp;
     String token,apiURL;
     List<Project> list1;
-    MyAdapter myAdapter;
+    ProjectAdapter myAdapter;
     List<Order> orderList;
     TextView tv_open_close;
     List<SelectEntitys> ses;
@@ -86,6 +86,7 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
     Boolean isLoadingMore=false;
     int currentPageNum;
     int totalPage;
+    int screenHeight;
     Handler  handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -100,7 +101,7 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
                     }else{
                         list1.clear();
                         list1=list;
-                        lv_customer_list.setAdapter(myAdapter);
+                        lv_customer_list.setAdapter(myAdapter=new ProjectAdapter(getContext(),list1,screenHeight));
                     }
                     lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -152,6 +153,10 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_customer,container,false);
+        //屏幕高度
+        WorkActivity parentActivity= (WorkActivity) getActivity();
+        screenHeight= Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight();
+
         list1=new ArrayList<>();
         myDialog=new MyProgressDialog(getActivity());
         dialog=new ProgressDialog(getActivity());
@@ -161,7 +166,6 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
         dialog.setIndeterminate(false);
         lv_customer_list =(WorkRefreshListView) view.findViewById(R.id.lv_customer_list);
         lv_customer_list.setOnRefreshListener(this);
-        myAdapter=new MyAdapter();
         sp=getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         token=sp.getString("token",null);
         apiURL=sp.getString("apiURL",null);
@@ -207,6 +211,7 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
                     }
                     @Override
                     public void onResponse(String response, int id) {
+//                        Log.e("Project",response);
                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
 
                         String msg_status=jsonObject.get("status").getAsString();
@@ -265,70 +270,6 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
                         }
                 }
                 });
-    }
-
-    class MyAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return list1.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            ViewHolder holder;
-            if (view==null){
-                holder=new ViewHolder();
-                view=View.inflate(getActivity(),R.layout.style_project_list,null);
-                holder.iv_avator=(CircleImageView) view.findViewById(R.id.iv_avator);
-                holder.tv_name=(TextView) view.findViewById(R.id.tv_name);
-                holder.tv_position=(TextView) view.findViewById(R.id.tv_position);
-                holder.tv_times=(TextView) view.findViewById(R.id.tv_times);
-                holder.tv_items=(TextView) view.findViewById(R.id.tv_items);
-                holder.tv_status=(TextView) view.findViewById(R.id.tv_status);
-                holder.tv_head=(TextView) view.findViewById(R.id.tv_head);
-                view.setTag(holder);
-            }else{
-                holder=(ViewHolder) view.getTag();
-            }
-            Project project=list1.get(i);
-            if(project.getAvator_url().equals("")){
-                //设置圆形头像
-                holder.tv_head.setVisibility(View.VISIBLE);
-                holder.iv_avator.setVisibility(View.INVISIBLE);
-                holder.tv_head.setBackgroundResource(R.drawable.yello_circle);
-
-                if (project.getProject_name().length()>1){
-                    String text=project.getProject_name().substring(0,2);
-                    holder.tv_head.setText(text);
-                }else{
-                    holder.tv_head.setText(project.getProject_name());
-                }
-            }else{
-                //设置原本头像
-                holder.tv_head.setVisibility(View.INVISIBLE);
-                holder.iv_avator.setVisibility(View.VISIBLE);
-                Picasso.with(getContext()).load(project.getAvator_url()).into(holder.iv_avator);
-                //setHead(project.getAvator_url(),holder.iv_avator);
-            }
-            holder.tv_name.setText(project.getProject_name());
-            holder.tv_position.setText(project.getOrg_name());
-            holder.tv_times.setText(project.getPaid_num()+"");
-            holder.tv_items.setText(project.getPaid_num()+"");
-            holder.tv_status.setText("");
-            return view;
-        }
     }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -740,31 +681,8 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
         return result;
     }
     //------------------------------------------------------------------------
-    //设置头像
-//    public void setHead(String avator_url,final ImageView iv_avator){
-//        //下载头像
-//        OkHttpUtils
-//                .get()
-//                .url(avator_url)
-//                .build()
-//                .execute(new BitmapCallback() {
-//                    @Override
-//                    public void onError(Call call, Exception e, int id) {
-//
-//                    }
-//                    @Override
-//                    public void onResponse(Bitmap response, int id) {
-//                        Bitmap bm=makeRoundCorner(response,63);
-//                        Drawable drawable =new BitmapDrawable(bm);
-//                        iv_avator.setImageDrawable(drawable);
-//                    }
-//                });
-//    }
 
-    class ViewHolder{
-        CircleImageView iv_avator;
-        TextView tv_name,tv_position,tv_times,tv_items,tv_status,tv_head;
-    }
+
     public static Bitmap makeRoundCorner(Bitmap bitmap, int px)
     {
         int width = bitmap.getWidth();

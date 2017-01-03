@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Gallery;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -103,17 +102,14 @@ public class ImageAdapter extends BaseAdapter {
         TextView tv2=(TextView) view.findViewById(R.id.tv2);
         //此处动态设置圆柱的高度(数据大于0)
         //处理办法:最大值不能大于屏幕的1/3;因此按比例进行取值
-        //((screenHight/3)*value[position])/(num[i]*k)
-       /* if(num[position]>screenHight/3){
-            tv2.getLayoutParams().height=480;
-        }else {
-            tv2.getLayoutParams().height = num[position];
-        }*/
-        tv2.getLayoutParams().height =height[position];
+        ViewGroup.LayoutParams params=tv2.getLayoutParams();
+        params.height=height[position];
+
+        tv2.setLayoutParams(params);
         LinearLayout ll=(LinearLayout)view.findViewById(R.id.ll_zhu);
-        ll.setY(y[position]);
-        ll.setX(60);
-        view.setLayoutParams(new Gallery.LayoutParams(200, screenHight/3));      // 设置布局
+////        ll.setY(y[position]);
+//        ll.setX(30);
+//        view.setLayoutParams(new LinearLayout.LayoutParams(100, screenHight/3));      // 设置布局
         return view;
     }
 }

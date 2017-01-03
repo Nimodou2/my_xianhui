@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.R;
@@ -20,15 +21,18 @@ public class OrderAdapter extends BaseAdapter {
     Context context;
     List<Order> list;
     int log;
+    int viewHeight;
 
     class ViewHolder{
         TextView tv_cus_name,tv_status,tv_bianhao,tv_start_time,tv_pro_name,tv_bed_num,tv_jishi_name;
+        LinearLayout ll_all;
     }
 
-    public OrderAdapter(Context context, List<Order> list,int log){
+    public OrderAdapter(Context context, List<Order> list,int log,int viewHeight){
         this.context=context;
         this.list=list;
         this.log=log;
+        this.viewHeight=viewHeight;
     }
     @Override
     public int getCount() {
@@ -58,10 +62,15 @@ public class OrderAdapter extends BaseAdapter {
             holder.tv_pro_name=(TextView) view.findViewById(R.id.tv_pro_name);
             holder.tv_bed_num=(TextView) view.findViewById(R.id.tv_bed_num);
             holder.tv_jishi_name=(TextView) view.findViewById(R.id.tv_jishi_name);
+            holder.ll_all= (LinearLayout) view.findViewById(R.id.ll_all);
             view.setTag(holder);
         }else{
             holder=(ViewHolder) view.getTag();
         }
+
+        ViewGroup.LayoutParams params=holder.ll_all.getLayoutParams();
+        params.height= (int) (viewHeight/3.2);
+        holder.ll_all.setLayoutParams(params);
         if(log==0){
             Order order=list.get(i);
             holder.tv_cus_name.setText("顾客:"+order.getCustomer_name());

@@ -4,46 +4,24 @@
     android:layout_height="match_parent"
     android:background="@color/weixin_lianxiren_gray">
     <LinearLayout
+        android:id="@+id/ll_head"
         android:background="@color/bar_color"
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <TextView
             android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:drawableLeft="@mipmap/black_right_arrow"
-            android:gravity="center|left"
-            android:paddingLeft="5dp"
-            android:drawablePadding="10dp"
-            android:textColor="#fff"
-            android:textSize="18dp"
+            style="@style/bar_left"
             android:text="返回"/>
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:textSize="18dp"
-            android:textColor="#fff"
-            android:gravity="center"
+            style="@style/bar_center"
             android:text="资料"/>
         <TextView
             android:id="@+id/tv_order"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:textSize="18dp"
-            android:textColor="#fff"
-            android:gravity="center|right"
-            android:paddingRight="15dp"
+            style="@style/bar_right"
             android:text="订单"/>
     </LinearLayout>
     <LinearLayout
-        android:background="#fff"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:gravity="center">
+        style="@style/message_head">
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -64,12 +42,13 @@
         <LinearLayout
             android:paddingLeft="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
             <TextView
                 android:id="@+id/cus_name"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:textSize="16dp"
                 android:text=""/>
@@ -79,6 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:textSize="16dp"
                 android:text=""/>
             <TextView
@@ -87,18 +67,15 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:textSize="16dp"
+                android:gravity="center"
                 android:textColor="@color/lcim_common_gray"
                 android:text=""/>
         </LinearLayout>
     </LinearLayout>
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:paddingLeft="10dp"
-        android:gravity="center|left"
+        style="@style/message_spacing"
         android:text="信息与设置"
-        android:textSize="16dp"
-        android:background="@color/weixin_lianxiren_gray"/>
+        />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -106,7 +83,8 @@
     <TextView
         android:id="@+id/tv_detal_msg"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:paddingLeft="10dp"
         android:drawableRight="@mipmap/nav_to_message_arrow_dark"
         android:paddingRight="10dp"
@@ -121,7 +99,8 @@
     <TextView
         android:id="@+id/tv_baobiao"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:paddingLeft="10dp"
         android:drawableRight="@mipmap/nav_to_message_arrow_dark"
         android:paddingRight="10dp"
@@ -136,7 +115,8 @@
     <TextView
         android:id="@+id/tv_power"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:paddingLeft="10dp"
         android:drawableRight="@mipmap/nav_to_message_arrow_dark"
         android:paddingRight="10dp"
@@ -150,7 +130,8 @@
         android:background="@color/weixin_lianxiren_gray"/>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
         android:paddingLeft="10dp"
         android:gravity="center|left"
         android:text="数据"
@@ -159,7 +140,8 @@
     <LinearLayout
         android:id="@+id/ll_have_cards_cus"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:background="#fff">
         <TextView
             android:layout_width="0dp"
@@ -168,7 +150,6 @@
             android:paddingLeft="10dp"
             android:textSize="16dp"
             android:gravity="center|left"
-
             android:text="持卡顾客"/>
         <TextView
             android:id="@+id/tv_people_num"
@@ -190,7 +171,8 @@
         android:id="@+id/ll_satisfy"
         android:layout_width="match_parent"
         android:background="#fff"
-        android:layout_height="50dp">
+        android:layout_height="0dp"
+        android:layout_weight="2">
         <TextView
             android:layout_width="0dp"
             android:layout_weight="8"
@@ -212,6 +194,7 @@
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="8.5"
         android:background="@color/weixin_lianxiren_gray"/>
 </LinearLayout>

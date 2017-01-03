@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -30,21 +29,22 @@ import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.App;
 import com.maibo.lvyongsheng.xianhui.PeopleMessageActivity;
 import com.maibo.lvyongsheng.xianhui.R;
+import com.maibo.lvyongsheng.xianhui.WorkActivity;
+import com.maibo.lvyongsheng.xianhui.adapter.CustomerAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.MyGridViewAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.HelperCustomer;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntity;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntitys;
 import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
+import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView;
-import com.squareup.picasso.Picasso;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 
 /**
@@ -54,7 +54,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
     WorkRefreshListView lv_customer_list;
     SharedPreferences sp;
     String token,apiURL;
-    MyAdapter myAdapter;
+    CustomerAdapter myAdapter;
     List<HelperCustomer> list1;
     String customer_name;
     int customer_id1;
@@ -77,6 +77,8 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
     Boolean isLoadingMore=false;
     int currentPageNum;
     int totalPage;
+
+    int screenHeight;
     ////////////////////////////////////////////////
 
     private Context context = null;
@@ -98,7 +100,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                    }else{
                        list1.clear();
                        list1=list;
-                       lv_customer_list.setAdapter(myAdapter);
+                       lv_customer_list.setAdapter(myAdapter=new CustomerAdapter(getContext(),list1,screenHeight));
                    }
                    lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                        @Override
@@ -159,7 +161,10 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         list1=new ArrayList<>();
         lv_customer_list =(WorkRefreshListView) view.findViewById(R.id.lv_customer_list);
         lv_customer_list.setOnRefreshListener(this);
-        myAdapter=new MyAdapter();
+//        myAdapter=new CustomerAdapter(getContext(),list1);
+        //屏幕高度
+        WorkActivity parentActivity= (WorkActivity) getActivity();
+        screenHeight= Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight();
 
         sp=getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         token=sp.getString("token",null);
@@ -415,72 +420,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
 
     }
 
-
-
-    class MyAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return list1.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            ViewHolder holder;
-            if (view==null){
-                holder=new ViewHolder();
-                view=View.inflate(getActivity(),R.layout.style_customer_list,null);
-                holder.iv_avator=(CircleImageView) view.findViewById(R.id.iv_avator);
-                holder.tv_name=(TextView) view.findViewById(R.id.tv_name);
-                holder.tv_position=(TextView) view.findViewById(R.id.tv_position);
-                holder.tv_times=(TextView) view.findViewById(R.id.tv_times);
-                holder.tv_items=(TextView) view.findViewById(R.id.tv_items);
-                holder.tv_status=(TextView) view.findViewById(R.id.tv_status);
-                holder.tv_card_name=(TextView) view.findViewById(R.id.tv_card_name);
-                view.setTag(holder);
-            }else{
-                holder=(ViewHolder) view.getTag();
-            }
-
-            HelperCustomer customer=list1.get(i);
-            Picasso.with(getContext()).load(customer.getAvator_url()).into(holder.iv_avator);
-            //setHead(customer.getAvator_url(),holder.iv_avator);
-            holder.tv_name.setText(customer.getFullname());
-            holder.tv_card_name.setText(customer.getVip_star());
-            holder.tv_position.setText(customer.getOrg_name());
-            holder.tv_times.setText(customer.getDays());
-            holder.tv_items.setText(customer.getProject_total()+"");
-            if(customer.getStatus()==1){
-                holder.tv_status.setText("服务中");
-            }else if (customer.getStatus()==2){
-                holder.tv_status.setText("未到店");
-            }else if (customer.getStatus()==3){
-                holder.tv_status.setText("已离店");
-            }else if (customer.getStatus()==4){
-                holder.tv_status.setText("已预约");
-            }else if (customer.getStatus()==5){
-                holder.tv_status.setText("未预约");
-            }else if (customer.getStatus()==6){
-                holder.tv_status.setText("未预约");
-            }
-            return view;
-        }
-    }
-    class ViewHolder{
-        CircleImageView iv_avator;
-        TextView tv_name,tv_position,tv_times,tv_items,tv_status,tv_card_name;
-    }
 
     public void initPopupWindow(){
         View popupWindowView = getLayoutInflater(getArguments()).inflate(R.layout.style_pop, null);

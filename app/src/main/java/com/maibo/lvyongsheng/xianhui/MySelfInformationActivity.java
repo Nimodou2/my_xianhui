@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,9 +10,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.userclass.AvatarImageView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import butterknife.Bind;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -37,21 +39,25 @@ import okhttp3.Response;
 /**
  * Created by LYS on 2016/11/14.
  */
-public class MySelfInformationActivity extends Activity implements View.OnClickListener{
+public class MySelfInformationActivity extends BaseActivity implements View.OnClickListener{
     TextView tv_name,back;
     AvatarImageView avatarImageView;
     SharedPreferences sp,sp1;
     String apiURL;
     String token;
     String avator_url;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_myself_information);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
     }
 
     private void initView() {
+        adapterLitterBar(ll_head);
         tv_name= (TextView) findViewById(R.id.tv_name);
         back= (TextView) findViewById(R.id.back);
         avatarImageView= (AvatarImageView) findViewById(R.id.avatarIv);
@@ -183,5 +189,11 @@ public class MySelfInformationActivity extends Activity implements View.OnClickL
                 finish();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

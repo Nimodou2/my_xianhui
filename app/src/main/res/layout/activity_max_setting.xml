@@ -6,45 +6,28 @@
     android:layout_height="match_parent"
     android:background="@color/weixin_lianxiren_gray">
     <LinearLayout
+        android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/bar_color">
         <TextView
             android:id="@+id/back"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:drawableLeft="@mipmap/black_right_arrow"
-            android:gravity="center|left"
-            android:paddingLeft="5dp"
-            android:drawablePadding="10dp"
-            android:textColor="#fff"
-            android:textSize="18dp"
+            style="@style/bar_left"
             android:text="返回"/>
         <TextView
             android:id="@+id/tv_setting"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textColor="#fff"
-            android:textSize="18dp"
+            style="@style/bar_center"
             android:text="设置" />
         <TextView
             android:id="@+id/tv_certain"
             android:onClick="submit"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:textColor="#fff"
-            android:textSize="18dp"
-            android:gravity="center|right"
-            android:paddingRight="15dp"
+            style="@style/bar_right"
             android:text="确定"/>
     </LinearLayout>
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:textSize="12sp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -53,12 +36,13 @@
         android:text="A、B、C 提供了现金、实操、产品的三种推荐档位标准。如果不符合要求,请自定义柱形图高度标准。"/>
    <LinearLayout
        android:layout_width="match_parent"
-       android:layout_height="wrap_content">
+       android:layout_height="0dp"
+       android:layout_weight="2">
        <TextView
            android:id="@+id/tv_a"
            android:layout_width="0dp"
            android:layout_weight="1"
-           android:layout_height="50dp"
+           android:layout_height="match_parent"
            android:gravity="center"
            android:textSize="18dp"
            android:background="#ffffff"
@@ -67,7 +51,7 @@
            android:id="@+id/tv_b"
            android:layout_width="0dp"
            android:layout_weight="1"
-           android:layout_height="50dp"
+           android:layout_height="match_parent"
            android:gravity="center"
            android:textSize="18dp"
            android:background="#ffffff"
@@ -76,7 +60,7 @@
            android:id="@+id/tv_c"
            android:layout_width="0dp"
            android:layout_weight="1"
-           android:layout_height="50dp"
+           android:layout_height="match_parent"
            android:gravity="center"
            android:textSize="18dp"
            android:background="#ffffff"
@@ -85,7 +69,7 @@
            android:id="@+id/tv_d"
            android:layout_width="0dp"
            android:layout_weight="1"
-           android:layout_height="50dp"
+           android:layout_height="match_parent"
            android:gravity="center"
            android:textSize="18dp"
            android:background="#ffffff"
@@ -94,15 +78,18 @@
     <TextView
         android:layout_width="match_parent"
         android:background="@color/weixin_lianxiren_gray"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
         android:gravity="left|center"
         android:textSize="14sp"
         android:paddingLeft="20dp"
         android:text="K:1000元"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:background="#ffffff"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:gravity="center">
         <TextView
             android:id="@+id/tv_cash"
@@ -116,21 +103,17 @@
             android:layout_width="0dp"
             android:layout_weight="6"
             android:layout_height="wrap_content">
+
             <SeekBar
                 android:id="@+id/sb_cash"
-                android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/Widget.SeekBar.Normal"
                 android:scrollbarStyle="outsideInset"
-                android:layout_gravity="center_vertical" />
-            <TextView
-                android:id="@+id/tv_cash_over"
-                android:visibility="invisible"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="#80F7F7F7" />
+                android:thumbTint="@android:color/holo_blue_dark"
+                android:progressTint="@android:color/holo_blue_light"
+                android:progressBackgroundTint="@android:color/darker_gray"
+                />
 
         </FrameLayout>
 
@@ -143,6 +126,7 @@
             android:layout_height="match_parent"
             android:text="00.0K"/>
     </LinearLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -152,7 +136,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:background="#ffffff"
-        android:layout_height="50dp">
+        android:layout_height="0dp"
+        android:layout_weight="2">
         <TextView
             android:id="@+id/tv_project"
             android:layout_width="0dp"
@@ -166,22 +151,17 @@
             android:layout_weight="6"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
+            <SeekBar
+                android:id="@+id/sb_project"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbarStyle="outsideInset"
+                android:thumbTint="@android:color/holo_blue_dark"
+                android:progressTint="@android:color/holo_blue_light"
+                android:progressBackgroundTint="@android:color/darker_gray"
+                android:layout_gravity="center_vertical"
+                />
 
-        <SeekBar
-            android:id="@+id/sb_project"
-            android:padding="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Widget.SeekBar.Normal"
-            android:scrollbarStyle="outsideInset"
-            android:layout_gravity="center_vertical" />
-        <TextView
-            android:id="@+id/tv_project_over"
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="#80F7F7F7" />
 
         </FrameLayout>
         <TextView
@@ -200,7 +180,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:background="#ffffff"
-        android:layout_height="50dp">
+        android:layout_height="0dp"
+        android:layout_weight="2">
         <TextView
             android:id="@+id/tv_product"
             android:layout_width="0dp"
@@ -214,22 +195,17 @@
             android:layout_weight="6"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
-        <SeekBar
-            android:id="@+id/sb_product"
-            android:padding="10dp"
-            android:layout_width="match_parent"
-            android:layout_weight="6"
-            android:layout_height="wrap_content"
-            style="@style/Widget.SeekBar.Normal"
-            android:scrollbarStyle="outsideInset"
-            android:layout_gravity="center_vertical" />
-            <TextView
-                android:id="@+id/tv_product_over"
-                android:visibility="invisible"
+
+            <SeekBar
+                android:id="@+id/sb_product"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:scrollbarStyle="outsideInset"
+                android:thumbTint="@android:color/holo_blue_dark"
+                android:progressTint="@android:color/holo_blue_light"
+                android:progressBackgroundTint="@android:color/darker_gray"
                 android:layout_gravity="center_vertical"
-                android:background="#80F7F7F7" />
+                />
         </FrameLayout>
         <TextView
             android:id="@+id/tv_mproduct"
@@ -242,7 +218,8 @@
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
         android:background="@color/weixin_lianxiren_gray"
         android:gravity="left|center"
         android:paddingLeft="20dp"
@@ -251,7 +228,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:background="#ffffff"
-        android:layout_height="50dp">
+        android:layout_height="0dp"
+        android:layout_weight="2">
         <TextView
             android:id="@+id/tv_customer"
             android:layout_width="0dp"
@@ -262,13 +240,15 @@
             android:text="现金"/>
         <SeekBar
             android:id="@+id/sb_customer"
-            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_weight="6"
             android:layout_height="wrap_content"
-            style="@style/Widget.SeekBar.Normal"
             android:scrollbarStyle="outsideInset"
-            android:layout_gravity="center_vertical" />
+            android:thumbTint="@android:color/holo_blue_dark"
+            android:progressTint="@android:color/holo_blue_light"
+            android:progressBackgroundTint="@android:color/darker_gray"
+            android:layout_gravity="center_vertical"
+            />
         <TextView
             android:id="@+id/tv_mcustomer"
             android:layout_width="0dp"
@@ -285,7 +265,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:background="#ffffff"
-        android:layout_height="50dp">
+        android:layout_height="0dp"
+        android:layout_weight="2">
         <TextView
             android:id="@+id/tv_times"
             android:layout_width="0dp"
@@ -294,15 +275,18 @@
             android:textSize="14sp"
             android:layout_height="match_parent"
             android:text="现金"/>
+
         <SeekBar
             android:id="@+id/sb_times"
-            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_weight="6"
             android:layout_height="wrap_content"
-            style="@style/Widget.SeekBar.Normal"
             android:scrollbarStyle="outsideInset"
-            android:layout_gravity="center_vertical" />
+            android:thumbTint="@android:color/holo_blue_dark"
+            android:progressTint="@android:color/holo_blue_light"
+            android:progressBackgroundTint="@android:color/darker_gray"
+            android:layout_gravity="center_vertical"
+            />
         <TextView
             android:id="@+id/tv_mtimes"
             android:layout_width="0dp"
@@ -314,7 +298,8 @@
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="6"
         android:background="@color/weixin_lianxiren_gray"/>
 
 

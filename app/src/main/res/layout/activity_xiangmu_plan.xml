@@ -5,39 +5,23 @@
     android:layout_height="match_parent"
     android:background="@color/weixin_lianxiren_gray">
     <LinearLayout
+        android:id="@+id/ll_head"
         android:background="@color/bar_color"
         android:layout_width="match_parent"
         android:layout_height="40dp">
          <TextView
              android:id="@+id/tv_back"
-             android:layout_width="0dp"
-             android:layout_weight="1"
-             android:layout_height="match_parent"
-             android:paddingLeft="10dp"
-             android:gravity="center"
-             android:textColor="#fff"
-             android:textSize="18dp"
-             android:drawableLeft="@mipmap/black_right_arrow"
+             style="@style/bar_left"
              android:text="返回"/>
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:textColor="#fff"
+            style="@style/bar_center"
             android:text="项目计划"/>
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|right"
-            android:paddingRight="10dp"
-            android:textSize="18dp"
-            android:textColor="#fff" />
+            style="@style/bar_right"/>
     </LinearLayout>
     <TextView
-        android:paddingLeft="10dp"
+        android:id="@+id/tv_customer_plan"
+        android:paddingLeft="15dp"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="客户计划"
@@ -45,6 +29,7 @@
         android:background="@color/weixin_lianxiren_gray"
         android:gravity="left|center"/>
     <LinearLayout
+        android:id="@+id/ll_add_item"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
@@ -53,11 +38,11 @@
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="50dp"
-            android:paddingLeft="10dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="15dp"
             android:text="增加项目"
-            android:textColor="#000"
-            android:textSize="16sp"
+            android:textColor="@color/radar_chart_text"
+            android:textSize="16dp"
             android:gravity="left|center" />
         <ImageView
             android:id="@+id/iv_add"

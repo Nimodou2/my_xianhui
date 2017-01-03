@@ -4,22 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <LinearLayout
+        android:id="@+id/ll_all"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="10dp"
+        android:gravity="center"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:background="@drawable/rect_feng">
         <LinearLayout
             android:layout_margin="5dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1">
             <TextView
                 android:id="@+id/tv_cus_name"
                 android:layout_width="0dp"
                 android:layout_weight="6"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:paddingLeft="10dp"
                 android:text="顾客:潘佳"/>
@@ -27,21 +31,24 @@
                 android:id="@+id/tv_status"
                 android:layout_width="0dp"
                 android:layout_weight="3"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+
                 android:textSize="16dp"
                 android:paddingRight="10dp"
-                android:gravity="center|right"
+                android:gravity="center_vertical|right"
                 android:text="已结束"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:layout_margin="5dp">
             <TextView
                 android:id="@+id/tv_bianhao"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:paddingLeft="10dp"
                 android:text="编号:X015"/>
@@ -49,7 +56,7 @@
                 android:id="@+id/tv_start_time"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textSize="16dp"
                 android:paddingRight="10dp"
                 android:gravity="center|right"
@@ -58,7 +65,9 @@
         <TextView
             android:id="@+id/tv_pro_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
             android:textSize="16dp"
             android:paddingLeft="10dp"
             android:layout_margin="5dp"
@@ -67,7 +76,9 @@
             android:id="@+id/tv_bed_num"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
             android:textSize="16dp"
             android:paddingLeft="10dp"
             android:text="床位:D1"/>
@@ -75,7 +86,9 @@
             android:id="@+id/tv_jishi_name"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
             android:textSize="16dp"
             android:paddingLeft="10dp"
             android:text="技师:和珍"/>

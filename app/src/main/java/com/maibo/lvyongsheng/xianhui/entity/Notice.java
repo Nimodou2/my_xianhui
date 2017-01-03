@@ -13,10 +13,28 @@ public class Notice {
     private String extra_id;
     private String org_name;
     private String org_id;
+    private String extra_type;
+    private String customer_id;
     public Notice() {}
 
     public Notice(int notice_id, String notice_type, String subject, String body,
-                  String creat_time, int status, String extra_id,String org_name,String org_id) {
+                  String creat_time, int status, String extra_id, String org_name,
+                  String org_id, String extra_type, String customer_id) {
+        this.notice_id = notice_id;
+        this.notice_type = notice_type;
+        this.subject = subject;
+        this.body = body;
+        this.creat_time = creat_time;
+        this.status = status;
+        this.extra_id = extra_id;
+        this.org_name = org_name;
+        this.org_id = org_id;
+        this.extra_type = extra_type;
+        this.customer_id = customer_id;
+    }
+
+    public Notice(int notice_id, String notice_type, String subject, String body,
+                  String creat_time, int status, String extra_id, String org_name, String org_id) {
         this.notice_id = notice_id;
         this.notice_type = notice_type;
         this.subject = subject;
@@ -26,6 +44,22 @@ public class Notice {
         this.extra_id = extra_id;
         this.org_name=org_name;
         this.org_id=org_id;
+    }
+
+    public String getExtra_type() {
+        return extra_type;
+    }
+
+    public void setExtra_type(String extra_type) {
+        this.extra_type = extra_type;
+    }
+
+    public String getCustomer_id() {
+        return customer_id;
+    }
+
+    public void setCustomer_id(String customer_id) {
+        this.customer_id = customer_id;
     }
 
     public String getOrg_id() {

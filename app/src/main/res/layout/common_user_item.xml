@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:background="#fff"
+    android:id="@+id/ll_content_person"
     android:gravity="center_vertical">
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"

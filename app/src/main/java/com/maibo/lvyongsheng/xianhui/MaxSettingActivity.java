@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -8,40 +7,48 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.TabMax;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.text.DecimalFormat;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
+
 
 /**
  * Created by LYS on 2016/9/29.
  */
-public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarChangeListener {
+public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
 
     SharedPreferences sp;
     String apiURL;
     String token;
     SeekBar sb_cash, sb_project, sb_product, sb_customer, sb_times;
     TextView tv_cash, tv_mcash, tv_project, tv_mproject, tv_product, tv_mproduct,
-            tv_customer, tv_mcustomer, tv_times, tv_mtimes,tv_cash_over,tv_project_over,tv_product_over;
+            tv_customer, tv_mcustomer, tv_times, tv_mtimes;
     TextView tv_a,tv_b,tv_c,tv_d,tv_certain,back,tv_setting;
     List<TabMax> list;
     float cash,project,product,customer,times;
     String org_id;
     String org_name;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_max_setting);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
@@ -71,9 +78,9 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
         tv_times = (TextView) findViewById(R.id.tv_times);
         tv_mtimes = (TextView) findViewById(R.id.tv_mtimes);
         tv_certain = (TextView) findViewById(R.id.tv_certain);
-        tv_cash_over= (TextView) findViewById(R.id.tv_cash_over);
-        tv_project_over= (TextView) findViewById(R.id.tv_project_over);
-        tv_product_over= (TextView) findViewById(R.id.tv_product_over);
+//        tv_cash_over= (TextView) findViewById(R.id.tv_cash_over);
+//        tv_project_over= (TextView) findViewById(tv_project_over);
+//        tv_product_over= (TextView) findViewById(tv_product_over);
         tv_setting= (TextView) findViewById(R.id.tv_setting);
         back= (TextView) findViewById(R.id.back);
         if (!TextUtils.isEmpty(org_name)){
@@ -89,6 +96,18 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
         TextView[] textViewLeft={tv_cash,tv_project,tv_product,tv_customer,tv_times};
         final TextView[] textViewRight={tv_mcash,tv_mproject,tv_mproduct,tv_mcustomer,tv_mtimes};
 
+//        for (int i=0;i<3;i++){
+//            seekBars[i].setEnabled(false);
+//        }
+        //颜色变灰
+//        tv_cash_over.setVisibility(View.VISIBLE);
+//        sb_cash.setEnabled(false);
+        sb_cash.setEnabled(false);
+        sb_project.setEnabled(false);
+        sb_product.setEnabled(false);
+//        tv_project_over.setVisibility(View.VISIBLE);
+//        tv_product_over.setVisibility(View.VISIBLE);
+
         tv_a = (TextView) findViewById(R.id.tv_a);
         setDangWei(tv_a,0,seekBars, textViewRight);
         tv_b = (TextView) findViewById(R.id.tv_b);
@@ -103,9 +122,9 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
                 seekBars[1].setEnabled(true);
                 seekBars[2].setEnabled(true);
                 //颜色恢复
-                tv_cash_over.setVisibility(View.INVISIBLE);
-                tv_project_over.setVisibility(View.INVISIBLE);
-                tv_product_over.setVisibility(View.INVISIBLE);
+//                tv_cash_over.setVisibility(View.INVISIBLE);
+//                tv_project_over.setVisibility(View.INVISIBLE);
+//                tv_product_over.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -155,9 +174,9 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
                     seekBars[i].setEnabled(false);
                 }
                 //颜色变灰
-                tv_cash_over.setVisibility(View.VISIBLE);
-                tv_project_over.setVisibility(View.VISIBLE);
-                tv_product_over.setVisibility(View.VISIBLE);
+//                tv_cash_over.setVisibility(View.VISIBLE);
+//                tv_project_over.setVisibility(View.VISIBLE);
+//                tv_product_over.setVisibility(View.VISIBLE);
                 //把档位的值保存在服务器
                     cash=list.get(0).getDefaults()[what];
                     project=list.get(1).getDefaults()[what];
@@ -204,6 +223,7 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
                         String status=jo.get("status").getAsString();
                         String message=jo.get("message").getAsString();
                         App.showToast(getApplicationContext(),message);
+                        setResult(16);
                         finish();
                         dialog.dismiss();
                     }
@@ -211,15 +231,6 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
     }
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
         switch(seekBar.getId()){
             case R.id.sb_cash:
                 cash=seekBar.getProgress();
@@ -244,7 +255,7 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
                 customer =Float.parseFloat(df.format((float)seekBar.getProgress()/2));
                 if (customer<1)
                     customer=1;
-               tv_mcustomer.setText(customer+list.get(3).getUnit());
+                tv_mcustomer.setText(customer+list.get(3).getUnit());
                 break;
             case R.id.sb_times:
                 times=seekBar.getProgress();
@@ -253,5 +264,20 @@ public class MaxSettingActivity extends Activity implements SeekBar.OnSeekBarCha
                 tv_mtimes.setText(times+list.get(4).getUnit());
                 break;
         }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

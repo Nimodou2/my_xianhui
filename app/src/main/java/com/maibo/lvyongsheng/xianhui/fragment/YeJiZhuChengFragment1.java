@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -78,7 +79,10 @@ public class YeJiZhuChengFragment1 extends Fragment {
         pieChart.setHoleRadius(60f);  //半径
         pieChart.setTransparentCircleRadius(30f); // 半透明圈
         pieChart.setHoleRadius(40); //实心圆
-        pieChart.setDescription("");
+
+        Description description=new Description();
+        description.setText("");
+        pieChart.setDescription(description);
         pieChart.setDrawCenterText(true);  //饼状图中间可以添加文字
         pieChart.setDrawHoleEnabled(true);
         pieChart.setRotationAngle(0); // 初始旋转角度
@@ -91,7 +95,7 @@ public class YeJiZhuChengFragment1 extends Fragment {
         pieChart.setData(pieData);
 
         Legend mLegend = pieChart.getLegend();  //设置比例图
-        mLegend.setPosition(Legend.LegendPosition.BELOW_CHART_RIGHT);  //最右边显示
+        mLegend.setPosition(Legend.LegendPosition.LEFT_OF_CHART);  //最右边显示
         //mLegend.setForm(LegendForm.LINE);  //设置比例图的形状，默认是方形
         mLegend.setXEntrySpace(7f);
         mLegend.setYEntrySpace(5f);
@@ -109,7 +113,6 @@ public class YeJiZhuChengFragment1 extends Fragment {
             xValues.add(data.get(0).get(i).getFullname());  //饼块上显示成Quarterly1, Quarterly2, Quarterly3, Quarterly4
             yValues.add(new PieEntry(data.get(0).get(i).getAmounts(), data.get(0).get(i).getFullname()));
         }
-
 
         //y轴的集合
         PieDataSet pieDataSet = new PieDataSet(yValues, "图例");//显示在比例图上

@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,18 +12,20 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 import com.github.mikephil.charting.data.RadarEntry;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IRadarDataSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -35,6 +36,8 @@ import com.maibo.lvyongsheng.xianhui.entity.BTabList;
 import com.maibo.lvyongsheng.xianhui.entity.Card;
 import com.maibo.lvyongsheng.xianhui.entity.LTabList;
 import com.maibo.lvyongsheng.xianhui.entity.Radar;
+import com.maibo.lvyongsheng.xianhui.entity.TabMax;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -44,9 +47,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
-public class DayTabActivity extends Activity implements View.OnClickListener{
+public class DayTabActivity extends BaseActivity implements View.OnClickListener{
 
     private RadarChart mChart;
     private Typeface mTfLight;
@@ -65,11 +69,14 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
     //传递给饼状图的数据
     List<List<List<List<Card>>>> pie_data;
     String chartData;
-    TextView btn_product,btn_caozuo,btn_keliu,btn_yuangong,btn_money,tv_club_name,tv_time;
+    TextView btn_product,btn_caozuo,btn_keliu,btn_yuangong,btn_money,tv_club_name,tv_time,tv_setting;
     ProgressDialog dialog;
 
     String org_id;
     String org_name;
+    List<TabMax> list1;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
 
 
     Handler handler = new Handler() {
@@ -90,7 +97,7 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
                 case 1:
                     bt=(List<BTabList>) msg.obj;
                     //在ListView中展示数据
-                    DayTabListAdapter adapter  = new DayTabListAdapter(DayTabActivity.this,bt);
+                    DayTabListAdapter adapter  = new DayTabListAdapter(DayTabActivity.this,bt,viewHeight);
                     lv_detail.setAdapter(adapter);
                     lv_detail.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -121,12 +128,25 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
                 case 5:
                     monthTal=(int[])msg.obj;
                     break;
+                case 6:
+                    list1=(List<TabMax>) msg.obj;
+                    Intent intent6 = new Intent(DayTabActivity.this, MaxSettingActivity.class);
+                    Bundle bundle= new Bundle();
+                    bundle.putSerializable("maxList",(Serializable) list1);
+                    bundle.putString("org_name",org_name);
+                    bundle.putString("org_id",org_id);
+                    intent6.putExtras(bundle);
+//                startActivity(intent);
+                    startActivityForResult(intent6,15);
+                    break;
             }
         }};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.day_table);
+        setContentView(R.layout.day_table_new2);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         dialog=new ProgressDialog(this);
         dialog.setMessage("加载中...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -137,7 +157,10 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);*/
 
         initView();
+
         getServiceData();
+
+
 
     }
 
@@ -162,12 +185,9 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         backs= (TextView) findViewById(R.id.back);
         tv_club_name= (TextView) findViewById(R.id.tv_club_name);
         tv_time= (TextView) findViewById(R.id.tv_time);
-        backs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               finish();
-            }
-        });
+        tv_setting= (TextView) findViewById(R.id.tv_setting);
+
+
 
         if (!TextUtils.isEmpty(org_name))
             tv_club_name.setText(org_name);
@@ -175,68 +195,67 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
             tv_time.setText(create_time.substring(5,10));
         }
 
-
+        backs.setOnClickListener(this);
         btn_product.setOnClickListener(this);
         btn_caozuo.setOnClickListener(this);
         btn_keliu.setOnClickListener(this);
         btn_yuangong.setOnClickListener(this);
         btn_money.setOnClickListener(this);
-
-        mTfLight=Typeface.createFromAsset(getAssets(), "OpenSans-Light.ttf");
+        tv_setting.setOnClickListener(this);
 
         mChart = (RadarChart) findViewById(R.id.chart1);
         mChart.setBackgroundColor(Color.rgb(231,222,205));
-        //设置对图表的描述
-        mChart.setDescription("");
 
-        mChart.setWebLineWidth(1f);//绘制线条宽度（向外辐射的线条）
-        mChart.setWebColor(Color.LTGRAY);
-        mChart.setWebLineWidthInner(1f);//内部线条宽度（外面的环状线条）
-        mChart.setWebColorInner(Color.LTGRAY);
-        mChart.setWebAlpha(0);//所有线条webline的透明度
+        initRanderChartStyle();
+
+
+    }
+
+    /**
+     * 初始化雷达图样式
+     */
+    private void initRanderChartStyle() {
+        Description description=new Description();
+        description.setText("");
+        mChart.setDescription(description);
+
+        mChart.setWebLineWidth(1f);
+        mChart.setWebColor(Color.rgb(186,169,141));
+        mChart.setWebLineWidthInner(1f);
+        mChart.setWebColorInner(Color.rgb(186,169,141));
+        mChart.setWebAlpha(255);
         mChart.setRotationEnabled(false);
 
         XAxis xAxis = mChart.getXAxis();
-        xAxis.setTypeface(mTfLight);// X坐标值字体样式
-        xAxis.setTextSize(9f);
+        xAxis.setTypeface(mTfLight);
+        xAxis.setTextSize(16f);
         xAxis.setYOffset(0f);
         xAxis.setXOffset(0f);
-        xAxis.setValueFormatter(new AxisValueFormatter() {
-            private String[] mActivities = new String[]{"", "", "", "", ""};
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            private String[] mActivities = new String[]{"现金", "实操", "产品", "客流", "工时"};
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return mActivities[(int) value % mActivities.length];
-            }
-            @Override
-            public int getDecimalDigits() {
-                return 0;
+                return  mActivities[(int) value % mActivities.length];
             }
         });
-        xAxis.setTextColor(Color.WHITE);
+        xAxis.setTextColor(Color.rgb(97,86,80));
+
 
         YAxis yAxis = mChart.getYAxis();
         yAxis.setTypeface(mTfLight);
-        yAxis.setLabelCount(4, false);// Y坐标值标签个数
+        yAxis.setLabelCount(5, false);
         yAxis.setTextSize(9f);
-        yAxis.setDrawLabels(false);//是否显示y值在图表上
-
+        yAxis.setAxisMinimum(0f);
+        yAxis.setAxisMaximum(8f);
+        yAxis.setDrawLabels(false);
         //设置图例相关参数
         Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);//图例位置
-        l.setTypeface(mTfLight);
-        l.setXEntrySpace(7f);//图例X间距
-        l.setYEntrySpace(5f);
-        l.setXOffset(60f);
-        l.setYOffset(10f);
-        int[] color=new int[2];
-        color[0]=Color.rgb(211,183,139);
-        color[1]=Color.rgb(114,76,54);
-        String[] des=new String[2];
-        des[0]="七日均值";
-        des[1]="今日";
-        l.setCustom(color,des);
-        l.setTextColor(Color.BLACK);
+        l.setEnabled(false);
     }
+
+    /**
+     * 初始化雷达图样式
+     */
 
     public void setData(Map<String,List<Radar>> ra) {
 
@@ -244,43 +263,33 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         ArrayList<RadarEntry> entries2 = new ArrayList<RadarEntry>();
         ArrayList<RadarEntry> entries3 = new ArrayList<RadarEntry>();
         List<Radar> ra1=ra.get("7日均值");
-        entries1.add(new RadarEntry(ra1.get(0).getScore()));
-        btn_money.setText(ra1.get(0).getName());
-        entries1.add(new RadarEntry(ra1.get(1).getScore()));
-        btn_caozuo.setText(ra1.get(1).getName());
-        entries1.add(new RadarEntry(ra1.get(2).getScore()));
-        btn_product.setText(ra1.get(2).getName());
-        entries1.add(new RadarEntry(ra1.get(3).getScore()));
-        btn_keliu.setText(ra1.get(3).getName());
-        entries1.add(new RadarEntry(ra1.get(4).getScore()));
-        btn_yuangong.setText(ra1.get(4).getName());
+        TextView[] btn_text={btn_money,btn_caozuo,btn_product,btn_keliu,btn_yuangong};
+        for (int i=0;i<ra1.size();i++){
+            if (ra1.get(i).getScore()*2>10){
+                entries1.add(new RadarEntry(10));
+            }else{
+                entries1.add(new RadarEntry(ra1.get(i).getScore()*2));
+            }
 
-
+        }
 
         List<Radar> ra2=ra.get("今日");
-        entries2.add(new RadarEntry(ra2.get(0).getScore()));
-        btn_money.setText(ra2.get(0).getName());
-        entries2.add(new RadarEntry(ra2.get(1).getScore()));
-        btn_caozuo.setText(ra2.get(1).getName());
-        entries2.add(new RadarEntry(ra2.get(2).getScore()));
-        btn_product.setText(ra2.get(2).getName());
-        entries2.add(new RadarEntry(ra2.get(3).getScore()));
-        btn_keliu.setText(ra2.get(3).getName());
-        entries2.add(new RadarEntry(ra2.get(4).getScore()));
-        btn_yuangong.setText(ra2.get(4).getName());
-
-        entries3.add(new RadarEntry(5));
-        entries3.add(new RadarEntry(5));
-        entries3.add(new RadarEntry(5));
-        entries3.add(new RadarEntry(5));
-        entries3.add(new RadarEntry(5));
-
+        for (int i=0;i<ra2.size();i++){
+            if (ra2.get(i).getScore()*2>10){
+                entries2.add(new RadarEntry(10));
+            }else{
+                entries2.add(new RadarEntry(ra2.get(i).getScore()*2));
+            }
+        }
+        for (int i=0;i<5;i++){
+            entries3.add(new RadarEntry(10));
+        }
 
         RadarDataSet set1 = new RadarDataSet(entries1, "7日均值");
         set1.setColor(Color.rgb(218,182,133));
         set1.setFillColor(Color.rgb(218,182,133));
         set1.setDrawFilled(true);
-        set1.setFillAlpha(255);
+        set1.setFillAlpha(100);
         set1.setLineWidth(0f);
         set1.setDrawHighlightCircleEnabled(true);
         set1.setDrawHighlightIndicators(false);
@@ -289,19 +298,20 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
         set2.setColor(Color.rgb(118,74,55));
         set2.setFillColor(Color.rgb(118,74,55));
         set2.setDrawFilled(true);
-        set2.setFillAlpha(255);
-        set2.setLineWidth(0f);
+        set2.setFillAlpha(200);
+        set2.setLineWidth(1f);
         set2.setDrawHighlightCircleEnabled(true);
         set2.setDrawHighlightIndicators(false);
 
         RadarDataSet set3 = new RadarDataSet(entries3, "");
-        set3.setColor(Color.rgb(221,205,180));
-        set3.setFillColor(Color.rgb(221,205,180));
+        set3.setColor(Color.rgb(224,204,177));
+        set3.setFillColor(Color.rgb(224,204,177));
         set3.setDrawFilled(true);
-        set3.setFillAlpha(180);
+        set3.setFillAlpha(100);
         set3.setLineWidth(0f);
         set3.setDrawHighlightCircleEnabled(true);
         set3.setDrawHighlightIndicators(false);
+
 
         ArrayList<IRadarDataSet> sets = new ArrayList<IRadarDataSet>();
         sets.add(set2);
@@ -590,7 +600,85 @@ public class DayTabActivity extends Activity implements View.OnClickListener{
             case R.id.btn_yuangong:
                 startActivitys(4);
                 break;
+            case R.id.back:
+                finish();
+                break;
+            case R.id.tv_setting:
+                //跳转到最大值设置界面
+                getServiceMaxData();
+                break;
         }
 
+    }
+    //获取最大值相关参数
+    //获取日报表峰值设置
+    public void getServiceMaxData(){
+        OkHttpUtils
+                .post()
+                .url(apiURL+"/rest/employee/getdailyreportsetting")
+                .addParams("token",token)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+                    @Override
+                    public void onResponse(String response, int id) {
+                        JsonObject  jsonObject=new JsonParser().parse(response).getAsJsonObject();
+                        JsonObject data=jsonObject.get("data").getAsJsonObject();
+                        List<TabMax> list=new ArrayList<>();
+
+                        JsonObject cash_amount=data.get("cash_amount").getAsJsonObject();
+                        list.add( getAllData(cash_amount));
+
+                        JsonObject project_amount=data.get("project_amount").getAsJsonObject();
+                        list.add( getAllData(project_amount));
+
+                        JsonObject product_amount=data.get("product_amount").getAsJsonObject();
+                        list.add( getAllData(product_amount));
+
+                        JsonObject room_turnover=data.get("room_turnover").getAsJsonObject();
+                        list.add( getAllData(room_turnover));
+
+                        JsonObject employee_hours=data.get("employee_hours").getAsJsonObject();
+                        list.add( getAllData(employee_hours));
+
+                        Message msg=Message.obtain();
+                        msg.what=6;
+                        msg.obj=list;
+                        handler.sendMessage(msg);
+
+                    }
+                });
+    }
+    public TabMax getAllData(JsonObject what){
+        String name=what.get("name").getAsString();
+        int min=what.get("min").getAsInt();
+        int max=what.get("max").getAsInt();
+        float step=what.get("step").getAsFloat();
+        String unit=what.get("unit").getAsString();
+        JsonObject def=what.get("default").getAsJsonObject();
+        float[] defaults=new float[3];
+        defaults[0]=def.get("A").getAsFloat();
+        defaults[1]=def.get("B").getAsFloat();
+        defaults[2]=def.get("C").getAsFloat();
+        float value=what.get("value").getAsFloat();
+
+        return new TabMax(name,min,max,step,unit,defaults,value);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode==16){
+            initRanderChartStyle();
+            getServiceData();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

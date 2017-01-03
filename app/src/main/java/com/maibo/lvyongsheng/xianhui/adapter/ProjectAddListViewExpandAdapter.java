@@ -2,7 +2,6 @@ package com.maibo.lvyongsheng.xianhui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
     private List<Project> dataPr;
     private int[] sel;
     private ExpandableListView expandableListView;
+    private int viewHeight;
 
     // 用来控制CheckBox的选中状况
     private static HashMap<Integer, Boolean> isSelected;
@@ -39,15 +39,16 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
         TextView tvName,tv_times;
         CheckBox cb;
         TextView card_name,card_style,price,yu_ci;
+        LinearLayout ll_all,ll_child_all;
     }
-    public ProjectAddListViewExpandAdapter(Context context, List<Project> dataPr, int[] sel,ExpandableListView expandableListView){
+    public ProjectAddListViewExpandAdapter(Context context, List<Project> dataPr, int[] sel,ExpandableListView expandableListView,int viewHeight){
         this.dataPr = dataPr;
         this.context = context;
         this.sel = sel;
         this.expandableListView=expandableListView;
+        this.viewHeight=viewHeight;
         isSelected = new HashMap<Integer, Boolean>();
         itemID=new HashMap<>();
-        Log.e("dataPr.size",dataPr.size()+"");
 
         // 初始化数据
         initDate();
@@ -109,11 +110,15 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             holder.cb = (CheckBox) view.findViewById(R.id.checkBox);
             holder.tvName = (TextView) view.findViewById(R.id.tv_project_name);
             holder.tv_times=(TextView) view.findViewById(R.id.tv_times);
+            holder.ll_all= (LinearLayout) view.findViewById(R.id.ll_all);
             view.setTag(holder);
         } else {
             // 取出holder
             holder = (ViewHolder) view.getTag();
         }
+        ViewGroup.LayoutParams params=holder.ll_all.getLayoutParams();
+        params.height=viewHeight*20/255;
+        holder.ll_all.setLayoutParams(params);
 
         holder.tvName.setText(bean.getFullname());
         if (bean.getCard_list().size()!=0){
@@ -191,11 +196,15 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             holder.card_style=(TextView) view.findViewById(R.id.card_style);
             holder.price=(TextView) view.findViewById(R.id.price);
             holder.yu_ci=(TextView) view.findViewById(R.id.yu_ci);
+            holder.ll_child_all= (LinearLayout) view.findViewById(R.id.ll_child_all);
 
             view.setTag(holder);
         }else{
             holder=(ViewHolder) view.getTag();
         }
+        ViewGroup.LayoutParams params=holder.ll_child_all.getLayoutParams();
+        params.height=viewHeight*25/255;
+        holder.ll_child_all.setLayoutParams(params);
 
         Card card=dataPr.get(i).getCard_list().get(i1);
         holder.card_name.setText(card.getFullname());

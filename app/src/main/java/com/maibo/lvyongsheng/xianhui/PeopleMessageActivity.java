@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +22,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.HelperCustomer;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.DrawRoundCorner;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
@@ -32,12 +32,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/10/6.
  */
-public class PeopleMessageActivity extends Activity implements View.OnClickListener{
+public class PeopleMessageActivity extends BaseActivity implements View.OnClickListener{
     SharedPreferences sp;
     String token,apiURL;
     int customer_id;
@@ -46,9 +47,12 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
     List<Order> orderList;
     ProgressDialog dialog;
     ImageView cus_head;
-    LinearLayout ll_cards,tv_consume_record,ll_plan_project,ll_yuyue,ll_kefu_manager;
+    LinearLayout ll_cards,tv_consume_record,ll_plan_project,ll_yuyue,ll_kefu_manager,ll_order;
     TextView cus_name,cus_grade,cus_files_num,cus_manager,
-            cus_cards_num,cus_record,cus_plan,cus_order,back,tv_files;
+            cus_cards_num,cus_record,cus_plan,cus_order,back,tv_files,cus_dingdan;
+
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
 
     Handler handler=new Handler(){
         @Override
@@ -102,6 +106,8 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
                     break;
                 case 1:
                     orderList=(List<Order>) msg.obj;
+                    if (orderList.size()!=0) cus_dingdan.setText(orderList.get(0).getStatus());
+                    else cus_dingdan.setText("暂无");
                     break;
             }
         }
@@ -110,6 +116,8 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_message);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         sp=getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         token=sp.getString("token",null);
         apiURL=sp.getString("apiURL",null);
@@ -122,6 +130,9 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
         dialog.show();
 
         cus_head=(ImageView) findViewById(R.id.cus_head);
+        //动态设置图片的宽和高
+        setPictureHeightAndWidth();
+
         cus_name=(TextView) findViewById(R.id.cus_name);
         cus_grade=(TextView) findViewById(R.id.cus_grade);
         cus_files_num=(TextView) findViewById(R.id.cus_files_num);
@@ -130,11 +141,14 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
         cus_record=(TextView) findViewById(R.id.cus_record);
         cus_plan=(TextView) findViewById(R.id.cus_plan);
         cus_order=(TextView) findViewById(R.id.cus_order);
+        cus_dingdan= (TextView) findViewById(R.id.cus_dingdan);
+
         ll_cards=(LinearLayout) findViewById(R.id.ll_cards);
         tv_consume_record=(LinearLayout) findViewById(R.id.tv_consume_record);
         ll_plan_project=(LinearLayout) findViewById(R.id.ll_plan_project);
         ll_yuyue=(LinearLayout) findViewById(R.id.ll_yuyue);
         ll_kefu_manager=(LinearLayout) findViewById(R.id.ll_kefu_manager);
+        ll_order= (LinearLayout) findViewById(R.id.ll_order);
         back= (TextView) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +164,7 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
         ll_plan_project.setOnClickListener(this);
         ll_yuyue.setOnClickListener(this);
         ll_kefu_manager.setOnClickListener(this);
+        ll_order.setOnClickListener(this);
 
         Intent intent=getIntent();
         customer_id=intent.getIntExtra("customer_id",-1);
@@ -157,6 +172,21 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
         getCustomerOrder(customer_id);
 
     }
+
+    /**
+     * 动态设置头像的宽和高
+     */
+    private void setPictureHeightAndWidth() {
+        View views[]=new View[1];
+        views[0]=cus_head;
+        int heights[]=new int[1];
+        heights[0]=viewHeight*30/255;
+        int widths[]=new int[1];
+        widths[0]=viewHeight*30/255;
+        setViewHeightAndWidth(views,heights,widths);
+    }
+
+
     public void getServicerData(){
         OkHttpUtils
                 .post()
@@ -171,7 +201,7 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
                     }
                     @Override
                     public void onResponse(String response, int id) {
-                        //Log.e("顾客资料:",response);
+//                        Log.e("顾客资料:",response);
                         JsonObject jsonObject=new JsonParser().parse(response).getAsJsonObject();
                         JsonObject data=jsonObject.get("data").getAsJsonObject();
                         JsonObject basic=data.get("basic").getAsJsonObject();
@@ -328,14 +358,14 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
                 break;
             case R.id.ll_plan_project:
                 //跳转项目计划界面
-                Intent intent2=new Intent(PeopleMessageActivity.this, XiangMuPlanActivity.class);
+                Intent intent2=new Intent(PeopleMessageActivity.this, ProjectPlanActivity.class);
                 intent2.putExtra("customer_id",customer_id);
                 intent2.putExtra("customer_name",list1.get(0).getFullname());
                 startActivity(intent2);
                 break;
             case R.id.ll_yuyue:
                 //跳转顾客预约信息界面
-                Intent intent3=new Intent(PeopleMessageActivity.this, YuyueMessageActivity.class);
+                Intent intent3=new Intent(PeopleMessageActivity.this, ReservationInformationActivity.class);
                 intent3.putExtra("customer_id",customer_id);
                 intent3.putExtra("tag",12);
                 startActivity(intent3);
@@ -356,7 +386,22 @@ public class PeopleMessageActivity extends Activity implements View.OnClickListe
                 intent5.putExtras(bundle);
                 startActivity(intent5);
                 break;
+            case R.id.ll_order:
+                //跳到订单界面
+                Intent intent6 = new Intent(this, OrderActivity.class);
+                Bundle bundle1=new Bundle();
+                bundle1.putSerializable("customerOrder",(Serializable) orderList);
+                intent6.putExtra("customer_name",list1.get(0).getFullname());
+                intent6.putExtra("tag",3);
+                intent6.putExtras(bundle1);
+                startActivity(intent6);
+                break;
 
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

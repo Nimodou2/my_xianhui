@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +9,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,6 +20,7 @@ import com.maibo.lvyongsheng.xianhui.entity.Card;
 import com.maibo.lvyongsheng.xianhui.entity.Consume;
 import com.maibo.lvyongsheng.xianhui.entity.CustemProjects;
 import com.maibo.lvyongsheng.xianhui.entity.Project;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -27,12 +28,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/9/13.
  */
-public class AddProjectActivity extends Activity {
+public class AddProjectActivity extends BaseActivity {
     List<Project> pro1;
     ExpandableListView lv_item_plan;
     SharedPreferences sp;
@@ -47,6 +49,8 @@ public class AddProjectActivity extends Activity {
     List<CustemProjects> list1;
     private ProjectAddListViewExpandAdapter adapter;
     ProgressDialog dialog;
+    @Bind(R.id.tv_head)
+    TextView tv_head;
 
     Handler handler = new Handler() {
 
@@ -109,6 +113,8 @@ public class AddProjectActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_project);
+        setSingleViewHeightAndWidth(tv_head,viewHeight*15/255,0);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         dialog=new ProgressDialog(this);
         dialog.setMessage("加载中...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -125,7 +131,7 @@ public class AddProjectActivity extends Activity {
     private void initView() {
         sp1 = getSharedPreferences("checkBox", MODE_PRIVATE);
         lv_item_plan = (ExpandableListView) findViewById(R.id.lv_item_plan);
-        adapter = new ProjectAddListViewExpandAdapter(AddProjectActivity.this, pro1, sel,lv_item_plan);
+        adapter = new ProjectAddListViewExpandAdapter(AddProjectActivity.this, pro1, sel,lv_item_plan,viewHeight);
         lv_item_plan.setAdapter(adapter);
         lv_item_plan.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
@@ -274,6 +280,11 @@ public class AddProjectActivity extends Activity {
         editor.putString("buffer_product_no",buffer_product_no);
         editor.putInt("tag",0);
         editor.commit();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 
 }

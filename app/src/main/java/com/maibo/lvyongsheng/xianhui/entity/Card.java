@@ -14,16 +14,45 @@ public class Card implements Serializable{
     private int item_id;
     private String amount;
     private int amounts;
+    private int item_type;
+    private String date;
 
-    public Card(String fullname,int amounts) {
+
+    public Card(String fullname, int item_id, String amount, int item_type, String date) {
+        this.fullname = fullname;
+        this.item_id = item_id;
+        this.amount = amount;
+        this.item_type = item_type;
+        this.date = date;
+    }
+
+    public Card(String fullname, int amounts) {
         this.amounts = amounts;
         this.fullname = fullname;
     }
+
 
     public Card(String fullname, int times, String amount) {
         this.fullname = fullname;
         this.times = times;
         this.amount = amount;
+    }
+
+    public Card(String fullname, int times, String card_class, String card_num, String price, int item_id) {
+        this.fullname = fullname;
+        this.times = times;
+        this.card_class = card_class;
+        this.card_num = card_num;
+        this.price = price;
+        this.item_id = item_id;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getAmounts() {
@@ -42,13 +71,13 @@ public class Card implements Serializable{
         this.amount = amount;
     }
 
-    public Card(String fullname, int times, String card_class, String card_num, String price, int item_id) {
-        this.fullname = fullname;
-        this.times = times;
-        this.card_class = card_class;
-        this.card_num = card_num;
-        this.price = price;
-        this.item_id = item_id;
+
+    public int getItem_type() {
+        return item_type;
+    }
+
+    public void setItem_type(int item_type) {
+        this.item_type = item_type;
     }
 
     public String getFullname() {

@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
@@ -31,14 +30,16 @@ import com.maibo.lvyongsheng.xianhui.AllMessageActivity;
 import com.maibo.lvyongsheng.xianhui.App;
 import com.maibo.lvyongsheng.xianhui.OrderActivity;
 import com.maibo.lvyongsheng.xianhui.R;
+import com.maibo.lvyongsheng.xianhui.WorkActivity;
+import com.maibo.lvyongsheng.xianhui.adapter.ColleagueAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.MyGridViewAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.Employee;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntity;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntitys;
 import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
+import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView;
-import com.squareup.picasso.Picasso;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -46,7 +47,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 
 /**
@@ -59,7 +59,7 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
     List<Employee> list1;
     List<Order> collOrder;
     Employee employee;
-    MyAdapter myAdapter;
+    ColleagueAdapter myAdapter;
     MyProgressDialog myDialog;
     ProgressDialog dialog;
     //+++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -79,6 +79,8 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
     Boolean isLoadingMore=false;
     int currentPageNum;
     int totalPage;
+
+    int screenHeight;
     //-----------------------------------------------------
 
     Handler  handler=new Handler(){
@@ -95,7 +97,7 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
                    }else{
                        list1.clear();
                        list1=list;
-                       lv_customer_list.setAdapter(myAdapter);
+                       lv_customer_list.setAdapter(myAdapter=new ColleagueAdapter(getContext(),list1,screenHeight));
                    }
                    lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                        @Override
@@ -160,6 +162,9 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
         View view = inflater.inflate(R.layout.fragment_customer,container,false);
         list1=new ArrayList<>();
         myDialog=new MyProgressDialog(getActivity());
+        //屏幕高度
+        WorkActivity parentActivity= (WorkActivity) getActivity();
+        screenHeight= Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight();
 //        WindowManager.LayoutParams params=myDialog.getWindow().getAttributes();
 ////        params.y=50;
 ////        params.x=50;
@@ -172,7 +177,6 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
         dialog.setIndeterminate(false);
         lv_customer_list =(WorkRefreshListView) view.findViewById(R.id.lv_customer_list);
         lv_customer_list.setOnRefreshListener(this);
-        myAdapter=new MyAdapter();
         sp=getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         token=sp.getString("token",null);
         apiURL=sp.getString("apiURL",null);
@@ -218,7 +222,7 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
                     }
                     @Override
                     public void onResponse(String response, int id) {
-                        //Log.e("同事:",response);
+//                        Log.e("同事:",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status=jsonObject.get("status").getAsString();
                         String message=jsonObject.get("message").getAsString();
@@ -621,8 +625,6 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
         lp.alpha = bgAlpha; //0.0-1.0
         getActivity().getWindow().setAttributes(lp);
     }
-
-
     class popupDismissListener implements PopupWindow.OnDismissListener{
 
         @Override
@@ -640,63 +642,5 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
         return result;
     }
     //----------------------------------------------------------------
-
-    class MyAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return list1.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            ViewHolder holder;
-            if (view==null){
-                holder=new ViewHolder();
-                view=View.inflate(getActivity(),R.layout.style_colleague_list,null);
-                holder.iv_avator=(CircleImageView) view.findViewById(R.id.iv_avator);
-                holder.tv_name=(TextView) view.findViewById(R.id.tv_name);
-                holder.tv_position=(TextView) view.findViewById(R.id.tv_position);
-                holder.tv_times=(TextView) view.findViewById(R.id.tv_times);
-                holder.tv_items=(TextView) view.findViewById(R.id.tv_items);
-                holder.tv_status=(TextView) view.findViewById(R.id.tv_status);
-                view.setTag(holder);
-            }else{
-                holder=(ViewHolder) view.getTag();
-            }
-            Employee employee=list1.get(i);
-            Picasso.with(getContext()).load(employee.getAvator_url()).into(holder.iv_avator);
-            //setHead(employee,holder.iv_avator);
-            holder.tv_name.setText(employee.getDisplay_name());
-            holder.tv_position.setText(employee.getOrg_name());
-            holder.tv_times.setText(employee.getProject_qty()+"");
-            holder.tv_items.setText(employee.getProject_hours()+"");
-            /*1服务中,2等待中有预约，3等待中未预约*/
-            if(employee.getStatus()==1){
-                holder.tv_status.setText("服务中");
-            }else if (employee.getStatus()==2){
-                holder.tv_status.setText("等待中");
-            }else if (employee.getStatus()==3){
-                holder.tv_status.setText("等待中");
-            }
-            return view;
-        }
-    }
-
-    class ViewHolder{
-        CircleImageView iv_avator;
-        TextView tv_name,tv_position,tv_times,tv_items,tv_status;
-    }
 
 }

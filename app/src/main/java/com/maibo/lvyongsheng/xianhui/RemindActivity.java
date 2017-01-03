@@ -1,13 +1,16 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -15,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.Notice;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.view.RefreshListView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -23,12 +27,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/9/27.
  */
-public class RemindActivity extends Activity implements RefreshListView.OnRefreshListener{
+public class RemindActivity extends BaseActivity implements RefreshListView.OnRefreshListener{
 
     SharedPreferences sp;
     String apiURL;
@@ -42,6 +47,11 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
     int totalPage;
     MyAdapter adapter;
     Boolean isLoadingMore=false;
+    int whatItem=-1;
+    Notice whatNotice;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
+
     android.os.Handler handler = new android.os.Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
@@ -63,15 +73,39 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
                     data2.addAll(0,datas);
                     dialog.dismiss();
                     lv_remind.completeRefresh();
+
+                    lv_remind.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            //只跳转和订单相关的提醒
+                            whatItem=i;
+                            whatNotice=data.get(i-1);
+                            String extra_type=whatNotice.getExtra_type();
+                            String customer_id1=whatNotice.getCustomer_id();
+                            if (extra_type.equals("schedule")){
+                                int customer_id=Integer.parseInt(customer_id1);
+                                Intent intent=new Intent(RemindActivity.this, PeopleMessageActivity.class);
+                                intent.putExtra("customer_id",customer_id);
+                                startActivity(intent);
+                                //通过执行获取通知明细的接口来达到取消未读状态的目的
+                                getNoticeDetail(whatNotice.getNotice_id());
+
+                            }
+
+                        }
+                    });
                 break;
             }
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remind);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         dialog=new ProgressDialog(this);
         dialog.setMessage("加载中...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -111,14 +145,37 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
     @Override
     public void onLoadingMore() {
         //上拉无效
-        //data.clear();
-//        isLoadingMore=false;
-//        getServiceData(1);
+
         lv_remind.completeRefresh();
 
     }
 
-    //请求数据
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (whatItem != -1) {
+            data.clear();
+            Notice notice = new Notice(whatNotice.getNotice_id(), whatNotice.getNotice_type(),
+                    whatNotice.getSubject(), whatNotice.getBody(),
+                    whatNotice.getCreat_time(), 1, whatNotice.getExtra_id(), whatNotice.getOrg_name(),
+                    whatNotice.getOrg_id(),whatNotice.getExtra_type(),whatNotice.getCustomer_id());
+            for (int i = 0; i < data2.size(); i++) {
+                if (i == whatItem - 1) {
+                    data.add(notice);
+                } else data.add(data2.get(i));
+            }
+            data2.clear();
+            data2.addAll(data);
+            adapter.notifyDataSetChanged();
+        }
+
+    }
+
+    /**
+     * 获取通知列表
+     * @param pageNum
+     */
     public void getServiceData(int pageNum) {
         OkHttpUtils
                 .post()
@@ -133,7 +190,7 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
 
                     @Override
                     public void onResponse(String response, int id) {
-                        //Log.e("remind",response);
+//                        Log.e("remind",response);
                         //解析数据
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         String data_status = object.get("status").getAsString();
@@ -166,6 +223,8 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
                                 String extra_id ="";
                                 String org_name="";
                                 String org_id="";
+                                String extra_type="";
+                                String customer_id="";
                                 if (!jsonObject.get("notice_id").isJsonNull())
                                     notice_id = jsonObject.get("notice_id").getAsInt();
                                 if (!jsonObject.get("notice_type").isJsonNull())
@@ -184,7 +243,18 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
                                     org_name=jsonObject.get("org_name").getAsString();
                                 if (!jsonObject.get("org_id").isJsonNull())
                                     org_id=jsonObject.get("org_id").getAsString();
-                                data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id,org_name,org_id));
+                                if (!jsonObject.get("extra_type").isJsonNull())
+                                    extra_type=jsonObject.get("extra_type").getAsString();
+
+                                if (jsonObject.has("customer_id")){
+                                    if (!jsonObject.get("customer_id").isJsonNull())
+                                        customer_id=jsonObject.get("customer_id").getAsString();
+                                }
+
+
+
+                                data1.add(new Notice(notice_id, notice_type, subject, body, create_time,
+                                        status, extra_id,org_name,org_id,extra_type,customer_id));
                             }
                             Message msg = Message.obtain();
                             msg.what = 1;
@@ -199,6 +269,37 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
 
                     }
                 }
+                });
+    }
+
+    /**
+     * 获取通知明细
+     * @param notice_id
+     */
+    private void getNoticeDetail(int notice_id) {
+        OkHttpUtils
+                .post()
+                .url(apiURL+"/rest/employee/getnoticedetail")
+                .addParams("token",token)
+                .addParams("notice_id",notice_id+"")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        JsonObject jsonobject=new JsonParser().parse(response).getAsJsonObject();
+                        String status="";
+                        String message="";
+                        if (!jsonobject.get("status").isJsonNull())
+                            status=jsonobject.get("status").getAsString();
+                        if (!jsonobject.get("message").isJsonNull())
+                            message=jsonobject.get("message").getAsString();
+                        if (status.equals("errow")) App.showToast(getApplicationContext(),message);
+                    }
                 });
     }
 
@@ -229,10 +330,15 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
                 holder.extra_id=(TextView) view.findViewById(R.id.extra_id);
                 holder.body=(TextView) view.findViewById(R.id.body);
                 holder.tv_red_tag=(TextView) view.findViewById(R.id.tv_red_tag);
+                holder.iv_picture= (ImageView) view.findViewById(R.id.iv_picture);
                 view.setTag(holder);
             }else{
                 holder=(ViewHolder) view.getTag();
             }
+
+            ViewGroup.LayoutParams params=holder.iv_picture.getLayoutParams();
+            params.height=screenHeight/60;
+            holder.iv_picture.setLayoutParams(params);
 
             Notice not=data.get(i);
             holder.create_time.setText(not.getCreat_time().substring(0,10));
@@ -241,11 +347,11 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
             holder.extra_id.setText(not.getCreat_time().substring(0,10));
             holder.body.setText(not.getBody());
             holder.tv_red_tag.setVisibility(View.INVISIBLE);
-           /* if(not.getStatus()==0){
-                holder.tv_red_tag.setVisibility(View.INVISIBLE);
+            if(not.getStatus()==0&&not.getExtra_type().equals("schedule")){
+                holder.tv_red_tag.setVisibility(View.VISIBLE);
             }else if(not.getStatus()==1){
                 holder.tv_red_tag.setVisibility(View.INVISIBLE);
-            }*/
+            }
 
             return view;
         }
@@ -253,5 +359,11 @@ public class RemindActivity extends Activity implements RefreshListView.OnRefres
 
     class ViewHolder{
         TextView  create_time,subject,extra_id,body,tv_red_tag;
+        ImageView iv_picture;
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

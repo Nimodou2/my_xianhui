@@ -9,16 +9,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMException;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
@@ -79,17 +81,21 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                     break;
                 case 1:
                     int result=msg.arg1;
-
                     if(result==1){
+                        //关闭推送服务
+                        String guid_close=sp1.getString("guid",null);
+                        if (guid_close!=null)
+                            closeLeancloud(guid_close);
                         //此处要清理缓存
                         sp1.edit().clear().commit();
                         sp2.edit().clear().commit();
                         sp3.edit().clear().commit();
-                        //跳转到登录界面，重新登录
                         //如果账号密码已保存则自动登录，否则跳到登录界面重新登录
                         if (sp4.getString("userName",null)!=null){
                             //此处重新获取登录数据
-                            getDate(sp4.getString("userName",null),sp4.getString("password",null));
+                            String userNames=sp4.getString("userName",null);
+                            String passwords=sp4.getString("password",null);
+                            getDate(userNames,passwords);
                             //重新获取代理
                             getServiceData(userName,type,sign);
                         }
@@ -104,15 +110,21 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                 case 2:
                     String guID=(String) msg.obj;
                     //重新获取用户体系
-                    //CustomUserProvider.customUserProvider=null;
-                    LCChatKit.getInstance().setProfileProvider(CustomUserProvider.getInstance(AgentActivity.this));
-                    AVOSCloud.setDebugLogEnabled(true);
-                    AVIMClient.setMessageQueryCacheEnable(true);
-                    LCChatKit.getInstance().init(getApplicationContext(), APP_ID, APP_KEY);
+                    LCChatKit.getInstance().setProfileProvider(CustomUserProvider.getInstance());
                     LCChatKit.getInstance().open(guID, new AVIMClientCallback() {
                         @Override
                         public void done(AVIMClient avimClient, AVIMException e) {}});
                     dialogs.dismiss();
+                    break;
+                case 3:
+                    //此处代表获取账号密码成功,开始切换帐号
+                    dialogs.show();
+                    String agent_id= (String) msg.obj;
+                    String userName=sp1.getString("userName",null);
+                    String publicKey="1addfcf4296d60f0f8e0c81cea87a099";
+                    String type="employee";
+                    String sign=getSign2(userName,type,agent_id,publicKey);
+                    setAgent(userName,type,agent_id,sign);
                     break;
             }
         }};
@@ -120,6 +132,7 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agent);
+        CloseAllActivity.getScreenManager().pushActivity(this);
 
         dialogs=new ProgressDialog(this);
         dialogs.setMessage("加载中...");
@@ -151,7 +164,9 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
         String publicKey="1addfcf4296d60f0f8e0c81cea87a099";
         type="employee";
         sign=getSign1(userName,type,publicKey);
+        Log.e("userName",userName+"  type:"+type+"  sign:"+sign);
         getServiceData(userName,type,sign);
+
 
 
     }
@@ -179,20 +194,72 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String userName=sp1.getString("userName",null);
-                String publicKey="1addfcf4296d60f0f8e0c81cea87a099";
-                String type="employee";
                 String agent_id=list2.get(i).getAgent_id();
-                String sign=getSign2(userName,type,agent_id,publicKey);
                 dialog.cancel();
                 //如果是当前已选则不再切换,否则切换
                 if (!list2.get(i).getIs_default().equals("1")){
-                   // proDialog = ProgressDialog.show(AgentActivity.this, "", "切换中...");
-                    dialogs.show();
-                    setAgent(userName,type,agent_id,sign);
+                    //先确定帐号密码是否存在
+                    isExistAccount(agent_id);
                 }
             }
         });
+    }
+
+    /**
+     * 此处判断帐号密码是否存在
+     */
+    private void isExistAccount(final String agent_id) {
+        if (sp4.getString("password",null)!=null){
+            dialogs.show();
+            String userName=sp1.getString("userName",null);
+            String publicKey="1addfcf4296d60f0f8e0c81cea87a099";
+            String type="employee";
+            String sign=getSign2(userName,type,agent_id,publicKey);
+            setAgent(userName,type,agent_id,sign);
+        }else{
+            //弹出帐号验证窗口
+            View view=View.inflate(this,R.layout.style_dialog_agentactivity,null);
+            final EditText et_zhanghao= (EditText) view.findViewById(R.id.et_zhanghao);
+            final EditText et_password= (EditText) view.findViewById(R.id.et_password);
+            final AlertDialog alertDialog=new AlertDialog.Builder(this)
+                    .setView(view)
+                    .setPositiveButton("确定", null)
+                    .setNegativeButton("取消", null)
+                    .show();
+            Button btn=alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //获取帐号和密码
+                    String zhanghao=et_zhanghao.getText().toString().trim();
+                    String newPassword=et_password.getText().toString().trim();
+                    if (!TextUtils.isEmpty(zhanghao)&&!TextUtils.isEmpty(newPassword)){
+                        //请求服务器，重新获取帐号和密码
+                        LoginAgain(zhanghao,newPassword,agent_id);
+                    }else{
+                        App.showToast(getApplicationContext(),"帐号或密码不能为空！");
+                    }
+                    alertDialog.dismiss();
+                }
+
+            });
+
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.quit:
+                quitApplication();
+                break;
+            case R.id.tv_door:
+                //判断是否有数据
+                if (data_list!=null)
+                    diaLog();
+                break;
+        }
+
     }
 
     //获取代理商数据
@@ -211,7 +278,7 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("a",response);
+                        Log.e("getServiceData",response);
                        //解析
                         JsonObject jsonObject= new JsonParser().parse(response).getAsJsonObject();
                         String message=jsonObject.get("message").getAsString();
@@ -256,6 +323,7 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e("setAgent",response);
                         JsonObject jo=new JsonParser().parse(response).getAsJsonObject();
                         String status=jo.get("status").getAsString();
                         if (status.equals("ok")){
@@ -272,78 +340,7 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                     }
                 });
     }
-    //md5加密
-    public String getSign1(String userName,String type,String publicKey){
-        SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
-        String dateTime = sf.format(new Date());
-        String plainText=userName+"-"+type+"-"+dateTime+"-"+publicKey;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(plainText.getBytes());
-            byte b[] = md.digest();
-            int i;
 
-            StringBuffer buf = new StringBuffer("");
-            for (int offset = 0; offset < b.length; offset++) {
-                i = b[offset];
-                if (i < 0)
-                    i += 256;
-                if (i < 16)
-                    buf.append("0");
-                buf.append(Integer.toHexString(i));
-            }
-            //32位加密
-            return buf.toString();
-            // 16位的加密
-            //return buf.toString().substring(8, 24);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public String getSign2(String userName,String type,String agent_id,String publicKey){
-        SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
-        String dateTime = sf.format(new Date());
-        String plainText=userName+"-"+type+"-"+agent_id+"-"+dateTime+"-"+publicKey;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(plainText.getBytes());
-            byte b[] = md.digest();
-
-            int i;
-
-            StringBuffer buf = new StringBuffer("");
-            for (int offset = 0; offset < b.length; offset++) {
-                i = b[offset];
-                if (i < 0)
-                    i += 256;
-                if (i < 16)
-                    buf.append("0");
-                buf.append(Integer.toHexString(i));
-            }
-            //32位加密
-            return buf.toString();
-            // 16位的加密
-            //return buf.toString().substring(8, 24);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.quit:
-                quitApplication();
-                break;
-            case R.id.tv_door:
-                //判断是否有数据
-                if (data_list!=null)
-                    diaLog();
-                break;
-        }
-
-    }
 
     /**
      * 退出应用
@@ -357,21 +354,18 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                //关闭推送服务
+                String guid_close=sp1.getString("guid",null);
+                if (guid_close!=null)
+                    closeLeancloud(guid_close);
                 //退出应用,清楚所用缓存
                 sp1.edit().clear().commit();
                 sp2.edit().clear().commit();
                 sp3.edit().clear().commit();
                 sp4.edit().clear().commit();
                 sp5.edit().clear().commit();
-//                LCChatKit.getInstance().close(new AVIMClientCallback() {
-//                    @Override
-//                    public void done(AVIMClient avimClient, AVIMException e) {
-//                        Log.e("关闭","close");
-//                    }
-//                });
-                //CustomUserProvider.getInstance(AgentActivity.this).cleanAllUser();
-                //CustomUserProvider.cleanAllUser();
-                CustomUserProvider.customUserProvider=null;
+
+                CustomUserProvider.getInstance().customUserProvider=null;
                 //清除聊天记录
                 List<String> conversationId=LCIMConversationItemCache.getInstance().getSortedConversationList();
                 for (int i=0;i<conversationId.size();i++){
@@ -411,7 +405,32 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
     }
 
     /**
-     * 当切换门店的时候，重新获取相关数据
+     * 退出当前应用时，要关闭消息推送
+     */
+    private void closeLeancloud(String guid) {
+
+        AVIMClient myClient = AVIMClient.getInstance(guid);
+        myClient.open(new AVIMClientCallback(){
+            @Override
+            public void done(AVIMClient client,AVIMException e){
+                if(e==null){
+                    //登录成功
+                    client.close(new AVIMClientCallback(){
+                        @Override
+                        public void done(AVIMClient client,AVIMException e){
+                            if(e==null){
+                                //登出成功
+                                Log.e("close","退出成功！");
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * 当切换门店的时候，重新获取相关数据，重新登录
      * @param name
      * @param password
      */
@@ -432,9 +451,7 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
 
                     @Override
                     public void onResponse(String response, int id) {
-
                         SharedPreferences.Editor editor=sp1.edit();
-                        SharedPreferences.Editor editor1=sp4.edit();
                         //登录判断
                         JsonObject obj = new JsonParser().parse(response).getAsJsonObject();
                         String status=obj.get("status").getAsString().trim();
@@ -458,8 +475,6 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                                 //保存登录成功状态、基础数据
                                 editor.putString("userName", name);
                                 editor.putString("password", password);
-                                editor1.putString("userName", name);
-                                editor1.putString("password", password);
                                 editor.putInt("success",1);
                                 editor.putString("token", token);
                                 //告知门店已经更改,0:未更改，1:更改
@@ -469,7 +484,7 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                                 editor.putString("avator_url",avator_url);
                                 editor.putString("displayname",displayname);
                                 editor.commit();
-                                editor1.commit();
+
                             //清除聊天记录
                             List<String> conversationId=LCIMConversationItemCache.getInstance().getSortedConversationList();
                             for (int i=0;i<conversationId.size();i++){
@@ -477,15 +492,48 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                             }
                             //更新用户体系
                             getMyCustomerList(apiURL,token,displayname,guID);
-//                            //重新获取用户体系
-//                            LCChatKit.getInstance().setProfileProvider(CustomUserProvider.getInstance(AgentActivity.this));
-//                            AVOSCloud.setDebugLogEnabled(true);
-//                            AVIMClient.setMessageQueryCacheEnable(true);
-//                            LCChatKit.getInstance().init(getApplicationContext(), APP_ID, APP_KEY);
-//                            LCChatKit.getInstance().open(guID, new AVIMClientCallback() {
-//                                @Override
-//                                public void done(AVIMClient avimClient, AVIMException e) {}});
+                        }
+                    }
+                });
+    }
 
+    private void LoginAgain(final String name, final String password, final String agent_id){
+        OkHttpUtils
+                .post()
+                .url("http://sso.sosys.cn:8080/mybook/rest/loginmobile")
+                .addParams("mobile",name)
+                .addParams("password",password)
+                .addParams("type","employee")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        SharedPreferences.Editor editor1=sp4.edit();
+                        JsonObject jsonobject=new JsonParser().parse(response).getAsJsonObject();
+                        String status="";
+                        String message="";
+                        if (!jsonobject.get("status").isJsonNull()){
+                            status=jsonobject.get("status").getAsString();
+                        }
+                        if (!jsonobject.get("message").isJsonNull()){
+                            message=jsonobject.get("message").getAsString();
+                        }
+                        if (status.equals("ok")){
+                            //将name和password保存下来
+                            editor1.putString("userName", name);
+                            editor1.putString("password", password);
+                            editor1.commit();
+                            Message msg=Message.obtain();
+                            msg.what=3;
+                            msg.obj=agent_id;
+                            handler.sendMessage(msg);
+                        }else{
+                            App.showToast(getApplicationContext(),message);
                         }
                     }
                 });
@@ -513,7 +561,8 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                     @Override
                     public void onResponse(String response, int id) {
                         //获取员工信息
-                        CustomUserProvider.partUsers.clear();
+                        Log.e("getMyCustomerList:",response);
+                        CustomUserProvider.getInstance().partUsers.clear();
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         JsonArray array = object.get("data").getAsJsonArray();
                         for (JsonElement jsonElement:array){
@@ -522,7 +571,7 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                             String guid=jObject.get("guid").getAsString();
                             String avator_url=jObject.get("avator_url").getAsString();
 //                            if (!name.equals(names))
-                                CustomUserProvider.partUsers.add(new LCChatKitUser(guid, names, avator_url));
+                                CustomUserProvider.getInstance().partUsers.add(new LCChatKitUser(guid, names, avator_url));
                         }
                         Message msg=Message.obtain();
                         msg.what=2;
@@ -531,5 +580,70 @@ public class AgentActivity extends Activity  implements View.OnClickListener {
                         handler.sendMessage(msg);
                     }
                 });
+    }
+    //md5加密
+    public String getSign1(String userName,String type,String publicKey){
+        SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
+        String dateTime = sf.format(new Date());
+        String plainText=userName+"-"+type+"-"+dateTime+"-"+publicKey;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(plainText.getBytes());
+            byte b[] = md.digest();
+            int i;
+
+            StringBuffer buf = new StringBuffer("");
+            for (int offset = 0; offset < b.length; offset++) {
+                i = b[offset];
+                if (i < 0)
+                    i += 256;
+                if (i < 16)
+                    buf.append("0");
+                buf.append(Integer.toHexString(i));
+            }
+            //32位加密
+            return buf.toString();
+            // 16位的加密
+            //return buf.toString().substring(8, 24);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String getSign2(String userName,String type,String agent_id,String publicKey){
+        SimpleDateFormat sf=new SimpleDateFormat("yyyyMMdd");
+        String dateTime = sf.format(new Date());
+        String plainText=userName+"-"+type+"-"+agent_id+"-"+dateTime+"-"+publicKey;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(plainText.getBytes());
+            byte b[] = md.digest();
+
+            int i;
+
+            StringBuffer buf = new StringBuffer("");
+            for (int offset = 0; offset < b.length; offset++) {
+                i = b[offset];
+                if (i < 0)
+                    i += 256;
+                if (i < 16)
+                    buf.append("0");
+                buf.append(Integer.toHexString(i));
+            }
+            //32位加密
+            return buf.toString();
+            // 16位的加密
+            //return buf.toString().substring(8, 24);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

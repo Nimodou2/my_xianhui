@@ -3,13 +3,24 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center"
-        android:textSize="18sp"
+    <LinearLayout
+        android:id="@+id/ll_head"
         android:background="@color/colorLightYellow"
-        android:text="验证码"/>
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/back"
+            style="@style/bar_left"
+            android:text="返回"/>
+        <TextView
+            android:id="@+id/cus_name"
+            style="@style/bar_center"
+            android:text="验证码"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
     <TextView
         android:id="@+id/tv_pnNmber"
         android:layout_width="match_parent"
@@ -20,15 +31,17 @@
         android:gravity="center"
         android:textSize="18sp"/>
     <LinearLayout
+        android:id="@+id/ll_yanzheng"
         android:layout_width="match_parent"
         android:layout_margin="10dp"
+        android:gravity="center"
         android:layout_height="50dp">
         <EditText
             android:id="@+id/et_yanzhengma"
             android:layout_width="0dp"
             android:background="@drawable/shap_all_gray_text_bg"
             android:layout_weight="4"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:inputType="number"
             android:hint="请输入验证码"/>
@@ -43,12 +56,14 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_time"
         android:layout_width="match_parent"
         android:layout_margin="10dp"
+        android:gravity="center"
         android:layout_height="50dp">
         <TextView
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:paddingRight="5dp"
             android:gravity="right|center"
@@ -59,7 +74,7 @@
             android:textSize="18sp"
             android:layout_width="0dp"
             android:paddingLeft="5dp"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:textColor="@color/dan_lan"
             android:gravity="center|left"

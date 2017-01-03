@@ -13,7 +13,7 @@
         android:color="@color/colorLightYellow" />
     <stroke
         android:width="0.8dp"
-        android:color="@android:color/white" />
-    <size android:width="15dp"
-        android:height="15dp" />
+        android:color="@color/colorLightYellow" />
+    <size android:width="13dp"
+        android:height="13dp" />
 </shape>

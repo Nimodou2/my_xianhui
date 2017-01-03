@@ -1,5 +1,6 @@
 package com.maibo.lvyongsheng.xianhui;
 
+import android.content.Intent;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,9 +8,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
@@ -20,6 +21,8 @@ import com.maibo.lvyongsheng.xianhui.fragment.ColleagueFragment;
 import com.maibo.lvyongsheng.xianhui.fragment.CustomerFragment;
 import com.maibo.lvyongsheng.xianhui.fragment.ProductFragment;
 import com.maibo.lvyongsheng.xianhui.fragment.ProjectFragment;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.implement.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,13 +34,12 @@ import java.util.List;
 public class WorkActivity extends FragmentActivity implements View.OnClickListener{
 
     TextView btn_customer,btn_partner,btn_project,btn_product;
-    LinearLayout ll_head,ll_search;
+    LinearLayout ll_head,tab;
     ViewPager vp;
-    TextView back,tv_quxiao;
+    TextView back;
     ImageView iv_search,iv_choose;
     List<Fragment> data;
     ImageView iv_over;
-    SearchView searchView;
     //屏幕宽度
     int screenWidth;
     //当前选中的项
@@ -53,6 +55,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work);
+        CloseAllActivity.getScreenManager().pushActivity(this);
 
         cusF=new CustomerFragment();
         collF=new ColleagueFragment();
@@ -66,11 +69,9 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
         ll_head= (LinearLayout) findViewById(R.id.ll_head);
         iv_search= (ImageView) findViewById(R.id.iv_search);
         iv_choose= (ImageView) findViewById(R.id.iv_choose);
-        ll_search= (LinearLayout) findViewById(R.id.ll_search);
-        searchView= (SearchView) findViewById(R.id.searchview);
         iv_over=(ImageView) findViewById(R.id.iv_over);
         back= (TextView) findViewById(R.id.back);
-        tv_quxiao= (TextView) findViewById(R.id.tv_quxiao);
+        tab= (LinearLayout) findViewById(R.id.tab);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,12 +79,13 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
             }
         });
 
-        //设置SearchView中字体大小
-        SearchView.SearchAutoComplete textView = ( SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
-        textView.setTextSize(14);
+        setHeightAndWidth();
+
+
+
+
 
         iv_choose.setOnClickListener(this);
-        tv_quxiao.setOnClickListener(this);
         iv_search.setOnClickListener(this);
 
         btn_customer.setOnClickListener(this);
@@ -105,9 +107,22 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
         vp.setOffscreenPageLimit(4);
         vp.setAdapter(new MyFragmentAdapters(getSupportFragmentManager()));
         vp.setOnPageChangeListener(new MyPagerChangerListener());
-        searchWantItem();
 
     }
+
+    /**
+     * 动态设置宽高
+     */
+    private void setHeightAndWidth() {
+        ViewGroup.LayoutParams params=ll_head.getLayoutParams();
+        params.height=((Util.getScreenHeight(this)-getStatusBarHeight())/35)*2;
+        ll_head.setLayoutParams(params);
+
+        ViewGroup.LayoutParams params_tab=tab.getLayoutParams();
+        params_tab.height= (int) (((Util.getScreenHeight(this)-getStatusBarHeight())/35)*2.4);
+        tab.setLayoutParams(params_tab);
+    }
+
     @Override
     public void onClick(View view) {
         switch(view.getId()){
@@ -124,14 +139,10 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
                 changeView(3);
                 break;
             case R.id.iv_search:
-                ll_head.setVisibility(View.INVISIBLE);
-                ll_search.setVisibility(View.VISIBLE);
-                searchView.setIconified(false);
-                break;
-            case R.id.tv_quxiao:
-                ll_head.setVisibility(View.VISIBLE);
-                ll_search.setVisibility(View.INVISIBLE);
-                searchView.setIconified(true);
+                //跳转到搜索界面
+                Intent intent=new Intent(this,SearchWorkActivity.class);
+                intent.putExtra("tag",currIndex);
+                startActivity(intent);
                 break;
             case R.id.iv_choose:
                 //获取当前Fragment对象
@@ -150,24 +161,6 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
                 }
                 break;
         }
-    }
-
-    /**
-     * 搜索
-     */
-    public void searchWantItem(){
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                return true;
-            }
-        });
     }
     //初始化指示器位置
     public void initCursorPos() {
@@ -276,5 +269,23 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
         public void onPageScrollStateChanged(int state) {
 
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    /**
+     * 获取状态栏高度
+     * @return
+     */
+    public  int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result =  getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

@@ -1,11 +1,12 @@
 package com.maibo.lvyongsheng.xianhui.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by LYS on 2016/10/6.
  */
-public class Cards {
+public class Cards implements Serializable{
     private int card_sort;
     private String card_class;
     private String amount;

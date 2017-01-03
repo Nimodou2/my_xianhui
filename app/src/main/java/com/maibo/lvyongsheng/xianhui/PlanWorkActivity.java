@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.fragment.PlanFragment;
 import com.maibo.lvyongsheng.xianhui.fragment.YuYueFragment;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class PlanWorkActivity extends FragmentActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan_work);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         btn1=(Button) findViewById(R.id.btn1);
         btn2=(Button) findViewById(R.id.btn2);
         back= (TextView) findViewById(R.id.back);
@@ -165,5 +167,10 @@ public class PlanWorkActivity extends FragmentActivity implements View.OnClickLi
     private void changeView(int desTab)
     {
         vp.setCurrentItem(desTab, true);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

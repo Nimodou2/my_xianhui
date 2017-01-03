@@ -2,18 +2,12 @@ package com.maibo.lvyongsheng.xianhui.implement;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,9 +23,13 @@ import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMSingleMessageQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
+import com.maibo.lvyongsheng.xianhui.HelperActivity;
 import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.RemindActivity;
-import com.maibo.lvyongsheng.xianhui.ZhuShouActivity;
+import com.maibo.lvyongsheng.xianhui.TaskActivity;
+import com.maibo.lvyongsheng.xianhui.constants.Constants;
+import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
+import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -63,6 +61,8 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
     TextView nameView;
     RelativeLayout avatarLayout;
     LinearLayout contentLayout;
+    LinearLayout ll_all;
+    Button bt_delete,bt_read;
 
     public static ViewHolderCreator HOLDER_CREATOR = new ViewHolderCreator<ConversationItemHolder>() {
         @Override
@@ -72,11 +72,12 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
         }
     };
     public ConversationItemHolder(ViewGroup root) {
-        super(root.getContext(), root, R.layout.style_conversation_item_list);
-        initView();
+//        super(root.getContext(), root, R.layout.style_conversation_item_list);
+        super(root.getContext(), root, R.layout.style_new_conversation_item_list);
+        initView(root);
     }
 
-    public void initView() {
+    public void initView(ViewGroup root) {
         avatarView = (CircleImageView) itemView.findViewById(R.id.conversation_item_iv_avatar);
         nameView = (TextView) itemView.findViewById(R.id.conversation_item_tv_name);
         timeView = (TextView) itemView.findViewById(R.id.conversation_item_tv_time);
@@ -84,6 +85,33 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
         messageView = (TextView) itemView.findViewById(R.id.conversation_item_tv_message);
         avatarLayout = (RelativeLayout) itemView.findViewById(R.id.conversation_item_layout_avatar);
         contentLayout = (LinearLayout) itemView.findViewById(R.id.conversation_item_layout_content);
+        SwipeMenuLayout swipe_menu_layout= (SwipeMenuLayout) itemView.findViewById(R.id.swipe_menu_layout);
+        //动态设置item的高度
+        setItemHeightAndWidth(root, swipe_menu_layout);
+
+
+
+        ll_all= (LinearLayout) itemView.findViewById(R.id.ll_all);
+        bt_read= (Button) itemView.findViewById(R.id.bt_read);
+        bt_delete= (Button) itemView.findViewById(R.id.bt_delete);
+    }
+
+    /**
+     * 动态设置Item的宽和高
+     * @param root
+     * @param swipe_menu_layout
+     */
+    private void setItemHeightAndWidth(ViewGroup root, SwipeMenuLayout swipe_menu_layout) {
+        int screenHeight= Util.getScreenHeight(root.getContext());
+        int viewHeight= (screenHeight-getStatusBarHeight(root.getContext()))/35;
+        ViewGroup.LayoutParams params=swipe_menu_layout.getLayoutParams();
+        params.height=viewHeight*3;
+        swipe_menu_layout.setLayoutParams(params);
+
+        ViewGroup.LayoutParams params1=avatarLayout.getLayoutParams();
+        params1.height=viewHeight*3-30;
+        params1.width=viewHeight*3-30;
+        avatarLayout.setLayoutParams(params1);
     }
 
     @Override
@@ -110,28 +138,57 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
             }
             updateUnreadCount(conversation);
             updateLastMessageByConversation(conversation);
-            itemView.setOnClickListener(new View.OnClickListener() {
+
+            ll_all.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     onConversationItemClick(conversation);
-                    //此处可处理判断点击类型
+                }
+            });
+            bt_read.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //标记已读
+                    LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
+                    EventBus.getDefault().post(new EventDatas(Constants.CONVERSATION_READ_STATUS,""));
+                }
+            });
+            bt_delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //删除会话
+                    EventBus.getDefault().post(new LCIMConversationItemLongClickEvent(conversation));
                 }
             });
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setItems(new String[]{"删除该聊天"}, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            EventBus.getDefault().post(new LCIMConversationItemLongClickEvent(conversation));
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                    return false;
-                }
-            });
+
+
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    onConversationItemClick(conversation);
+//                    //此处可处理判断点击类型
+//                }
+//            });
+//
+//
+//            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                    builder.setItems(new String[]{"删除该聊天"}, new DialogInterface.OnClickListener() {
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            EventBus.getDefault().post(new LCIMConversationItemLongClickEvent(conversation));
+//
+//                        }
+//                    });
+//                    AlertDialog dialog = builder.create();
+//                    dialog.show();
+//                    return false;
+//                }
+//            });
+
+
         }
     }
 
@@ -181,7 +238,7 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
     private void updateIcon(AVIMConversation conversation) {
         if (null != conversation) {
             if (conversation.isTransient() || conversation.getMembers().size() > 2) {
-                avatarView.setImageResource(R.drawable.lcim_group_icon);
+                avatarView.setImageResource(R.drawable.lcim_group_icon); //聊天室的头像
             } else {
                 LCIMConversationUtils.getConversationPeerIcon(conversation, new AVCallback<String>() {
                     @Override
@@ -224,7 +281,6 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
             @Override
             public void done(AVIMMessage avimMessage, AVIMException e) {
                 //处理自定义消息
-
                 if (null != avimMessage) {
                     upMyselfMsg(avimMessage);
                     updateLastMessage(avimMessage);
@@ -257,25 +313,9 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
             case TextMessageType:
                 if(avimMessage!=null&&((AVIMTextMessage) avimMessage).getAttrs()!=null) {
                     Map<String, Object> map = ((AVIMTextMessage) avimMessage).getAttrs();
-                    String notice_type = (String) map.get("notice_type");
-
-                    //////////////////////////////////////////////////////////////////
                     if (map.containsKey("notice_type")) {
-                        if (notice_type.equals("common_notice")) {
-                            nameView.setText("提醒");
-                            Resources res = getContext().getResources();
-                            Bitmap bmp = BitmapFactory.decodeResource(res, R.mipmap.remind);
-                            Bitmap bn = DrawRoundCorner.makeRoundCorner(bmp);
-                            Drawable drawable = new BitmapDrawable(bn);
-                            avatarView.setImageDrawable(drawable);
-                        } else if (notice_type.equals("daily_report") || notice_type.equals("project_plan")) {
-                            nameView.setText("助手");
-                            Resources res = getContext().getResources();
-                            Bitmap bmp = BitmapFactory.decodeResource(res, R.mipmap.helper);
-                            Bitmap bn = DrawRoundCorner.makeRoundCorner(bmp);
-                            Drawable drawable = new BitmapDrawable(bn);
-                            avatarView.setImageDrawable(drawable);
-                        }
+                        String head_url=(String) map.get("avator");
+                        Picasso.with(getContext()).load(head_url).placeholder(R.drawable.lcim_default_avatar_icon).into(avatarView);
                     }
                 }
                 break;
@@ -303,27 +343,39 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
             public void done(List<AVIMMessage> list, AVIMException e) {
                 //这里面的list包括会话内容
                 /*((AVIMTextMessage) list.get(0)).getAttrs()!=null*/
-                AVIMReservedMessageType type = AVIMReservedMessageType.getAVIMReservedMessageType(
-                        ((AVIMTypedMessage) list.get(0)).getMessageType());
-                switch (type){
-                    case TextMessageType:
-                        if (((AVIMTextMessage) list.get(0)).getAttrs()!=null){
-                            Map<String, Object> map= ((AVIMTextMessage) list.get(0)).getAttrs();
-                            if (map.containsKey("notice_type")){
-                                if (map.get("notice_type").equals("common_notice")){
-                                    LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
-                                    getContext().startActivity(new Intent(getContext(), RemindActivity.class));
-                                    return;
-                                }else if (map.get("notice_type").equals("daily_report")){
-                                    LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
-                                    getContext().startActivity(new Intent(getContext(), ZhuShouActivity.class));
-                                    return;
+                if  (list.size()>0){
+                    AVIMReservedMessageType type = AVIMReservedMessageType.getAVIMReservedMessageType(
+                            ((AVIMTypedMessage) list.get(0)).getMessageType());
+                    switch (type){
+                        case TextMessageType:
+                            if (((AVIMTextMessage) list.get(0)).getAttrs()!=null){
+                                Map<String, Object> map= ((AVIMTextMessage) list.get(0)).getAttrs();
+                                if (map.containsKey("notice_type")){
+                                    if (map.get("notice_type").equals("common_notice")){
+                                        LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
+                                        getContext().startActivity(new Intent(getContext(), RemindActivity.class));
+                                        return;
+                                    }else if (map.get("notice_type").equals("daily_report")||map.get("notice_type").equals("project_plan")){
+                                        LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
+                                        getContext().startActivity(new Intent(getContext(), HelperActivity.class));
+                                        return;
+                                    }else if (map.get("notice_type").equals("process")){
+                                        LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
+                                        getContext().startActivity(new Intent(getContext(), TaskActivity.class));
+                                        return;
+                                    }else if (map.get("notice_type").equals("tutorial")){
+                                        //暂时不做处理,等待web页面完成之后再打开
+                                        LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
+//                                        getContext().startActivity(new Intent(getContext(), NewHandRemindActivity.class));
+                                        return;
+                                    }
                                 }
-                            }
 
-                        }
-                        break;
+                            }
+                            break;
+                    }
                 }
+
 
                     try {
                         Intent intent = new Intent();
@@ -373,6 +425,14 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
             return message.getContent();
         }
 
+    }
+    public  int getStatusBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result =  context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
 }

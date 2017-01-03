@@ -1,124 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_test"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:background="#fff"
     android:gravity="center"
-    android:id="@+id/ll_test"
-    android:background="#fff">
-    <FrameLayout
-        android:layout_width="55dp"
-        android:layout_height="55dp">
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_avator"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:padding="5dp"
-            android:src="@mipmap/cat_personal_1"/>
-        <TextView
-            android:id="@+id/tv_head"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:visibility="invisible"
-            android:background="@mipmap/cat_health_1"/>
-    </FrameLayout>
-
+    android:padding="8dp">
 
     <LinearLayout
-        android:layout_marginLeft="5dp"
-        android:layout_width="0dp"
-        android:layout_weight="8"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
-            android:paddingLeft="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/tv_name"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textSize="14sp"
-                android:text="刘红"/>
-            <TextView
-                android:id="@+id/tv_card_name"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                android:textSize="14sp"
-                android:textColor="@color/result_points"
-                android:text=""/>
-        </LinearLayout>
-        <LinearLayout
-            android:paddingLeft="5dp"
-            android:paddingTop="3dp"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@mipmap/location"/>
-            <TextView
-                android:id="@+id/tv_position"
-                android:textSize="12sp"
-                android:gravity="center|left"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:lines="1"
-                android:ellipsize="end"
-                android:layout_height="wrap_content"
-                android:paddingLeft="3dp"
-                android:text="海景"/>
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@mipmap/calander"/>
-            <TextView
-                android:id="@+id/tv_times"
-                android:textSize="12sp"
-                android:gravity="center|left"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:lines="1"
-                android:ellipsize="end"
-                android:layout_height="wrap_content"
-                android:paddingLeft="3dp"
-                android:text="海景"/>
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@mipmap/littlepeoplenum"/>
-            <TextView
-                android:id="@+id/tv_items"
-                android:textSize="12sp"
-                android:gravity="center|left"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:lines="1"
-                android:ellipsize="end"
-                android:layout_height="wrap_content"
-                android:paddingLeft="3dp"
-                android:text="海景"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="0.3"
-                android:layout_height="wrap_content" />
+        android:id="@+id/ll_alls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_avator"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:src="@mipmap/cat_personal_1" />
+
+            <TextView
+                android:id="@+id/tv_head"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@mipmap/cat_health_1"
+                android:gravity="center"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="8"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingLeft="5dp">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="刘红"
+                    android:textColor="@color/text_color"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_card_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/result_points"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingTop="3dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@mipmap/location" />
+
+                <TextView
+                    android:id="@+id/tv_position"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center|left"
+                    android:lines="1"
+                    android:paddingLeft="3dp"
+                    android:text="海景"
+                    android:textColor="@color/text_color"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@mipmap/calander" />
+
+                <TextView
+                    android:id="@+id/tv_times"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center|left"
+                    android:lines="1"
+                    android:paddingLeft="3dp"
+                    android:text="海景"
+                    android:textColor="@color/text_color"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@mipmap/littlepeoplenum" />
+
+                <TextView
+                    android:id="@+id/tv_items"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:gravity="center|left"
+                    android:lines="1"
+                    android:paddingLeft="3dp"
+                    android:text="海景"
+                    android:textColor="@color/text_color"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3" />
+
+            </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:drawablePadding="3dp"
+            android:gravity="center"
+            android:text="项目状态"
+            android:textColor="@color/text_color"
+            android:textSize="12sp" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/tv_status"
-        android:layout_width="0dp"
-        android:layout_weight="2"
-        android:layout_height="match_parent"
-        android:textSize="12sp"
-        android:gravity="center"
-        android:text="项目状态"
-        android:drawablePadding="3dp" />
+
 </LinearLayout>

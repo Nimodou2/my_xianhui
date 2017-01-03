@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -27,6 +26,7 @@ import com.maibo.lvyongsheng.xianhui.entity.TabMax;
 import com.maibo.lvyongsheng.xianhui.fragment.YeJiZhuChengFragment1;
 import com.maibo.lvyongsheng.xianhui.fragment.YeJiZhuChengFragment2;
 import com.maibo.lvyongsheng.xianhui.fragment.YeJiZhuChengFragment3;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -34,12 +34,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/9/2.
  */
-public class ItemDetailActivity extends FragmentActivity implements View.OnClickListener{
+public class ItemDetailActivity extends BaseFragmentActivity implements View.OnClickListener{
     ProgressDialog dialog;
     ViewPager viewPager;
     MyFragmentPageAdapter fragmentPageAdapter;
@@ -69,8 +70,9 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
     String org_id;
     String org_name;
 
-
     public int test=0;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
 
     public int getTest() {
         return test;
@@ -89,7 +91,6 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
                     for (int i=0;i<5;i++){
                         values[i]=list1.get(i).getValue();
                     }
-
                     //Gallery适配器
                     imageAdapter=new ImageAdapter(ItemDetailActivity.this,weekDays,position,values);
                     // gallery添加ImageAdapter图片资源
@@ -106,6 +107,8 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.xian_jin);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         dialog=new ProgressDialog(this);
         dialog.setMessage("加载中...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -134,6 +137,7 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
         });
 
         gallery = (Gallery) findViewById(R.id.gallery);
+        gallery.setSpacing(screenWidth/12);
         tv_setting.setOnClickListener(this);
         //默认为最后一个(作用：为了在选择Gallery时，饼状图也跟随变化)
         setTest(6);
@@ -220,11 +224,11 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        getServiceMaxData();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        getServiceMaxData();
+//    }
 
     public void setData(int i){
         //填充当前平均和当前总量
@@ -283,7 +287,8 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
         bundle.putString("org_name",org_name);
         bundle.putString("org_id",org_id);
         intent.putExtras(bundle);
-        startActivity(intent);
+//        startActivity(intent);
+        startActivityForResult(intent,15);
     }
     //获取日报表峰值设置
     public void getServiceMaxData(){
@@ -406,4 +411,15 @@ public class ItemDetailActivity extends FragmentActivity implements View.OnClick
         }
     };
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode==16){
+            getServiceMaxData();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
+    }
 }

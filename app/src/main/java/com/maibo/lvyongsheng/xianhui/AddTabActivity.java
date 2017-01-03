@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -27,6 +31,7 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener{
 
     RadioGroup radiogrop;
     RadioButton btn1,btn2;
+    LinearLayout ll_head;
     SharedPreferences sp;
     String apiURL;
     String token;
@@ -39,6 +44,8 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_tab);
+
+        CloseAllActivity.getScreenManager().pushActivity(this);
         dialog=new ProgressDialog(this);
         dialog.setMessage("加载中...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -54,6 +61,9 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener{
         radiogrop=(RadioGroup) findViewById(R.id.rg_menu);
         btn1 = (RadioButton) findViewById(R.id.button1);
         btn2 = (RadioButton) findViewById(R.id.button2);
+        ll_head= (LinearLayout) findViewById(R.id.ll_head);
+        adapterLitterBar(ll_head);
+
         btn1.setTextColor(Color.WHITE);
         btn2.setTextColor(Color.rgb(1,122,255));
 
@@ -173,5 +183,32 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener{
                 finish();
                 break;
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    /**
+     * 适配tab的高度
+     * @param ll_head
+     */
+    public void adapterLitterBar(LinearLayout ll_head){
+        ViewGroup.LayoutParams params=ll_head.getLayoutParams();
+        params.height=((Util.getScreenHeight(this)-getStatusBarHeight())/35)*2;
+        ll_head.setLayoutParams(params);
+    }
+    /**
+     * 获取状态栏高度
+     * @return
+     */
+    public  int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result =  getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

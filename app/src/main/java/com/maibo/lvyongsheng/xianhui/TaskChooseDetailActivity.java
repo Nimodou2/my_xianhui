@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,21 +9,25 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.maibo.lvyongsheng.xianhui.adapter.TaskChooseTypeAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.Task;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.myinterface.OnChooseTypeListener;
 
 import java.util.List;
 
+import butterknife.Bind;
 import cn.leancloud.chatkit.view.LCIMDividerItemDecoration;
 
 /**
  * Created by LYS on 2016/11/23.
  */
 
-public class TaskChooseDetailActivity extends Activity implements View.OnClickListener{
+public class TaskChooseDetailActivity extends BaseActivity implements View.OnClickListener{
     TextView tv_hand,back,tv_task_name;
     RecyclerView rv_detail_list;
     List<Task> list_task;
@@ -35,6 +38,9 @@ public class TaskChooseDetailActivity extends Activity implements View.OnClickLi
     TaskChooseTypeAdapter adapter;
     String resultData="";//回传过去的用于上传的数据
     String textData="";//回传过去用于界面填充的数据
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +50,8 @@ public class TaskChooseDetailActivity extends Activity implements View.OnClickLi
 
     private void initView(){
         setContentView(R.layout.activity_choose_detail);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         tv_hand= (TextView) findViewById(R.id.tv_hand);
         rv_detail_list= (RecyclerView) findViewById(R.id.rv_detail_list);
         back= (TextView) findViewById(R.id.back);
@@ -79,8 +87,11 @@ public class TaskChooseDetailActivity extends Activity implements View.OnClickLi
                         list_task.get(i).setIsChecked(1);
                     }
                 }
-                rv_detail_list.setAdapter(adapter=new TaskChooseTypeAdapter(TaskChooseDetailActivity.this,list_task,tag));
+                rv_detail_list.setAdapter(adapter=new TaskChooseTypeAdapter(TaskChooseDetailActivity.this,list_task,tag,viewHeight));
                 tv_hand.setVisibility(View.VISIBLE);
+                ViewGroup.LayoutParams params = tv_hand.getLayoutParams();
+                params.height=viewHeight*15/255;
+                tv_hand.setLayoutParams(params);
                 tv_task_name.setText("范围");
                 myNotificeDataChange(list_task,1);
             }else if(tag.equals("type")){
@@ -90,7 +101,7 @@ public class TaskChooseDetailActivity extends Activity implements View.OnClickLi
                         list_task.get(i).setIsChecked(1);
                     }
                 }
-                rv_detail_list.setAdapter(adapter=new TaskChooseTypeAdapter(TaskChooseDetailActivity.this,list_task,tag));
+                rv_detail_list.setAdapter(adapter=new TaskChooseTypeAdapter(TaskChooseDetailActivity.this,list_task,tag,viewHeight));
                 tv_task_name.setText("类型");
                 myNotificeDataChange(list_task,1);
             }else if (tag.equals("joiner")){
@@ -107,7 +118,7 @@ public class TaskChooseDetailActivity extends Activity implements View.OnClickLi
                     }
                 }
 
-                rv_detail_list.setAdapter(adapter=new TaskChooseTypeAdapter(TaskChooseDetailActivity.this,list_task,tag));
+                rv_detail_list.setAdapter(adapter=new TaskChooseTypeAdapter(TaskChooseDetailActivity.this,list_task,tag,viewHeight));
                 tv_task_name.setText("参与者");
                 myNotificeDataChange(list_task,2);
 
@@ -225,5 +236,10 @@ public class TaskChooseDetailActivity extends Activity implements View.OnClickLi
         }else{
             return super.onKeyDown(keyCode, event);
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

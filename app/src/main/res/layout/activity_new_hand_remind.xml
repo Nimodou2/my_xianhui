@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/bar_color">
+
+        <TextView
+            android:id="@id/back"
+            style="@style/bar_left"
+            android:text="返回" />
+
+        <TextView
+            style="@style/bar_center"
+            android:text="新手提示" />
+
+        <TextView style="@style/bar_right" />
+    </LinearLayout>
+    <!--style="@android:style/Widget.ProgressBar.Horizontal"-->
+    <!--Widget.Holo.ProgressBar.Horizontal-->
+    <!--默认应用总色调Widget.DeviceDefault.ProgressBar.Horizontal-->
+    <ProgressBar
+        android:id="@+id/pro_bar"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:progress="50"
+        style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+        android:layout_height="7dp" />
+
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </WebView>
+
+</LinearLayout>

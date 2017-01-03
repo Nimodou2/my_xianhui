@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,10 +9,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -22,33 +23,37 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/10/16.
  */
-public class UpdataPasswordActivity extends Activity {
+public class UpdataPasswordActivity extends BaseActivity {
 
     EditText et_password,et_password_again;
-    TextView btn_submit;
+    TextView btn_submit,tv_remind;
     SharedPreferences sp,sp1;
     String apiURL;
     String token;
-    TextView tv_back;
     ProgressDialog dialog;
+    String tag;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_updata_password);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
-        tv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
         Intent intent=getIntent();
         final String userName=intent.getStringExtra("userName");
+        tag=intent.getStringExtra("tag");
+        if (tag.equals("changePassword")){
+            tv_remind.setVisibility(View.GONE);
+        }
+
         final String publicKey="1addfcf4296d60f0f8e0c81cea87a099";
         final String type="employee";
 
@@ -77,6 +82,9 @@ public class UpdataPasswordActivity extends Activity {
         et_password_again= (EditText) findViewById(R.id.et_password_again);
         et_password.setHintTextColor(Color.rgb(186,186,188));
         et_password_again.setHintTextColor(Color.rgb(186,186,188));
+        tv_remind= (TextView) findViewById(R.id.tv_remind);
+        //适配界面
+        setHeightAndWidth();
 
         sp=getSharedPreferences("baseDate",MODE_PRIVATE);
         sp1=getSharedPreferences("changeAccount",MODE_PRIVATE);
@@ -86,7 +94,17 @@ public class UpdataPasswordActivity extends Activity {
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setCancelable(true);
         dialog.setIndeterminate(false);
-        tv_back= (TextView) findViewById(R.id.tv_back);
+    }
+
+    /**
+     * 适配界面
+     */
+    private void setHeightAndWidth() {
+        View views[]={et_password,et_password_again,btn_submit};
+        int ht=viewHeight*20/255;
+        int height[]={ht,ht,ht};
+        int widths[]=null;
+        setViewHeightAndWidth(views,height,widths);
     }
 
     public void setPassword(final String username, String type, final String str, String sign){
@@ -101,7 +119,7 @@ public class UpdataPasswordActivity extends Activity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        dialog.dismiss();
                     }
 
                     @Override
@@ -119,8 +137,15 @@ public class UpdataPasswordActivity extends Activity {
                             editor1.putString("password", str);
                             editor.commit();
                             editor1.commit();
-                            App.showToast(getApplicationContext(),"请重新登录");
-                            startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                            //normalPassword:当第一次激活账号时
+                            //changePassword:当在应用内修改密码时
+                            if (tag.equals("normalPassword")){
+                                App.showToast(getApplicationContext(),"请重新登录");
+                                startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                            }else if (tag.equals("changePassword")){
+                                App.showToast(getApplicationContext(),"修改成功");
+                            }
+
                             finish();
                         }else{
                             App.showToast(getApplicationContext(),message);
@@ -165,5 +190,10 @@ public class UpdataPasswordActivity extends Activity {
             e.printStackTrace();
             return null;
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

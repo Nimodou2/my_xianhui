@@ -7,9 +7,8 @@ import android.widget.Toast;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.im.v2.AVIMClient;
-import com.avos.avoscloud.im.v2.AVIMException;
-import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.karumi.dexter.Dexter;
+import com.maibo.lvyongsheng.xianhui.implement.AVImClientManager;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -33,19 +32,13 @@ public class App extends Application {
     ZXingLibrary.initDisplayOpinion(this);
     SharedPreferences sp = getSharedPreferences("baseDate",MODE_PRIVATE);
     String guid=sp.getString("guid",null);
-    //leanCloud即时通讯初始化配置
-    if(guid!=null){
-      //初始化用户体系
 
-      //此处不可缺少
-      AVOSCloud.setDebugLogEnabled(true);
-      AVIMClient.setMessageQueryCacheEnable(true);
-      LCChatKit.getInstance().init(getApplicationContext(), APP_ID, APP_KEY);
+    AVOSCloud.setDebugLogEnabled(true);
+    AVIMClient.setMessageQueryCacheEnable(true);
+    LCChatKit.getInstance().init(getApplicationContext(), APP_ID, APP_KEY);
+    // 自定义实现的 AVIMClientEventHandler 需要注册到 SDK 后，SDK 才会通过回调 onClientOffline 来通知开发者
+    AVIMClient.setClientEventHandler(new AVImClientManager(getApplicationContext()));
 
-      LCChatKit.getInstance().open(guid, new AVIMClientCallback() {
-        @Override
-        public void done(AVIMClient avimClient, AVIMException e) {}});
-    }
     //OKhttp初始化配置
     OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(10000L, TimeUnit.MILLISECONDS)
@@ -63,6 +56,5 @@ public class App extends Application {
   public static void showToast(Context context,String text){
     Toast.makeText(context,text,Toast.LENGTH_SHORT).show();
   }
-
 
 }

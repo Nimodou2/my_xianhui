@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.adapter.ConsumRecordAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.SaleTab;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.view.RefreshListView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -24,12 +25,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import butterknife.Bind;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/10/31.
  */
-public class CustomerConsumeActivity extends Activity implements RefreshListView.OnRefreshListener{
+public class CustomerConsumeActivity extends BaseActivity implements RefreshListView.OnRefreshListener{
 
     SharedPreferences sp;
     String token,apiURL;
@@ -42,6 +44,8 @@ public class CustomerConsumeActivity extends Activity implements RefreshListView
     List<SaleTab> list22;
     List<SaleTab> list33;
     ConsumRecordAdapter myAdapter;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
     Handler handler=new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -61,7 +65,7 @@ public class CustomerConsumeActivity extends Activity implements RefreshListView
                 Collections.reverse(listss);
                 list22.clear();
                 list22=listss;
-                lv_cards.setAdapter(myAdapter=new ConsumRecordAdapter(CustomerConsumeActivity.this,list22));
+                lv_cards.setAdapter(myAdapter=new ConsumRecordAdapter(CustomerConsumeActivity.this,list22,viewHeight));
             }
             list33.addAll(0,listss);
             lv_cards.completeRefresh();
@@ -71,6 +75,8 @@ public class CustomerConsumeActivity extends Activity implements RefreshListView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_consume);
+        adapterLitterBar(ll_head);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         list22=new ArrayList<>();
         list33=new ArrayList<>();
         sp=getSharedPreferences("baseDate", Context.MODE_PRIVATE);
@@ -171,6 +177,11 @@ public class CustomerConsumeActivity extends Activity implements RefreshListView
                         }
                     }
                 });
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 
 }

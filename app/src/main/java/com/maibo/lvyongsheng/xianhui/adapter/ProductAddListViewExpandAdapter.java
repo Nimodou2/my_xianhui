@@ -33,18 +33,21 @@ public class ProductAddListViewExpandAdapter extends BaseExpandableListAdapter {
     private static HashMap<Integer, Boolean> isSelected;
     //记录选中的对象
     private static HashMap<Integer,Integer> itemID;
+    private int viewHeight;
 
     class ViewHolder {
 
         TextView tvName;
         CheckBox cb;
         TextView card_name,card_style,price,yu_ci;
+        LinearLayout ll_all,ll_child_all;
     }
-    public ProductAddListViewExpandAdapter(Context context, List<Product> dataPr, int[] sel, ExpandableListView expandableListView){
+    public ProductAddListViewExpandAdapter(Context context, List<Product> dataPr, int[] sel, ExpandableListView expandableListView,int viewHeight){
         this.dataPr = dataPr;
         this.context = context;
         this.sel = sel;
         this.expandableListView=expandableListView;
+        this.viewHeight=viewHeight;
         isSelected = new HashMap<Integer, Boolean>();
         itemID=new HashMap<>();
 
@@ -106,11 +109,16 @@ public class ProductAddListViewExpandAdapter extends BaseExpandableListAdapter {
             holder = new ViewHolder();
             holder.cb = (CheckBox) view.findViewById(R.id.checkBox);
             holder.tvName = (TextView) view.findViewById(R.id.tv_project_name);
+            holder.ll_all= (LinearLayout) view.findViewById(R.id.ll_all);
             view.setTag(holder);
         } else {
             // 取出holder
             holder = (ViewHolder) view.getTag();
         }
+
+        ViewGroup.LayoutParams params=holder.ll_all.getLayoutParams();
+        params.height=viewHeight*20/255;
+        holder.ll_all.setLayoutParams(params);
 
         holder.tvName.setText(bean.getFullname());
         if (bean.getCard_list().size()!=0){
@@ -179,11 +187,14 @@ public class ProductAddListViewExpandAdapter extends BaseExpandableListAdapter {
             holder.card_style=(TextView) view.findViewById(R.id.card_style);
             holder.price=(TextView) view.findViewById(R.id.price);
             holder.yu_ci=(TextView) view.findViewById(R.id.yu_ci);
-
+            holder.ll_child_all= (LinearLayout) view.findViewById(R.id.ll_child_all);
             view.setTag(holder);
         }else{
             holder=(ViewHolder) view.getTag();
         }
+        ViewGroup.LayoutParams params=holder.ll_child_all.getLayoutParams();
+        params.height=viewHeight*25/255;
+        holder.ll_child_all.setLayoutParams(params);
 
         Card card=dataPr.get(i).getCard_list().get(i1);
         holder.card_name.setText(card.getFullname());

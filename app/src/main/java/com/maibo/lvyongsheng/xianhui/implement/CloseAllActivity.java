@@ -41,4 +41,9 @@ public class CloseAllActivity {
             }
         }
     }
+    public Activity getFirstActivity(){
+        if (mActivityStack.size()>0)
+            return mActivityStack.get(mActivityStack.size()-1);
+        else return null;
+    }
 }
