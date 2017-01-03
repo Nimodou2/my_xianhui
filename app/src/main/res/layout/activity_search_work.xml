@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/weixin_lianxiren_gray"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/ll_head"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/searchView_bg">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="7"
+            android:layout_height="match_parent"
+            android:background="@drawable/searchview_shap_all_white_bg"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp">
+            <SearchView
+                android:id="@+id/search_people"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:queryHint="搜索"
+                android:iconifiedByDefault="false">
+            </SearchView>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/back"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:textColor="#fff"
+            android:text="取消"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/lv_seached_people"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+
+</LinearLayout>
