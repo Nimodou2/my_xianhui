@@ -1,5 +1,6 @@
 package com.maibo.lvyongsheng.xianhui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 
 import butterknife.ButterKnife;
@@ -23,6 +25,9 @@ public class BaseFragmentActivity extends FragmentActivity {
     //去掉状态栏和标题栏后的高度
     public int viewHeight;
     public int screenWidth;
+
+    ProgressDialog longDialog;
+    MyProgressDialog shortDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +41,7 @@ public class BaseFragmentActivity extends FragmentActivity {
         screenWidth=Util.getScreenWidth(this);
         ButterKnife.bind(this);
         onViewCreated();
+        initDialog();
     }
 
     @Override
@@ -128,5 +134,37 @@ public class BaseFragmentActivity extends FragmentActivity {
         ViewGroup.LayoutParams params=ll_head.getLayoutParams();
         params.height=((Util.getScreenHeight(this)-getStatusBarHeight())/35)*2;
         ll_head.setLayoutParams(params);
+    }
+
+    /**
+     * 初始化用于加载的dialog
+     */
+    private void initDialog() {
+        longDialog = new ProgressDialog(this);
+        longDialog.setMessage("加载中...");
+        longDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        longDialog.setCancelable(true);
+        longDialog.setIndeterminate(false);
+        shortDialog=new MyProgressDialog(this);
+    }
+    /**
+     * 用于长时间加载的dialog
+     */
+    public  void showLongDialog(){
+        longDialog.show();
+    }
+    public void dismissLongDialog(){
+        longDialog.dismiss();
+    }
+
+    /**
+     * 用于短时间加载的dialog
+     */
+    public void showShortDialog(){
+        shortDialog=new MyProgressDialog(this);
+        shortDialog.show();
+    }
+    public void dismissShortDialog(){
+        shortDialog.dismiss();
     }
 }

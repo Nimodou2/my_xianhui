@@ -1,53 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/weixin_lianxiren_gray">
+    android:background="@color/weixin_lianxiren_gray"
+    android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/ll_head"
-        android:background="@color/bar_color"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:background="@color/bar_color">
+
         <TextView
             android:id="@+id/back"
             style="@style/bar_left"
-            android:text="返回"/>
+            android:text="返回" />
+
         <TextView
             android:id="@+id/cus_name"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:textSize="18dp"
-            android:textColor="#fff"
+            android:layout_weight="1"
+            android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:ellipsize="end"
-            android:text="张三"/>
+            android:text="张三"
+            android:textColor="#fff"
+            android:textSize="18dp" />
+
         <TextView
             android:id="@+id/tv_files"
             style="@style/bar_right" />
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ListView
             android:id="@+id/lv_order"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:dividerHeight="0dp"
-            android:divider="#00000000">
+            android:divider="#00000000"
+            android:dividerHeight="0dp">
 
         </ListView>
-        <TextView
+
+        <LinearLayout
             android:id="@+id/tv_notdata"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textSize="24sp"
             android:gravity="center"
             android:visibility="invisible"
-            android:textColor="@color/gray_weixin"
-            android:text="无数据"/>
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="暂无数据"
+                android:textColor="@color/gray_weixin"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请及时联系系统管理员..."
+                android:textColor="@color/gray_weixin"
+                android:textSize="18dp" />
+        </LinearLayout>
     </FrameLayout>
 
 </LinearLayout>

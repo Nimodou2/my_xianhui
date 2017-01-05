@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/weixin_lianxiren_gray"
+    android:gravity="center"
+    android:id="@+id/ll_loading_error"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@mipmap/ic_error_page" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="网络好像出了点问题..."
+        android:textSize="18dp" />
+
+    <TextView
+        android:clickable="true"
+        android:onClick="loadingMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="重新加载"
+        android:textColor="@color/text_color_blue"
+        android:textSize="18dp" />
+</LinearLayout>

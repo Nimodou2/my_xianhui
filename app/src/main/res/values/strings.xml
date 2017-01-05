@@ -6,4 +6,6 @@
     <string name="talk">会话</string>
     <string name="people">联系人</string>
     <string name="setting">设置</string>
+    <string name="data_error">数据异常</string>
+    <string name="net_connect_error">网络连接异常</string>
 </resources>

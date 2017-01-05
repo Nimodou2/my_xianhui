@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,7 +43,6 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
     List<Notice> data2;
     List<Notice> data3;
     TextView back;
-    ProgressDialog dialog;
     MyAdapter adapter;
     Boolean isLoadingMore = false;
     int currentPageNum;
@@ -56,9 +54,19 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
 
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+
+
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
+                case 0:
+                    in_loading_error.setVisibility(View.VISIBLE);
+                    lv_zhushou.setVisibility(View.GONE);
+                    break;
                 case 1:
                     List<Notice> data = (List<Notice>) msg.obj;
                     currentPageNum = msg.arg1;
@@ -74,13 +82,14 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                         Collections.reverse(data);
                         data2.clear();
                         data2 = data;
-//                        data3.clear();
-//                        data3=data;
+                        if (data2.size()==0){
+                            in_no_datas.setVisibility(View.VISIBLE);
+                            lv_zhushou.setVisibility(View.GONE);
+                            return;
+                        }
                         lv_zhushou.setAdapter(adapter = new MyAdapter(data2));
                     }
                     data3.addAll(0, data);
-                    //Log.e("data3:",data3.size()+"");
-                    dialog.dismiss();
                     lv_zhushou.completeRefresh();
                     break;
             }
@@ -132,12 +141,7 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
         token = sp.getString("token", null);
         data2 = new ArrayList<>();
         data3 = new ArrayList<>();
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
+        showLongDialog();
         back = (TextView) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,11 +154,8 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
     @Override
     protected void onResume() {
         super.onResume();
-        //isLoadingMore=false;
-        // initData(1);
         //刷新数据，去除已读
         if (whatItem != -1) {
-//            data2=new ArrayList<>();
             data2.clear();
             Notice notice = new Notice(whatNotice.getNotice_id(), whatNotice.getNotice_type(), whatNotice.getSubject(), whatNotice.getBody(),
                     whatNotice.getCreat_time(), 1, whatNotice.getExtra_id(), whatNotice.getOrg_name(), whatNotice.getOrg_id());
@@ -183,6 +184,11 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        Message msg = Message.obtain();
+                        msg.what = 0;
+                        handler.sendMessage(msg);
+                        dismissLongDialog();
+                        dismissShortDialog();
                     }
 
                     @Override
@@ -191,62 +197,77 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                         List<Notice> data1 = new ArrayList<Notice>();
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status = object.get("status").getAsString();
+                        String message=object.get("message").getAsString();
                         if (msg_status.equals("ok")) {
-                            JsonObject data = object.get("data").getAsJsonObject();
-                            //int total = data.get("total").getAsInt();
-                            int pageSize = 0;
-                            int pageNumber = 0;
-                            int totalPage = 0;
-                            if (!data.get("pageSize").isJsonNull())
-                                pageSize = data.get("pageSize").getAsInt();
-                            if (!data.get("pageNumber").isJsonNull())
-                                pageNumber = data.get("pageNumber").getAsInt();
-                            if (!data.get("totalPage").isJsonNull())
-                                totalPage = data.get("totalPage").getAsInt();
-                            JsonArray rows = data.get("rows").getAsJsonArray();
-                            if (rows != null) {
-                                for (JsonElement jsonElement : rows) {
-                                    JsonObject jsonObject = jsonElement.getAsJsonObject();
-                                    int notice_id = -1;
-                                    String notice_type = "";
-                                    String subject = "";
-                                    String body = "";
-                                    String create_time = "";
-                                    int status = -1;
-                                    String extra_id = "";
-                                    String org_name = "";
-                                    String org_id = "";
-                                    if (!jsonObject.get("notice_id").isJsonNull())
-                                        notice_id = jsonObject.get("notice_id").getAsInt();
-                                    if (!jsonObject.get("notice_type").isJsonNull())
-                                        notice_type = jsonObject.get("notice_type").getAsString();
-                                    if (!jsonObject.get("subject").isJsonNull())
-                                        subject = jsonObject.get("subject").getAsString();
-                                    if (!jsonObject.get("body").isJsonNull())
-                                        body = jsonObject.get("body").getAsString();
-                                    if (!jsonObject.get("create_time").isJsonNull())
-                                        create_time = jsonObject.get("create_time").getAsString();
-                                    if (!jsonObject.get("status").isJsonNull())
-                                        status = jsonObject.get("status").getAsInt();
-                                    if (!jsonObject.get("extra_id").isJsonNull())
-                                        extra_id = jsonObject.get("extra_id").getAsString();
-                                    if (!jsonObject.get("org_name").isJsonNull())
-                                        org_name = jsonObject.get("org_name").getAsString();
-                                    if (!jsonObject.get("org_id").isJsonNull())
-                                        org_id = jsonObject.get("org_id").getAsString();
-                                    data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id, org_name, org_id));
-                                }
-                                Message msg = Message.obtain();
-                                msg.obj = data1;
-                                msg.what = 1;
-                                msg.arg1 = pageNumber;
-                                msg.arg2 = totalPage;
-                                handler.sendMessage(msg);
-
-                            }
+                            //解析Json字符串
+                            analysisJsonDatas(data1, object);
+                        }else{
+                            showToast(message);
                         }
+                        //
+                        dismissLongDialog();
+                        dismissShortDialog();
                     }
                 });
+    }
+
+    /**
+     * 解析Json
+     * @param data1
+     * @param object
+     */
+    private void analysisJsonDatas(List<Notice> data1, JsonObject object) {
+        JsonObject data = object.get("data").getAsJsonObject();
+        int pageSize = 0;
+        int pageNumber = 0;
+        int totalPage = 0;
+        if (!data.get("pageSize").isJsonNull())
+            pageSize = data.get("pageSize").getAsInt();
+        if (!data.get("pageNumber").isJsonNull())
+            pageNumber = data.get("pageNumber").getAsInt();
+        if (!data.get("totalPage").isJsonNull())
+            totalPage = data.get("totalPage").getAsInt();
+        JsonArray rows = data.get("rows").getAsJsonArray();
+        if (rows != null) {
+            for (JsonElement jsonElement : rows) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                int notice_id = -1;
+                String notice_type = "";
+                String subject = "";
+                String body = "";
+                String create_time = "";
+                int status = -1;
+                String extra_id = "";
+                String org_name = "";
+                String org_id = "";
+                if (!jsonObject.get("notice_id").isJsonNull())
+                    notice_id = jsonObject.get("notice_id").getAsInt();
+                if (!jsonObject.get("notice_type").isJsonNull())
+                    notice_type = jsonObject.get("notice_type").getAsString();
+                if (!jsonObject.get("subject").isJsonNull())
+                    subject = jsonObject.get("subject").getAsString();
+                if (!jsonObject.get("body").isJsonNull())
+                    body = jsonObject.get("body").getAsString();
+                if (!jsonObject.get("create_time").isJsonNull())
+                    create_time = jsonObject.get("create_time").getAsString();
+                if (!jsonObject.get("status").isJsonNull())
+                    status = jsonObject.get("status").getAsInt();
+                if (!jsonObject.get("extra_id").isJsonNull())
+                    extra_id = jsonObject.get("extra_id").getAsString();
+                if (!jsonObject.get("org_name").isJsonNull())
+                    org_name = jsonObject.get("org_name").getAsString();
+                if (!jsonObject.get("org_id").isJsonNull())
+                    org_id = jsonObject.get("org_id").getAsString();
+                data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id, org_name, org_id));
+            }
+            Message msg = Message.obtain();
+            msg.obj = data1;
+            msg.what = 1;
+            msg.arg1 = pageNumber;
+            msg.arg2 = totalPage;
+            handler.sendMessage(msg);
+
+        }
     }
 
     @Override
@@ -264,9 +285,6 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
     @Override
     public void onLoadingMore() {
         //上拉设定为无效
-        /*isLoadingMore=false;
-        initData(1);*/
-//        isLoadingMore=false;
         lv_zhushou.completeRefresh();
 
     }
@@ -304,13 +322,13 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                 holder.extra_id = (TextView) view.findViewById(R.id.extra_id);
                 holder.body = (TextView) view.findViewById(R.id.body);
                 holder.tv_red_tag = (TextView) view.findViewById(R.id.tv_red_tag);
-                holder.iv_picture= (ImageView) view.findViewById(R.id.iv_picture);
+                holder.iv_picture = (ImageView) view.findViewById(R.id.iv_picture);
                 view.setTag(holder);
             } else {
                 holder = (ViewHolder) view.getTag();
             }
-            ViewGroup.LayoutParams params=holder.iv_picture.getLayoutParams();
-            params.height=screenHeight/60;
+            ViewGroup.LayoutParams params = holder.iv_picture.getLayoutParams();
+            params.height = screenHeight / 60;
             holder.iv_picture.setLayoutParams(params);
 
             Notice not = list.get(i);
@@ -337,6 +355,17 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        showShortDialog();
+        in_loading_error.setVisibility(View.GONE);
+        lv_zhushou.setVisibility(View.VISIBLE);
+        initData(1);
     }
 }
 

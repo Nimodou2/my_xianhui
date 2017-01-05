@@ -1,228 +1,284 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/weixin_lianxiren_gray">
+    android:background="@color/weixin_lianxiren_gray"
+    android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/ll_head"
-        android:background="@color/bar_color"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:background="@color/bar_color">
+
         <TextView
             android:id="@+id/back"
             style="@style/bar_left"
-            android:text="返回"/>
+            android:text="返回" />
+
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:textSize="18dp"
-            android:gravity="center"
-            android:textColor="#fff"
-            android:singleLine="true"
+            android:layout_weight="1"
             android:ellipsize="end"
-            android:text="资料"/>
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="资料"
+            android:textColor="#fff"
+            android:textSize="18dp" />
+
         <TextView
             android:id="@+id/tv_files"
             style="@style/bar_right"
-            android:text="订单"/>
+            android:text="订单" />
     </LinearLayout>
-<LinearLayout
-    style="@style/message_head">
-    <ImageView
-        android:id="@+id/cus_head"
-        android:layout_width="60dp"
-        android:layout_height="match_parent" />
-    <LinearLayout
-        android:paddingLeft="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/cus_name"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:textSize="16dp"
-            android:text=""/>
-        <TextView
-            android:textColor="@color/lcim_common_gray"
-            android:id="@+id/cus_grade"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:textSize="16dp"
-            android:text=""/>
-        <TextView
-            android:id="@+id/cus_files_num"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:textSize="16dp"
-            android:textColor="@color/lcim_common_gray"
-            android:text=""/>
-    </LinearLayout>
-</LinearLayout>
-    <TextView
-        style="@style/message_spacing"/>
-    <LinearLayout
-        android:id="@+id/ll_kefu_manager"
-        style="@style/message_item">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="6"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:textSize="16dp"
-            android:gravity="center|left"
-            android:text="客服经理"/>
-        <TextView
-            android:id="@+id/cus_manager"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:gravity="center"
-            android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-            android:paddingRight="10dp"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <LinearLayout
-        android:id="@+id/ll_cards"
-        style="@style/message_item">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="6"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:textSize="16dp"
-            android:gravity="center|left"
-            android:text="她的卡包"/>
-        <TextView
-            android:id="@+id/cus_cards_num"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:gravity="center"
-            android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-            android:paddingRight="10dp"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <LinearLayout
-        android:id="@+id/tv_consume_record"
-        style="@style/message_item">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="6"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:paddingLeft="10dp"
-            android:gravity="center|left"
-            android:text="消费记录"/>
-        <TextView
-            android:id="@+id/cus_record"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:gravity="center"
-            android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-            android:paddingRight="10dp"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <LinearLayout
-        android:id="@+id/ll_plan_project"
-        style="@style/message_item">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="6"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:textSize="16dp"
-            android:gravity="center|left"
-            android:text="项目计划"/>
-        <TextView
-            android:id="@+id/cus_plan"
-            android:layout_width="0dp"
-            android:textSize="16dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-            android:paddingRight="10dp"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <LinearLayout
-        android:id="@+id/ll_yuyue"
-        style="@style/message_item">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="6"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:paddingLeft="10dp"
-            android:gravity="center|left"
-            android:text="预约信息"/>
-        <TextView
-            android:id="@+id/cus_order"
-            android:textSize="16dp"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-            android:paddingRight="10dp"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
 
-    <LinearLayout
-        android:id="@+id/ll_order"
-        style="@style/message_item">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="6"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:paddingLeft="10dp"
-            android:gravity="center|left"
-            android:text="订单信息"/>
-        <TextView
-            android:id="@+id/cus_dingdan"
-            android:textSize="16dp"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:paddingRight="10dp"
-            android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="8"/>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/ll_all_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout style="@style/message_head">
+
+                <ImageView
+                    android:id="@+id/cus_head"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/cus_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text=""
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/cus_grade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text=""
+                        android:textColor="@color/lcim_common_gray"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/cus_files_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:text=""
+                        android:textColor="@color/lcim_common_gray"
+                        android:textSize="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView style="@style/message_spacing" />
+
+            <LinearLayout
+                android:id="@+id/ll_kefu_manager"
+                style="@style/message_item">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="客服经理"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/cus_manager"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_cards"
+                style="@style/message_item">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="她的卡包"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/cus_cards_num"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <LinearLayout
+                android:id="@+id/tv_consume_record"
+                style="@style/message_item">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="消费记录"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/cus_record"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_plan_project"
+                style="@style/message_item">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="项目计划"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/cus_plan"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_yuyue"
+                style="@style/message_item">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="预约信息"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/cus_order"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_order"
+                style="@style/message_item">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="订单信息"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/cus_dingdan"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8" />
+        </LinearLayout>
+
+        <include
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
+
+    </FrameLayout>
 
 </LinearLayout>

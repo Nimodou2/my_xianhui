@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +21,7 @@ import com.maibo.lvyongsheng.xianhui.adapter.CommonAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.ViewHolder;
 import com.maibo.lvyongsheng.xianhui.entity.TaskInfomation;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -41,11 +41,15 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
     SharedPreferences sp;
     String apiURL;
     String token;
-    ProgressDialog dialog;
     List<TaskInfomation> list_task_info;
 
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
+
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
 
     Handler handler=new Handler(){
         @Override
@@ -55,6 +59,10 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
                 case 0:
                     list_task_info=(List<TaskInfomation>) msg.obj;
                     //开启Adapter
+                    if (list_task_info.size()==0){
+                        in_no_datas.setVisibility(View.VISIBLE);
+                        return;
+                    }
                     setMyAdapte();
                     break;
             }
@@ -120,20 +128,25 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        getTaskListFromService();
+        if (NetWorkUtils.isNetworkConnected(this)){
+            tv_new_build.setOnClickListener(this);
+            showShortDialog();
+            getTaskListFromService();
+        }else{
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+        }
+
     }
+
+    /**
+     * 初始化View
+     */
     private void initView(){
         setContentView(R.layout.activity_progress);
         adapterLitterBar(ll_head);
 
         CloseAllActivity.getScreenManager().pushActivity(this);
-
-        dialog=new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
 
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
@@ -143,7 +156,6 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
         tv_new_build= (TextView) findViewById(R.id.tv_new_build);
         lv_progress= (ListView) findViewById(R.id.lv_progress);
         back.setOnClickListener(this);
-        tv_new_build.setOnClickListener(this);
     }
 
     @Override
@@ -174,7 +186,7 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        dismissShortDialog();
                     }
 
                     @Override
@@ -189,63 +201,70 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
                             message=jsonObject.get("message").getAsString();
                         }
                         if (status.equals("ok")){
-                            JsonObject data=jsonObject.get("data").getAsJsonObject();
-                            if (data!=null){
-                                JsonArray rows=data.get("rows").getAsJsonArray();
-                                List<TaskInfomation> list=new ArrayList<TaskInfomation>();
-                                for (JsonElement je:rows){
-                                    JsonObject jo=je.getAsJsonObject();
-                                    String task_id="";
-                                    String start_date="";
-                                    String end_date="";
-                                    String publish_date="";
-                                    String type="";
-                                    String range="";
-                                    String percentage="";
-                                    String is_update="";
-                                    String target="";
-                                    String range_name="";
-                                    String type_name="";
-                                    if (!jo.get("task_id").isJsonNull())
-                                        task_id=jo.get("task_id").getAsString();
-                                    if (!jo.get("start_date").isJsonNull())
-                                        start_date=jo.get("start_date").getAsString();
-                                    if (!jo.get("end_date").isJsonNull())
-                                        end_date=jo.get("end_date").getAsString();
-                                    if (!jo.get("publish_date").isJsonNull())
-                                        publish_date=jo.get("publish_date").getAsString();
-                                    if (!jo.get("type").isJsonNull())
-                                        type=jo.get("type").getAsString();
-                                    if (!jo.get("range").isJsonNull())
-                                        range=jo.get("range").getAsString();
-                                    if (!jo.get("percentage").isJsonNull())
-                                        percentage=jo.get("percentage").getAsString();
-                                    if (!jo.get("is_update").isJsonNull())
-                                        is_update=jo.get("is_update").getAsString();
-                                    if (!jo.get("target").isJsonNull())
-                                        target=jo.get("target").getAsString();
-                                    if (!jo.get("range_name").isJsonNull())
-                                        range_name=jo.get("range_name").getAsString();
-                                    if (!jo.get("type_name").isJsonNull())
-                                        type_name=jo.get("type_name").getAsString();
-                                    list.add(new TaskInfomation(task_id,start_date,end_date,publish_date,type,
-                                            range,percentage,is_update,target,range_name,type_name));
-                                }
-                                //回传数据
-                                Message msg=Message.obtain();
-                                msg.what=0;
-                                msg.obj=list;
-                                handler.sendMessage(msg);
-                            }
-                            dialog.dismiss();
+                            analysisTaskJson(jsonObject);
 
                         }else{
                             App.showToast(getApplicationContext(),message);
-                            dialog.dismiss();
                         }
+                        dismissShortDialog();
 
                     }
                 });
+    }
+
+    /**
+     * 解析任务相关的数据
+     * @param jsonObject
+     */
+    private void analysisTaskJson(JsonObject jsonObject) {
+        JsonObject data = jsonObject.get("data").getAsJsonObject();
+        if (data != null) {
+            JsonArray rows = data.get("rows").getAsJsonArray();
+            List<TaskInfomation> list = new ArrayList<TaskInfomation>();
+            for (JsonElement je : rows) {
+                JsonObject jo = je.getAsJsonObject();
+                String task_id = "";
+                String start_date = "";
+                String end_date = "";
+                String publish_date = "";
+                String type = "";
+                String range = "";
+                String percentage = "";
+                String is_update = "";
+                String target = "";
+                String range_name = "";
+                String type_name = "";
+                if (!jo.get("task_id").isJsonNull())
+                    task_id = jo.get("task_id").getAsString();
+                if (!jo.get("start_date").isJsonNull())
+                    start_date = jo.get("start_date").getAsString();
+                if (!jo.get("end_date").isJsonNull())
+                    end_date = jo.get("end_date").getAsString();
+                if (!jo.get("publish_date").isJsonNull())
+                    publish_date = jo.get("publish_date").getAsString();
+                if (!jo.get("type").isJsonNull())
+                    type = jo.get("type").getAsString();
+                if (!jo.get("range").isJsonNull())
+                    range = jo.get("range").getAsString();
+                if (!jo.get("percentage").isJsonNull())
+                    percentage = jo.get("percentage").getAsString();
+                if (!jo.get("is_update").isJsonNull())
+                    is_update = jo.get("is_update").getAsString();
+                if (!jo.get("target").isJsonNull())
+                    target = jo.get("target").getAsString();
+                if (!jo.get("range_name").isJsonNull())
+                    range_name = jo.get("range_name").getAsString();
+                if (!jo.get("type_name").isJsonNull())
+                    type_name = jo.get("type_name").getAsString();
+                list.add(new TaskInfomation(task_id, start_date, end_date, publish_date, type,
+                        range, percentage, is_update, target, range_name, type_name));
+            }
+            //回传数据
+            Message msg = Message.obtain();
+            msg.what = 0;
+            msg.obj = list;
+            handler.sendMessage(msg);
+        }
     }
 
     @Override
@@ -309,5 +328,17 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    public void loadingMore(View view){
+        if (NetWorkUtils.isNetworkConnected(this)){
+            in_loading_error.setVisibility(View.GONE);
+            tv_new_build.setOnClickListener(this);
+            showShortDialog();
+            getTaskListFromService();
+        }else{
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+        }
     }
 }

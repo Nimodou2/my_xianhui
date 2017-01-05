@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,6 +26,7 @@ import com.maibo.lvyongsheng.xianhui.fragment.YeJiZhuChengFragment1;
 import com.maibo.lvyongsheng.xianhui.fragment.YeJiZhuChengFragment2;
 import com.maibo.lvyongsheng.xianhui.fragment.YeJiZhuChengFragment3;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -40,8 +40,8 @@ import okhttp3.Call;
 /**
  * Created by LYS on 2016/9/2.
  */
-public class ItemDetailActivity extends BaseFragmentActivity implements View.OnClickListener{
-    ProgressDialog dialog;
+public class ItemDetailActivity extends BaseFragmentActivity implements View.OnClickListener {
+//    ProgressDialog dialog;
     ViewPager viewPager;
     MyFragmentPageAdapter fragmentPageAdapter;
     List<Fragment> data;
@@ -49,7 +49,7 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
     int[] monthAvg;
     int[] monthTal;
     //饼状图的数据
-    TextView tv_number,lv_avg,lv_total,tv_time,tv_item_name,tv_setting,back;
+    TextView tv_number, lv_avg, lv_total, tv_time, tv_item_name, tv_setting, back;
     Gallery gallery;
     //同一种类型一周的数据
     int[] weekDays;
@@ -70,9 +70,15 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
     String org_id;
     String org_name;
 
-    public int test=0;
+    public int test = 0;
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+    @Bind(R.id.ll_all_data)
+    LinearLayout ll_all_data;
 
     public int getTest() {
         return test;
@@ -82,53 +88,66 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
         this.test = test;
     }
 
-    Handler handler = new Handler(){
-        public void handleMessage(android.os.Message msg){
-            switch(msg.what){
+    Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
                 case 0:
-                    list1=(List<TabMax>) msg.obj;
-                   values=new float[5];
-                    for (int i=0;i<5;i++){
-                        values[i]=list1.get(i).getValue();
+                    in_loading_error.setVisibility(View.GONE);
+                    ll_all_data.setVisibility(View.VISIBLE);
+
+                    list1 = (List<TabMax>) msg.obj;
+                    values = new float[5];
+                    for (int i = 0; i < 5; i++) {
+                        values[i] = list1.get(i).getValue();
                     }
                     //Gallery适配器
-                    imageAdapter=new ImageAdapter(ItemDetailActivity.this,weekDays,position,values);
+                    imageAdapter = new ImageAdapter(ItemDetailActivity.this, weekDays, position, values);
                     // gallery添加ImageAdapter图片资源
                     gallery.setAdapter(imageAdapter);
                     gallery.setOnItemClickListener(listener); // gallery设置点击图片资源的事件
                     gallery.setOnItemSelectedListener(selectedListener);//gallery设置选中图片资源的事件
                     gallery.setSelection(6);
-                    dialog.dismiss();
+                    break;
+                case 1:
+                    //网络异常
+                    in_loading_error.setVisibility(View.VISIBLE);
+                    ll_all_data.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    list1 = (List<TabMax>) msg.obj;
+                    Intent intent = new Intent(ItemDetailActivity.this, MaxSettingActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("maxList", (Serializable) list1);
+                    bundle.putString("org_name", org_name);
+                    bundle.putString("org_id", org_id);
+                    intent.putExtras(bundle);
+                    startActivityForResult(intent, 15);
                     break;
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.xian_jin);
         adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        dialog=new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
+        showLongDialog();
 
-        sp=getSharedPreferences("baseDate",MODE_PRIVATE);
-        token=sp.getString("token",null);
+        sp = getSharedPreferences("baseDate", MODE_PRIVATE);
+        token = sp.getString("token", null);
         apiURL = sp.getString("apiURL", null);
 
-        viewPager=(ViewPager) findViewById(R.id.vp_xianjing);
-        dot_layout=(LinearLayout) findViewById(R.id.dot_layout);
-        tv_number=(TextView)findViewById(R.id.tv_number);
-        lv_avg=(TextView) findViewById(R.id.lv_avg);
-        lv_total=(TextView) findViewById(R.id.lv_total);
-        tv_time =(TextView) findViewById(R.id.tv_time);
-        tv_item_name=(TextView) findViewById(R.id.tv_item_name);
-        tv_setting=(TextView) findViewById(R.id.tv_setting);
-        back= (TextView) findViewById(R.id.back);
+        viewPager = (ViewPager) findViewById(R.id.vp_xianjing);
+        dot_layout = (LinearLayout) findViewById(R.id.dot_layout);
+        tv_number = (TextView) findViewById(R.id.tv_number);
+        lv_avg = (TextView) findViewById(R.id.lv_avg);
+        lv_total = (TextView) findViewById(R.id.lv_total);
+        tv_time = (TextView) findViewById(R.id.tv_time);
+        tv_item_name = (TextView) findViewById(R.id.tv_item_name);
+        tv_setting = (TextView) findViewById(R.id.tv_setting);
+        back = (TextView) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,78 +156,78 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
         });
 
         gallery = (Gallery) findViewById(R.id.gallery);
-        gallery.setSpacing(screenWidth/12);
+        gallery.setSpacing(screenWidth / 12);
         tv_setting.setOnClickListener(this);
         //默认为最后一个(作用：为了在选择Gallery时，饼状图也跟随变化)
         setTest(6);
 
         //接收数据
-        Intent intent=getIntent();
-        Bundle bundle=intent.getExtras();
-        monthAvg=intent.getIntArrayExtra("monthAvg");
-        monthTal=intent.getIntArrayExtra("monthTal");
-        org_name=intent.getStringExtra("org_name");
-        org_id=intent.getStringExtra("org_id");
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        monthAvg = intent.getIntArrayExtra("monthAvg");
+        monthTal = intent.getIntArrayExtra("monthTal");
+        org_name = intent.getStringExtra("org_name");
+        org_id = intent.getStringExtra("org_id");
 
         //柱状图数据
-        zhuList1=(List<List<Radar>>) bundle.get("zhuzhuangtu");
+        zhuList1 = (List<List<Radar>>) bundle.get("zhuzhuangtu");
         //饼状图数据
-        pie_data=(List<List<List<List<Card>>>>) bundle.get("pie");
-        position = intent.getIntExtra("position",-1);
+        pie_data = (List<List<List<List<Card>>>>) bundle.get("pie");
+        position = intent.getIntExtra("position", -1);
 
         //准备柱状图数据
-        String[] dateTime=new String[7];
-        weekDays=new int[7];
-        for (int i=0;i<7;i++){
-            if (position==0){
-                name=zhuList1.get(0).get(0).getName();
-                dateTime[i]=zhuList1.get(i).get(0).getDate();
-                weekDays[i]=zhuList1.get(i).get(0).getAmount();
+        String[] dateTime = new String[7];
+        weekDays = new int[7];
+        for (int i = 0; i < 7; i++) {
+            if (position == 0) {
+                name = zhuList1.get(0).get(0).getName();
+                dateTime[i] = zhuList1.get(i).get(0).getDate();
+                weekDays[i] = zhuList1.get(i).get(0).getAmount();
                 setData(0);
-            }else if(position==1){
-                name=zhuList1.get(0).get(1).getName();
-                dateTime[i]=zhuList1.get(i).get(1).getDate();
-                weekDays[i]=zhuList1.get(i).get(1).getAmount();
+            } else if (position == 1) {
+                name = zhuList1.get(0).get(1).getName();
+                dateTime[i] = zhuList1.get(i).get(1).getDate();
+                weekDays[i] = zhuList1.get(i).get(1).getAmount();
                 setData(1);
-            }else if(position==2){
-                name=zhuList1.get(0).get(2).getName();
-                dateTime[i]=zhuList1.get(i).get(2).getDate();
-                weekDays[i]=zhuList1.get(i).get(2).getAmount();
+            } else if (position == 2) {
+                name = zhuList1.get(0).get(2).getName();
+                dateTime[i] = zhuList1.get(i).get(2).getDate();
+                weekDays[i] = zhuList1.get(i).get(2).getAmount();
                 setData(2);
-            }else if(position==3){
-                name=zhuList1.get(0).get(3).getName();
-                dateTime[i]=zhuList1.get(i).get(3).getDate();
-                weekDays[i]=zhuList1.get(i).get(3).getAmount();
+            } else if (position == 3) {
+                name = zhuList1.get(0).get(3).getName();
+                dateTime[i] = zhuList1.get(i).get(3).getDate();
+                weekDays[i] = zhuList1.get(i).get(3).getAmount();
                 setData(3);
-            }else if(position==4){
-                name=zhuList1.get(0).get(4).getName();
-                dateTime[i]=zhuList1.get(i).get(4).getDate();
-                weekDays[i]=zhuList1.get(i).get(4).getAmount();
+            } else if (position == 4) {
+                name = zhuList1.get(0).get(4).getName();
+                dateTime[i] = zhuList1.get(i).get(4).getDate();
+                weekDays[i] = zhuList1.get(i).get(4).getAmount();
                 setData(4);
             }
         }
         tv_item_name.setText(name);
         //对获取到的日期进行截取只保留月和天
         cutDateTime = new String[7];
-       for (int i=0;i<7;i++){
-            cutDateTime[i]=dateTime[i].substring(5);
+        for (int i = 0; i < 7; i++) {
+            cutDateTime[i] = dateTime[i].substring(5);
         }
 
         //第一次进入默认选择填充第七个
-        int number=weekDays[6];
-        tv_number.setText(number+"");
+        int number = weekDays[6];
+        tv_number.setText(number + "");
 
 
        /* gallery.setOnItemClickListener(listener); // gallery设置点击图片资源的事件
         gallery.setOnItemSelectedListener(selectedListener);//gallery设置选中图片资源的事件
         gallery.setSelection(6);*/
 
-        data=new ArrayList<>();
+        data = new ArrayList<>();
 
-        if(name.equals("工时")){
+        if (name.equals("工时")) {
             data.add(new YeJiZhuChengFragment1());
             data.add(new YeJiZhuChengFragment2());
-        }else{
+        } else {
             data.add(new YeJiZhuChengFragment1());
             data.add(new YeJiZhuChengFragment2());
             data.add(new YeJiZhuChengFragment3());
@@ -217,33 +236,29 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
         initDots();
         updateIntroAndDot();
         initListener();
-        fragmentPageAdapter=new MyFragmentPageAdapter(getSupportFragmentManager());
+        fragmentPageAdapter = new MyFragmentPageAdapter(getSupportFragmentManager());
         viewPager.setAdapter(fragmentPageAdapter);
         //获取日报表峰值
-        getServiceMaxData();
+        getServiceMaxData(0);
 
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        getServiceMaxData();
-//    }
 
-    public void setData(int i){
+    public void setData(int i) {
         //填充当前平均和当前总量
-        lv_avg.setText("当前平均:"+monthAvg[i]);
-        lv_total.setText("当前总量:"+monthTal[i]);
+        lv_avg.setText("当前平均:" + monthAvg[i]);
+        lv_total.setText("当前总量:" + monthTal[i]);
     }
+
     /**
      * 初始化dot
      */
-    private void initDots(){
+    private void initDots() {
         for (int i = 0; i < data.size(); i++) {
             View view = new View(this);
             LayoutParams params = new LayoutParams(30, 30);
-            params.topMargin=5;
-            if(i!=0){
+            params.topMargin = 5;
+            if (i != 0) {
                 params.leftMargin = 20;
             }
             view.setLayoutParams(params);
@@ -251,6 +266,7 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
             dot_layout.addView(view);
         }
     }
+
     //ViewPager监听器
     private void initListener() {
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -258,100 +274,126 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
             public void onPageSelected(int position) {
                 updateIntroAndDot();
             }
+
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
 
             }
         });
     }
+
     /**
      * 更新文本
      */
-    private void updateIntroAndDot(){
-        int currentPage = viewPager.getCurrentItem()%data.size();
+    private void updateIntroAndDot() {
+        int currentPage = viewPager.getCurrentItem() % data.size();
         for (int i = 0; i < dot_layout.getChildCount(); i++) {
-            dot_layout.getChildAt(i).setEnabled(i==currentPage);
+            dot_layout.getChildAt(i).setEnabled(i == currentPage);
         }
     }
 
     //点击进入设置最大值
     @Override
     public void onClick(View view) {
-        Intent intent = new Intent(ItemDetailActivity.this, MaxSettingActivity.class);
-        Bundle bundle= new Bundle();
-        bundle.putSerializable("maxList",(Serializable) list1);
-        bundle.putString("org_name",org_name);
-        bundle.putString("org_id",org_id);
-        intent.putExtras(bundle);
-//        startActivity(intent);
-        startActivityForResult(intent,15);
+        //判断网络连接状态
+        boolean isNetWork = NetWorkUtils.isNetworkConnected(this);
+        if (isNetWork) {
+            if (list1==null){
+                showToast("网络异常");
+            }else{
+                Intent intent = new Intent(ItemDetailActivity.this, MaxSettingActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("maxList", (Serializable) list1);
+                bundle.putString("org_name", org_name);
+                bundle.putString("org_id", org_id);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, 15);
+            }
+
+        } else {
+            showToast("网络连接异常");
+        }
+
+
     }
+
     //获取日报表峰值设置
-    public void getServiceMaxData(){
+    public void getServiceMaxData(final int tag) {
         OkHttpUtils
                 .post()
-                .url(apiURL+"/rest/employee/getdailyreportsetting")
-                .addParams("token",token)
+                .url(apiURL + "/rest/employee/getdailyreportsetting")
+                .addParams("token", token)
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        Message msg = Message.obtain();
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                        dismissLongDialog();
+                        dismissShortDialog();
 
                     }
+
                     @Override
                     public void onResponse(String response, int id) {
-                        JsonObject  jsonObject=new JsonParser().parse(response).getAsJsonObject();
-                        JsonObject data=jsonObject.get("data").getAsJsonObject();
-                        List<TabMax> list=new ArrayList<>();
+                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                        JsonObject data = jsonObject.get("data").getAsJsonObject();
+                        List<TabMax> list = new ArrayList<>();
 
-                        JsonObject cash_amount=data.get("cash_amount").getAsJsonObject();
-                        list.add( getAllData(cash_amount));
+                        JsonObject cash_amount = data.get("cash_amount").getAsJsonObject();
+                        list.add(getAllData(cash_amount));
 
-                        JsonObject project_amount=data.get("project_amount").getAsJsonObject();
-                        list.add( getAllData(project_amount));
+                        JsonObject project_amount = data.get("project_amount").getAsJsonObject();
+                        list.add(getAllData(project_amount));
 
-                        JsonObject product_amount=data.get("product_amount").getAsJsonObject();
-                        list.add( getAllData(product_amount));
+                        JsonObject product_amount = data.get("product_amount").getAsJsonObject();
+                        list.add(getAllData(product_amount));
 
-                        JsonObject room_turnover=data.get("room_turnover").getAsJsonObject();
-                        list.add( getAllData(room_turnover));
+                        JsonObject room_turnover = data.get("room_turnover").getAsJsonObject();
+                        list.add(getAllData(room_turnover));
 
-                        JsonObject employee_hours=data.get("employee_hours").getAsJsonObject();
-                        list.add( getAllData(employee_hours));
-
-                        Message msg=Message.obtain();
-                        msg.what=0;
-                        msg.obj=list;
-                        handler.sendMessage(msg);
+                        JsonObject employee_hours = data.get("employee_hours").getAsJsonObject();
+                        list.add(getAllData(employee_hours));
+                        if (tag==0){
+                            Message msg = Message.obtain();
+                            msg.what = 0;
+                            msg.obj = list;
+                            handler.sendMessage(msg);
+                        }
+                        dismissLongDialog();
+                        dismissShortDialog();
 
                     }
                 });
     }
-    public TabMax getAllData(JsonObject what){
-        String name=what.get("name").getAsString();
-        int min=what.get("min").getAsInt();
-        int max=what.get("max").getAsInt();
-        float step=what.get("step").getAsFloat();
-        String unit=what.get("unit").getAsString();
-        JsonObject def=what.get("default").getAsJsonObject();
-        float[] defaults=new float[3];
-        defaults[0]=def.get("A").getAsFloat();
-        defaults[1]=def.get("B").getAsFloat();
-        defaults[2]=def.get("C").getAsFloat();
-        float value=what.get("value").getAsFloat();
 
-        return new TabMax(name,min,max,step,unit,defaults,value);
+    public TabMax getAllData(JsonObject what) {
+        String name = what.get("name").getAsString();
+        int min = what.get("min").getAsInt();
+        int max = what.get("max").getAsInt();
+        float step = what.get("step").getAsFloat();
+        String unit = what.get("unit").getAsString();
+        JsonObject def = what.get("default").getAsJsonObject();
+        float[] defaults = new float[3];
+        defaults[0] = def.get("A").getAsFloat();
+        defaults[1] = def.get("B").getAsFloat();
+        defaults[2] = def.get("C").getAsFloat();
+        float value = what.get("value").getAsFloat();
+
+        return new TabMax(name, min, max, step, unit, defaults, value);
     }
 
 
     //ViewPager适配器
     class MyFragmentPageAdapter extends FragmentStatePagerAdapter {
 
-        public MyFragmentPageAdapter(FragmentManager fm){
+        public MyFragmentPageAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -370,37 +412,37 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            int number=weekDays[position];
-            tv_number.setText(number+"");
+            int number = weekDays[position];
+            tv_number.setText(number + "");
             tv_time.setText(cutDateTime[position]);
             setTest(position);
             data.clear();
-            if(name.equals("工时")){
+            if (name.equals("工时")) {
                 data.add(new YeJiZhuChengFragment1());
                 data.add(new YeJiZhuChengFragment2());
-            }else{
-            data.add(new YeJiZhuChengFragment1());
-            data.add(new YeJiZhuChengFragment2());
-            data.add(new YeJiZhuChengFragment3());
+            } else {
+                data.add(new YeJiZhuChengFragment1());
+                data.add(new YeJiZhuChengFragment2());
+                data.add(new YeJiZhuChengFragment3());
             }
             viewPager.setAdapter(fragmentPageAdapter);
         }
     };
-    AdapterView.OnItemSelectedListener selectedListener=new AdapterView.OnItemSelectedListener() {
+    AdapterView.OnItemSelectedListener selectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            int number=weekDays[i];
-            tv_number.setText(number+"");
+            int number = weekDays[i];
+            tv_number.setText(number + "");
             tv_time.setText(cutDateTime[i]);
             setTest(i);
             data.clear();
-            if(name.equals("工时")){
+            if (name.equals("工时")) {
                 data.add(new YeJiZhuChengFragment1());
                 data.add(new YeJiZhuChengFragment2());
-            }else{
-            data.add(new YeJiZhuChengFragment1());
-            data.add(new YeJiZhuChengFragment2());
-            data.add(new YeJiZhuChengFragment3());
+            } else {
+                data.add(new YeJiZhuChengFragment1());
+                data.add(new YeJiZhuChengFragment2());
+                data.add(new YeJiZhuChengFragment3());
             }
             viewPager.setAdapter(fragmentPageAdapter);
         }
@@ -413,13 +455,23 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode==16){
-            getServiceMaxData();
+        if (resultCode == 16) {
+            getServiceMaxData(0);
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        showShortDialog();
+        getServiceMaxData(0);
     }
 }

@@ -1,30 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:paddingTop="5dp"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="5dp">
 
-    <LinearLayout
-        android:id="@+id/ll_head"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:background="@color/weixin_lianxiren_gray"
-        android:layout_height="40dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <LinearLayout
+            android:id="@+id/ll_all_data"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="计划产品"
-            android:textSize="16dp"
-            android:gravity="center"/>
+            android:orientation="vertical">
 
-    </LinearLayout>
-    <ExpandableListView
-        android:id="@+id/lv_add_product"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:groupIndicator="@null">
 
-    </ExpandableListView>
+            <LinearLayout
+                android:id="@+id/ll_head"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/weixin_lianxiren_gray">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="计划产品"
+                    android:textSize="16dp" />
+
+            </LinearLayout>
+
+            <ExpandableListView
+                android:id="@+id/lv_add_product"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:groupIndicator="@null">
+
+            </ExpandableListView>
+        </LinearLayout>
+
+        <include
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
+
+    </FrameLayout>
 </LinearLayout>

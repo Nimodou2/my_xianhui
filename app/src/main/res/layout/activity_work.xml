@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
@@ -8,86 +8,110 @@
         android:id="@+id/fl_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
-        android:id="@+id/ll_head"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/bar_color">
 
-        <TextView
-            android:id="@+id/back"
-            style="@style/bar_left"
-            android:text="返回"/>
-
-        <TextView
-            android:id="@+id/tv_head_work"
-            style="@style/bar_center"
-            android:text="工作"
-            />
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/iv_search"
-                android:layout_width="0dp"
-                android:layout_weight="1.5"
-                android:paddingLeft="30dp"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:src="@mipmap/search"/>
-            <ImageView
-                android:id="@+id/iv_choose"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:padding="11dp"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:src="@mipmap/choose"/>
-        </LinearLayout>
+            android:id="@+id/ll_head"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/bar_color">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/back"
+                style="@style/bar_left"
+                android:text="返回" />
+
+            <TextView
+                android:id="@+id/tv_head_work"
+                style="@style/bar_center"
+                android:text="工作" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:paddingBottom="9dp"
+                    android:paddingLeft="30dp"
+                    android:paddingTop="9dp"
+                    android:src="@mipmap/search" />
+
+                <ImageView
+                    android:id="@+id/iv_choose"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="11dp"
+                    android:src="@mipmap/choose" />
+            </LinearLayout>
+
+        </LinearLayout>
     </FrameLayout>
 
     <LinearLayout
         android:id="@+id/tab"
-        android:layout_below="@+id/fl_frame"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        android:layout_below="@+id/fl_frame">
+
         <TextView
-            style="@style/WorkActivityHeadStyle"
             android:id="@+id/btn_customer"
-            android:text="客户"/>
+            style="@style/WorkActivityHeadStyle"
+            android:text="客户" />
 
         <TextView
-            style="@style/WorkActivityHeadStyle"
             android:id="@+id/btn_partner"
-            android:text="同事"/>
-        <TextView
             style="@style/WorkActivityHeadStyle"
-            android:id="@+id/btn_project"
-            android:text="项目"/>
-        <TextView
-            style="@style/WorkActivityHeadStyle"
-            android:id="@+id/btn_product"
-            android:text="产品"/>
-    </LinearLayout>
-    <ImageView
-        android:layout_below="@+id/tab"
-        android:id="@+id/iv_over"
-        android:background="@color/colorDarkYello"
-        android:layout_width="100dp"
-        android:layout_height="2dp">
-    </ImageView>
-    <android.support.v4.view.ViewPager
-        android:layout_below="@+id/iv_over"
-        android:id="@+id/vp_mywork"
-        android:layout_marginTop="-1dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            android:text="同事" />
 
-    </android.support.v4.view.ViewPager>
+        <TextView
+            android:id="@+id/btn_project"
+            style="@style/WorkActivityHeadStyle"
+            android:text="项目" />
+
+        <TextView
+            android:id="@+id/btn_product"
+            style="@style/WorkActivityHeadStyle"
+            android:text="产品" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_over"
+        android:layout_width="100dp"
+        android:layout_height="2dp"
+        android:layout_below="@+id/tab"
+        android:background="@color/colorDarkYello"></ImageView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/iv_over">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_mywork"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/iv_over"
+            android:layout_marginTop="-1dp">
+
+        </android.support.v4.view.ViewPager>
+
+        <include
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
+
+    </FrameLayout>
 </RelativeLayout>

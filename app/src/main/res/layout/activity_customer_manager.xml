@@ -24,50 +24,74 @@
         <TextView style="@style/bar_right" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_spacing1"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/weixin_lianxiren_gray" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/ll_change_date"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="#fff"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/ll_all_data"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="6"
-            android:gravity="center|left"
-            android:paddingLeft="10dp"
-            android:text="变更日期"
-            android:textSize="16dp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_update_time"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:paddingRight="10dp"
-            android:text="2018/08/09"
-            android:textSize="16dp" />
-    </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_spacing2"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/weixin_lianxiren_gray" />
+            <TextView
+                android:id="@+id/tv_spacing1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/weixin_lianxiren_gray" />
 
-    <ListView
-        android:id="@+id/lv_guwen"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#fff">
+            <LinearLayout
+                android:id="@+id/ll_change_date"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="#fff"
+                android:gravity="center">
 
-    </ListView>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="变更日期"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_update_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_spacing2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <ListView
+                android:id="@+id/lv_guwen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff">
+
+            </ListView>
+        </LinearLayout>
+
+        <include
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
+
+    </FrameLayout>
 </LinearLayout>

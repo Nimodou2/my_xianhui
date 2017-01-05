@@ -43,19 +43,35 @@ public class ReservationInformationActivity extends BaseActivity {
     TextView back;
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
 
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            list1 = (List<YuyueTab>) msg.obj;
-            //处理数据:lastDatas为处理后的数据
-            List<LastData> lastDatas = dealDatas();
-            //传递给适配器
-            LinearLayoutManager llm = new LinearLayoutManager(ReservationInformationActivity.this);
-            rv_yuyue.setLayoutManager(llm);
-            rv_yuyue.addItemDecoration(new AllDividerDecoration(ReservationInformationActivity.this));
-            rv_yuyue.setAdapter(new MyRecyclerViewAdapter(lastDatas));
+            switch (msg.what){
+                case 0:
+                    showToast(R.string.net_connect_error);
+                    in_loading_error.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    list1 = (List<YuyueTab>) msg.obj;
+                    //处理数据:lastDatas为处理后的数据
+                    List<LastData> lastDatas = dealDatas();
+                    //传递给适配器
+                    if (lastDatas.size()==0){
+                        in_no_datas.setVisibility(View.VISIBLE);
+                        return;
+                    }
+                    LinearLayoutManager llm = new LinearLayoutManager(ReservationInformationActivity.this);
+                    rv_yuyue.setLayoutManager(llm);
+                    rv_yuyue.addItemDecoration(new AllDividerDecoration(ReservationInformationActivity.this));
+                    rv_yuyue.setAdapter(new MyRecyclerViewAdapter(lastDatas));
+                    break;
+            }
 
         }
     };
@@ -79,13 +95,19 @@ public class ReservationInformationActivity extends BaseActivity {
         apiURL = sp.getString("apiURL", null);
         Intent intent = getIntent();
         customer_id = intent.getIntExtra("customer_id", -1);
-        getYuyueMsg();
+        showShortDialog();
+        if (customer_id!=-1)
+            getYuyueMsg(customer_id);
+        else {
+            showToast(R.string.data_error);
+            dismissShortDialog();
+        }
     }
 
     /**
      * 获取顾客预约信息
      */
-    public void getYuyueMsg() {
+    public void getYuyueMsg(int customer_id) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getcustomerschedulelist")
@@ -95,52 +117,72 @@ public class ReservationInformationActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Message msg = Message.obtain();
+                        msg.what=0;
+                        handler.sendMessage(msg);
+                        dismissShortDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         List<YuyueTab> list = new ArrayList<YuyueTab>();
-                        if (!jsonObject.get("data").isJsonNull()) {
-                            JsonArray data = jsonObject.get("data").getAsJsonArray();
-                            for (JsonElement je : data) {
-                                JsonObject jo = je.getAsJsonObject();
-                                String schedule_id = "";
-                                String adate = "";
-                                String start_time = "";
-                                String end_time = "";
-                                String item_id = "";
-                                String fullname = "";
-                                String engineer_id = "";
-                                String engineer_name = "";
-                                String status = "";
-                                if (!jo.get("schedule_id").isJsonNull())
-                                    schedule_id = jo.get("schedule_id").getAsString();
-                                if (!jo.get("adate").isJsonNull())
-                                    adate = jo.get("adate").getAsString();
-                                if (!jo.get("start_time").isJsonNull())
-                                    start_time = jo.get("start_time").getAsString();
-                                if (!jo.get("end_time").isJsonNull())
-                                    end_time = jo.get("end_time").getAsString();
-                                if (!jo.get("item_id").isJsonNull())
-                                    item_id = jo.get("item_id").getAsString();
-                                if (!jo.get("fullname").isJsonNull())
-                                    fullname = jo.get("fullname").getAsString();
-                                if (!jo.get("engineer_id").isJsonNull())
-                                    engineer_id = jo.get("engineer_id").getAsString();
-                                if (!jo.get("engineer_name").isJsonNull())
-                                    engineer_name = jo.get("engineer_name").getAsString();
-                                if (!jo.get("status").isJsonNull())
-                                    status = jo.get("status").getAsString();
-                                list.add(new YuyueTab(schedule_id, adate, start_time, end_time, item_id, fullname, engineer_id, engineer_name, status));
-                            }
+                        String statuss=jsonObject.get("status").getAsString();
+                        String message=jsonObject.get("message").getAsString();
+                        if (statuss.equals("ok")){
+                            analysisJson(jsonObject, list);
+                        }else{
+                            showToast(message);
                         }
                         Message msg = Message.obtain();
+                        msg.what=1;
                         msg.obj = list;
                         handler.sendMessage(msg);
+                        dismissShortDialog();
                     }
                 });
+    }
+
+    /**
+     * 解析Json
+     * @param jsonObject
+     * @param list
+     */
+    private void analysisJson(JsonObject jsonObject, List<YuyueTab> list) {
+        if (!jsonObject.get("data").isJsonNull()) {
+            JsonArray data = jsonObject.get("data").getAsJsonArray();
+            for (JsonElement je : data) {
+                JsonObject jo = je.getAsJsonObject();
+                String schedule_id = "";
+                String adate = "";
+                String start_time = "";
+                String end_time = "";
+                String item_id = "";
+                String fullname = "";
+                String engineer_id = "";
+                String engineer_name = "";
+                String status = "";
+                if (!jo.get("schedule_id").isJsonNull())
+                    schedule_id = jo.get("schedule_id").getAsString();
+                if (!jo.get("adate").isJsonNull())
+                    adate = jo.get("adate").getAsString();
+                if (!jo.get("start_time").isJsonNull())
+                    start_time = jo.get("start_time").getAsString();
+                if (!jo.get("end_time").isJsonNull())
+                    end_time = jo.get("end_time").getAsString();
+                if (!jo.get("item_id").isJsonNull())
+                    item_id = jo.get("item_id").getAsString();
+                if (!jo.get("fullname").isJsonNull())
+                    fullname = jo.get("fullname").getAsString();
+                if (!jo.get("engineer_id").isJsonNull())
+                    engineer_id = jo.get("engineer_id").getAsString();
+                if (!jo.get("engineer_name").isJsonNull())
+                    engineer_name = jo.get("engineer_name").getAsString();
+                if (!jo.get("status").isJsonNull())
+                    status = jo.get("status").getAsString();
+                list.add(new YuyueTab(schedule_id, adate, start_time, end_time, item_id, fullname, engineer_id, engineer_name, status));
+            }
+        }
     }
 
     //处理数据
@@ -152,11 +194,6 @@ public class ReservationInformationActivity extends BaseActivity {
         List<LastData> lastList = new ArrayList<>();
         List<String> dataTime = new ArrayList<>();
         List<String> queChong = new ArrayList<>();
-       /* //倒序数据
-        List<YuyueTab> fanDatas=new ArrayList<>();
-        for (int i=0;i<list1.size();i++){
-            fanDatas.add(list1.get(list1.size()-1-i));
-        }*/
         //将时间单独拿出来为比较做准备
         for (int i = 0; i < list1.size(); i++) {
             dataTime.add(list1.get(i).getAdate());
@@ -296,5 +333,20 @@ public class ReservationInformationActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        showShortDialog();
+        in_loading_error.setVisibility(View.GONE);
+        if (customer_id!=-1)
+            getYuyueMsg(customer_id);
+        else {
+            showToast(R.string.data_error);
+            dismissShortDialog();
+        }
+
     }
 }

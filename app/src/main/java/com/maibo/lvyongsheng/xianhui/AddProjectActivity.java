@@ -1,13 +1,14 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -48,58 +49,28 @@ public class AddProjectActivity extends BaseActivity {
     int cusId;
     List<CustemProjects> list1;
     private ProjectAddListViewExpandAdapter adapter;
-    ProgressDialog dialog;
     @Bind(R.id.tv_head)
     TextView tv_head;
+
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+    @Bind(R.id.ll_all_data)
+    LinearLayout ll_all_data;
 
     Handler handler = new Handler() {
 
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
+                case 0:
+                    ll_all_data.setVisibility(View.GONE);
+                    in_loading_error.setVisibility(View.VISIBLE);
+                    break;
                 case 1:
-                    list1 = (List<CustemProjects>) msg.obj;
-                    List<Project> dataPr = list1.get(0).getList();
-                    //处理项目数据 排列顺序：1、带卡项且选中的 2、已计划的 3、带卡项的 4、其它
-                    pro1=new ArrayList<>();
-                    List<Project> pro2=new ArrayList<>();
-                    List<Project> pro3=new ArrayList<>();
-                    List<Project> pro4=new ArrayList<>();
-                    int[] sel1=list1.get(0).getSelected();
-                    for (int i=0;i<dataPr.size();i++){
-                    //是否有卡项
-                    int ka=dataPr.get(i).getCard_list().size();
-                    int lanjie=0;
-                    //是否被选中
-                    for (int j=0;j<sel1.length;j++){
-                        //被选中
-                        if(sel1[j]==dataPr.get(i).getItem_id()){
-                           //带卡项
-                            if (ka>0){
-                                pro1.add(dataPr.get(i));
-                            }else{
-                                //只是被选中
-                                pro2.add(dataPr.get(i));
-                            }
-                            lanjie=2;
-                        }
-                    }
-                        if(ka>0&&lanjie!=2){
-                            if(ka>0){
-                                //只是带卡项的
-                                pro3.add(dataPr.get(i));
-                            }
-                        }else if (lanjie!=2){
-                            pro4.add(dataPr.get(i));
-                        }
-                }
-                    //排序后的数据
-                    pro1.addAll(pro2);
-                    pro1.addAll(pro3);
-                    pro1.addAll(pro4);
-                    //获取已选中的计划项目
-                    sel = list1.get(0).getSelected();
-                    initView();
-                    dialog.dismiss();
+                    ll_all_data.setVisibility(View.VISIBLE);
+                    in_loading_error.setVisibility(View.GONE);
+                    setProjectsAdapter(msg);
                     break;
                 case 2:
                     sel_product= (int[]) msg.obj;
@@ -108,6 +79,60 @@ public class AddProjectActivity extends BaseActivity {
         }
     };
 
+    /**
+     * 设置项目适配器
+     * @param msg
+     */
+    private void setProjectsAdapter(Message msg) {
+        list1 = (List<CustemProjects>) msg.obj;
+        if (list1.size()==0){
+            ll_all_data.setVisibility(View.GONE);
+            in_no_datas.setVisibility(View.VISIBLE);
+            return;
+        }
+        List<Project> dataPr = list1.get(0).getList();
+        //处理项目数据 排列顺序：1、带卡项且选中的 2、已计划的 3、带卡项的 4、其它
+        pro1=new ArrayList<>();
+        List<Project> pro2=new ArrayList<>();
+        List<Project> pro3=new ArrayList<>();
+        List<Project> pro4=new ArrayList<>();
+        int[] sel1=list1.get(0).getSelected();
+        for (int i=0;i<dataPr.size();i++){
+        //是否有卡项
+        int ka=dataPr.get(i).getCard_list().size();
+        int lanjie=0;
+        //是否被选中
+        for (int j=0;j<sel1.length;j++){
+            //被选中
+            if(sel1[j]==dataPr.get(i).getItem_id()){
+               //带卡项
+                if (ka>0){
+                    pro1.add(dataPr.get(i));
+                }else{
+                    //只是被选中
+                    pro2.add(dataPr.get(i));
+                }
+                lanjie=2;
+            }
+        }
+            if(ka>0&&lanjie!=2){
+                if(ka>0){
+                    //只是带卡项的
+                    pro3.add(dataPr.get(i));
+                }
+            }else if (lanjie!=2){
+                pro4.add(dataPr.get(i));
+            }
+    }
+        //排序后的数据
+        pro1.addAll(pro2);
+        pro1.addAll(pro3);
+        pro1.addAll(pro4);
+        //获取已选中的计划项目
+        sel = list1.get(0).getSelected();
+        initView();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,12 +140,7 @@ public class AddProjectActivity extends BaseActivity {
         setContentView(R.layout.activity_add_project);
         setSingleViewHeightAndWidth(tv_head,viewHeight*15/255,0);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        dialog=new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
+       showShortDialog();
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
@@ -147,13 +167,26 @@ public class AddProjectActivity extends BaseActivity {
                 .build()
                 .execute(new StringCallback() {
                     @Override
-                    public void onError(Call call, Exception e, int id) {}
+                    public void onError(Call call, Exception e, int id) {
+                        Message msg=Message.obtain();
+                        msg.what=0;
+                        handler.sendMessage(msg);
+                        dismissShortDialog();
+                    }
 
                     @Override
                     public void onResponse(String response, int id) {
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         //获取顾客使用项目的数据
-                        getProjectData(object);
+                        String status=object.get("status").getAsString();
+                        String message=object.get("message").getAsString();
+                        if (status.equals("ok")){
+                            getProjectData(object);
+                        }else{
+                            showToast(message);
+                        }
+
+                        dismissShortDialog();
                     }
                 });
     }
@@ -239,7 +272,11 @@ public class AddProjectActivity extends BaseActivity {
         super.onPause();
 
         //提交项目计划
+        if (adapter==null)
+            return;
         HashMap<Integer, Integer> itemID = adapter.getItemID();
+        if (itemID==null)
+            return;
         int j = 0;
         int k = -1;
         //排除保留的空值
@@ -287,4 +324,12 @@ public class AddProjectActivity extends BaseActivity {
         CloseAllActivity.getScreenManager().popActivity(this);
     }
 
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        showShortDialog();
+        initData();
+    }
 }

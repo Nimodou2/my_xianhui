@@ -23,10 +23,25 @@
             style="@style/bar_right"
             android:text="新建"/>
     </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <ListView
         android:id="@+id/lv_progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </ListView>
+
+        <include
+            android:id="@+id/in_no_datas"
+            android:visibility="gone"
+            layout="@layout/incloud_no_datas"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            android:visibility="gone"
+            layout="@layout/incloud_loading_error"></include>
+
+    </FrameLayout>
 </LinearLayout>

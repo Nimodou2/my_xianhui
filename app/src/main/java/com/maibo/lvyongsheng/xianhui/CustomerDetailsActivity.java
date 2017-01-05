@@ -59,9 +59,15 @@ public class CustomerDetailsActivity extends BaseActivity {
     MyProgressDialog myDialog;
     ConsumRecordAdapter myAdapter;
     Cards cards;
+    int tag;
 
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -70,24 +76,13 @@ public class CustomerDetailsActivity extends BaseActivity {
                 case 0:
                     //卡包
                     list11 = (List<Cards>) msg.obj;
-                    final CustomerDetailAdapter adapters;
-                    lv_cards.setAdapter(adapters = new CustomerDetailAdapter(CustomerDetailsActivity.this, list11,viewHeight));
-
-                    lv_cards.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                            myDialog.show();
-                            Cards adapter_cards = (Cards) adapters.getItem(i);
-                            Intent intent = new Intent(CustomerDetailsActivity.this, CustomerDetailsActivity.class);
-                            intent.putExtra("tag", 13);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("Cards", adapter_cards);
-                            bundle.putString("cardAmount", adapter_cards.getAmount());
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                        }
-                    });
-                    myDialog.dismiss();
+                    Log.e("list11",list11+"");
+                    if (list11.size()>0){
+                        setCardPackageAdapter();
+                    }else{
+                        in_no_datas.setVisibility(View.VISIBLE);
+                        lv_cards.setVisibility(View.GONE);
+                    }
                     break;
                 case 1:
                     //消费记录
@@ -102,18 +97,34 @@ public class CustomerDetailsActivity extends BaseActivity {
                         list22 = listss;
                         lv_cards.setAdapter(myAdapter = new ConsumRecordAdapter(CustomerDetailsActivity.this, list22,viewHeight));
                     }
-                    myDialog.dismiss();
                     break;
                 case 2:
                     //各卡项的操作记录
                     list33 = (List<Card>) msg.obj;
                     //设置适配器SimpleAdapter
                     lv_cards.setAdapter(new CardsDetailAdapter(getApplicationContext(), list33,viewHeight));
-                    myDialog.dismiss();
                     break;
             }
         }
     };
+
+    private void setCardPackageAdapter() {
+        final CustomerDetailAdapter adapters;
+        lv_cards.setAdapter(adapters = new CustomerDetailAdapter(CustomerDetailsActivity.this, list11,viewHeight));
+        lv_cards.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Cards adapter_cards = (Cards) adapters.getItem(i);
+                Intent intent = new Intent(CustomerDetailsActivity.this, CustomerDetailsActivity.class);
+                intent.putExtra("tag", 13);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("Cards", adapter_cards);
+                bundle.putString("cardAmount", adapter_cards.getAmount());
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +151,7 @@ public class CustomerDetailsActivity extends BaseActivity {
         Intent intent = getIntent();
         customer_id = intent.getIntExtra("customer_id", -1);
         String customer_name = intent.getStringExtra("customer_name");
-        int tag = intent.getIntExtra("tag", -1);
+        tag = intent.getIntExtra("tag", -1);
         //项目
         Bundle bundle = intent.getExtras();
         //详细信息
@@ -393,20 +404,28 @@ public class CustomerDetailsActivity extends BaseActivity {
     public void getServicesData(int what, int where) {
 
         if (what == 0) {
-            getCardsData();
+            if (customer_id!=-1)
+                getCardsData(customer_id);
+            else showToast(R.string.data_error);
         } else if (what == 1) {
-            getConsumeRecordData();
+            if (customer_id!=-1)
+                getConsumeRecordData(customer_id);
+            else showToast(R.string.data_error);
         } else if (what == 2) {
-            getCardsMsg(where);
+            if (cards!=null)
+                getCardsMsg(cards.getCard_num());
+            else showToast(R.string.data_error);
         } else if (what == 3) {
-            getYuyueMsg();
+            if (customer_id!=-1)
+                getYuyueMsg(customer_id);
+            else showToast(R.string.data_error);
         }
     }
 
     /**
      * 获取顾客预约信息
      */
-    public void getYuyueMsg() {
+    public void getYuyueMsg(int customer_id) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getcustomerschedulelist")
@@ -429,19 +448,19 @@ public class CustomerDetailsActivity extends BaseActivity {
     /**
      * 获取卡明细
      *
-     * @param where
+     * @param cardNum
      */
-    public void getCardsMsg(int where) {
+    public void getCardsMsg(String cardNum) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getcustomercardlog")
                 .addParams("token", token)
-                .addParams("card_num", cards.getCard_num())
+                .addParams("card_num", cardNum)
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        netWorkError();
                     }
 
                     @Override
@@ -474,6 +493,7 @@ public class CustomerDetailsActivity extends BaseActivity {
                         msg.what = 2;
                         msg.obj = list;
                         handler.sendMessage(msg);
+                        myDialog.dismiss();
                     }
                 });
     }
@@ -481,7 +501,7 @@ public class CustomerDetailsActivity extends BaseActivity {
     /**
      * 获取卡包信息
      */
-    public void getCardsData() {
+    public void getCardsData(int customer_id) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getcustomercardlist")
@@ -491,70 +511,87 @@ public class CustomerDetailsActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        myDialog.dismiss();
+                        netWorkError();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
-                        if (jsonObject.get("data").isJsonArray()) {
-                            JsonArray data = jsonObject.get("data").getAsJsonArray();
-                            List<Cards> list1 = new ArrayList<Cards>();
-                            for (JsonElement jsonElement : data) {
-                                JsonObject jo = jsonElement.getAsJsonObject();
-                                int card_sort = -1;
-                                String card_class = "";
-                                String amount = "";
-                                String card_num = "";
-                                int item_id = 0;
-                                String fullname = "";
-                                if (!jo.get("card_sort").isJsonNull())
-                                    card_sort = jo.get("card_sort").getAsInt();
-                                if (!jo.get("card_class").isJsonNull())
-                                    card_class = jo.get("card_class").getAsString();
-                                if (!jo.get("amount").isJsonNull())
-                                    amount = jo.get("amount").getAsString();
-                                if (!jo.get("card_num").isJsonNull())
-                                    card_num = jo.get("card_num").getAsString();
-                                if (!jo.get("item_id").isJsonNull())
-                                    item_id = jo.get("item_id").getAsInt();
-                                if (!jo.get("fullname").isJsonNull())
-                                    fullname = jo.get("fullname").getAsString();
-
-                                JsonArray project_list = jo.get("project_list").getAsJsonArray();
-                                List<Card> list2 = new ArrayList<Card>();
-                                for (JsonElement jsonElement1 : project_list) {
-                                    JsonObject jsonObject1 = jsonElement1.getAsJsonObject();
-                                    int item_id1 = -1;
-                                    String fullname1 = "";
-                                    String price = "";
-                                    int times = 0;
-                                    if (!jsonObject1.get("item_id").isJsonNull())
-                                        item_id1 = jsonObject1.get("item_id").getAsInt();
-                                    if (!jsonObject1.get("fullname").isJsonNull())
-                                        fullname1 = jsonObject1.get("fullname").getAsString();
-                                    if (!jsonObject1.get("price").isJsonNull())
-                                        price = jsonObject1.get("price").getAsString();
-                                    if (!jsonObject1.get("times").isJsonNull())
-                                        times = jsonObject1.get("times").getAsInt();
-                                    list2.add(new Card(fullname1, times, card_class, card_num, price, item_id1));
-                                }
-                                list1.add(new Cards(card_sort, card_class, amount, card_num, item_id, fullname, list2));
-                            }
-                            Message msg = Message.obtain();
-                            msg.what = 0;
-                            msg.obj = list1;
-                            handler.sendMessage(msg);
+                        List<Cards> list1 = new ArrayList<Cards>();
+                        String status=jsonObject.get("status").getAsString();
+                        String message=jsonObject.get("message").getAsString();
+                        if (status.equals("ok")){
+                            analysisCardPackageJson(jsonObject, list1);
+                        }else {
+                            showToast(message);
                         }
+
                         myDialog.dismiss();
                     }
                 });
     }
 
     /**
+     * 解析卡包数据
+     * @param jsonObject
+     * @param list1
+     */
+    private void analysisCardPackageJson(JsonObject jsonObject, List<Cards> list1) {
+        if (jsonObject.get("data").isJsonArray()) {
+            JsonArray data = jsonObject.get("data").getAsJsonArray();
+            for (JsonElement jsonElement : data) {
+                JsonObject jo = jsonElement.getAsJsonObject();
+                int card_sort = -1;
+                String card_class = "";
+                String amount = "";
+                String card_num = "";
+                int item_id = 0;
+                String fullname = "";
+                if (!jo.get("card_sort").isJsonNull())
+                    card_sort = jo.get("card_sort").getAsInt();
+                if (!jo.get("card_class").isJsonNull())
+                    card_class = jo.get("card_class").getAsString();
+                if (!jo.get("amount").isJsonNull())
+                    amount = jo.get("amount").getAsString();
+                if (!jo.get("card_num").isJsonNull())
+                    card_num = jo.get("card_num").getAsString();
+                if (!jo.get("item_id").isJsonNull())
+                    item_id = jo.get("item_id").getAsInt();
+                if (!jo.get("fullname").isJsonNull())
+                    fullname = jo.get("fullname").getAsString();
+
+                JsonArray project_list = jo.get("project_list").getAsJsonArray();
+                List<Card> list2 = new ArrayList<Card>();
+                for (JsonElement jsonElement1 : project_list) {
+                    JsonObject jsonObject1 = jsonElement1.getAsJsonObject();
+                    int item_id1 = -1;
+                    String fullname1 = "";
+                    String price = "";
+                    int times = 0;
+                    if (!jsonObject1.get("item_id").isJsonNull())
+                        item_id1 = jsonObject1.get("item_id").getAsInt();
+                    if (!jsonObject1.get("fullname").isJsonNull())
+                        fullname1 = jsonObject1.get("fullname").getAsString();
+                    if (!jsonObject1.get("price").isJsonNull())
+                        price = jsonObject1.get("price").getAsString();
+                    if (!jsonObject1.get("times").isJsonNull())
+                        times = jsonObject1.get("times").getAsInt();
+                    list2.add(new Card(fullname1, times, card_class, card_num, price, item_id1));
+                }
+                list1.add(new Cards(card_sort, card_class, amount, card_num, item_id, fullname, list2));
+            }
+        }
+        Message msg = Message.obtain();
+        msg.what = 0;
+        msg.obj = list1;
+        handler.sendMessage(msg);
+    }
+
+
+    /**
      * 获取消费记录
      */
-    public void getConsumeRecordData() {
+    public void getConsumeRecordData(int customer_id) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getcustomerconsumelist")
@@ -564,7 +601,7 @@ public class CustomerDetailsActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        netWorkError();
                     }
 
                     @Override
@@ -611,10 +648,20 @@ public class CustomerDetailsActivity extends BaseActivity {
                         } else {
                             App.showToast(getApplication(), message);
                         }
+                        myDialog.dismiss();
                     }
                 });
     }
 
+    /**
+     * 处理网络连接错误问题
+     */
+    private void netWorkError() {
+        myDialog.dismiss();
+        lv_cards.setVisibility(View.GONE);
+        in_loading_error.setVisibility(View.VISIBLE);
+        showToast(R.string.net_connect_error);
+    }
     //排序
     class MyComparator implements Comparator {
         //这里的o1和o2就是list里任意的两个对象，然后按需求把这个方法填完整就行了
@@ -639,5 +686,24 @@ public class CustomerDetailsActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        myDialog.show();
+        in_loading_error.setVisibility(View.GONE);
+        lv_cards.setVisibility(View.VISIBLE);
+        if (tag==0){
+            getServicesData(0,-1);
+        }else if (tag==1){
+            getServicesData(1,-1);
+        }else if(tag==12){
+            getServicesData(3,-1);
+        }else if (tag==13){
+            getServicesData(2,-1);
+        }
     }
 }

@@ -54,49 +54,74 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
     TextView tv_spacing2;
     @Bind(R.id.ll_change_date)
     LinearLayout ll_change_date;
+    @Bind(R.id.ll_all_data)
+    LinearLayout ll_all_data;
+
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
 
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            list1 = (List<Custemer>) msg.obj;
-            //初始化buffer
-            buffer = new int[list1.size()];
-            for (int i = 0; i < list1.size(); i++) {
-                if (list1.get(i).getSelected())
-                    buffer[i] = 1;
-                else buffer[i] = 0;
+
+            switch (msg.what){
+                case 0:
+                    ll_all_data.setVisibility(View.GONE);
+                    in_loading_error.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    ll_all_data.setVisibility(View.VISIBLE);
+                    in_loading_error.setVisibility(View.GONE);
+                    setCustomerManagerAdapter(msg);
+                    break;
             }
-            adapter = new MyAdapter();
-            lv_guwen.setAdapter(adapter);
-            tv_update_time.setText(list1.get(0).getUpdate_time());
-            myDialog.dismiss();
-            lv_guwen.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    ImageView tv_checked = (ImageView) view.findViewById(R.id.iv_checked);
-                    if (buffer[i] == 0) {
-                        tv_checked.setVisibility(View.VISIBLE);
-                        for (int j = 0; j < buffer.length; j++) {
-                            if (buffer[j] == 1) {
-                                View v = adapterView.getChildAt(j);
-                                ImageView checked = (ImageView) v.findViewById(R.id.iv_checked);
-                                checked.setVisibility(View.INVISIBLE);
-                                buffer[j] = 0;
-                            }
-
-                        }
-                        buffer[i] = 1;
-                    } else {
-                        if (buffer[i] != 1)
-                            tv_checked.setVisibility(View.INVISIBLE);
-
-                    }
-                }
-            });
         }
     };
+
+    /**
+     * 设置顾问选项
+     * @param msg
+     */
+    private void setCustomerManagerAdapter(Message msg) {
+        list1 = (List<Custemer>) msg.obj;
+        //初始化buffer
+        buffer = new int[list1.size()];
+        for (int i = 0; i < list1.size(); i++) {
+            if (list1.get(i).getSelected())
+                buffer[i] = 1;
+            else buffer[i] = 0;
+        }
+        adapter = new MyAdapter();
+        lv_guwen.setAdapter(adapter);
+        tv_update_time.setText(list1.get(0).getUpdate_time());
+        lv_guwen.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                ImageView tv_checked = (ImageView) view.findViewById(R.id.iv_checked);
+                if (buffer[i] == 0) {
+                    tv_checked.setVisibility(View.VISIBLE);
+                    for (int j = 0; j < buffer.length; j++) {
+                        if (buffer[j] == 1) {
+                            View v = adapterView.getChildAt(j);
+                            ImageView checked = (ImageView) v.findViewById(R.id.iv_checked);
+                            checked.setVisibility(View.INVISIBLE);
+                            buffer[j] = 0;
+                        }
+
+                    }
+                    buffer[i] = 1;
+                } else {
+                    if (buffer[i] != 1)
+                        tv_checked.setVisibility(View.INVISIBLE);
+
+                }
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +144,12 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         Intent intent = getIntent();
         customer_id = intent.getIntExtra("customer_id", -1);
         String name = intent.getStringExtra("customer_name");
-        getAdviserList();
+        if (customer_id!=-1)
+            getAdviserList(customer_id);
+        else {
+            showToast(R.string.data_error);
+            myDialog.dismiss();
+        }
     }
 
     /**
@@ -138,7 +168,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         setViewHeightAndWidth(views,height,width);
     }
 
-    public void getAdviserList() {
+    public void getAdviserList(int customer_id) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getcustomeradviserlist")
@@ -148,7 +178,10 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Message msg=Message.obtain();
+                        msg.what=0;
+                        handler.sendMessage(msg);
+                        myDialog.dismiss();
                     }
 
                     @Override
@@ -182,11 +215,13 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
                                 list.add(new Custemer(user_id, display_name, avator_url, guid, selected, update_time));
                             }
                             Message msg = Message.obtain();
+                            msg.what=1;
                             msg.obj = list;
                             handler.sendMessage(msg);
                         } else {
                             App.showToast(getApplication(), message);
                         }
+                        myDialog.dismiss();
                     }
                 });
     }
@@ -236,16 +271,19 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         super.onPause();
         //保存更改的顾问
         int clickWhat = 0;
-        for (int i = 0; i < buffer.length; i++) {
-            if (buffer[i] == 1) {
-                clickWhat = i;
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("adviserName", list1.get(i).getFullname());
-                editor.commit();
+        if (buffer!=null){
+            for (int i = 0; i < buffer.length; i++) {
+                if (buffer[i] == 1) {
+                    clickWhat = i;
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("adviserName", list1.get(i).getFullname());
+                    editor.commit();
+                }
             }
+
+            setCustomerAdviser(clickWhat);
         }
 
-        setCustomerAdviser(clickWhat);
     }
 
     public void setCustomerAdviser(int clickWhat) {
@@ -273,5 +311,20 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        myDialog.show();
+        if (customer_id!=-1)
+            getAdviserList(customer_id);
+        else {
+            showToast(R.string.data_error);
+            myDialog.dismiss();
+        }
     }
 }

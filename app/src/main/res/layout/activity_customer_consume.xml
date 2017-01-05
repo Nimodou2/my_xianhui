@@ -26,6 +26,10 @@
             android:id="@+id/tv_files"
             style="@style/bar_right"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <com.maibo.lvyongsheng.xianhui.view.RefreshListView
         android:id="@+id/lv_cards"
         android:layout_width="match_parent"
@@ -34,4 +38,15 @@
         android:transcriptMode="normal">
 
     </com.maibo.lvyongsheng.xianhui.view.RefreshListView>
+        <include
+            android:id="@+id/in_no_datas"
+            android:visibility="gone"
+            layout="@layout/incloud_no_datas"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            android:visibility="gone"
+            layout="@layout/incloud_loading_error"></include>
+
+    </FrameLayout>
 </LinearLayout>

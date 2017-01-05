@@ -23,9 +23,12 @@ import com.maibo.lvyongsheng.xianhui.fragment.ProductFragment;
 import com.maibo.lvyongsheng.xianhui.fragment.ProjectFragment;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
+import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.maibo.lvyongsheng.xianhui.R.id.vp_mywork;
 
 
 /**
@@ -34,7 +37,7 @@ import java.util.List;
 public class WorkActivity extends FragmentActivity implements View.OnClickListener{
 
     TextView btn_customer,btn_partner,btn_project,btn_product;
-    LinearLayout ll_head,tab;
+    LinearLayout ll_head,tab,in_loading_error;
     ViewPager vp;
     TextView back;
     ImageView iv_search,iv_choose;
@@ -42,6 +45,8 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
     ImageView iv_over;
     //屏幕宽度
     int screenWidth;
+
+    int isLoagedDatas=0;
     //当前选中的项
     int currenttab=-1;
 
@@ -51,17 +56,65 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
 
     Fragment cusF,collF,projF,prodF;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_work);
+        initView();
         CloseAllActivity.getScreenManager().pushActivity(this);
+        if (NetWorkUtils.isNetworkConnected(getApplicationContext())){
+            initData();
+        }else{
+            in_loading_error.setVisibility(View.VISIBLE);
+            vp.setVisibility(View.GONE);
+        }
 
+
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void initData() {
+        isLoagedDatas=1;
         cusF=new CustomerFragment();
         collF=new ColleagueFragment();
         projF=new ProjectFragment();
         prodF=new ProductFragment();
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
+        setHeightAndWidth();
+
+        iv_choose.setOnClickListener(this);
+        iv_search.setOnClickListener(this);
+
+        btn_customer.setOnClickListener(this);
+        btn_partner.setOnClickListener(this);
+        btn_project.setOnClickListener(this);
+        btn_product.setOnClickListener(this);
+        data=new ArrayList<>();
+        data.add(cusF);
+        data.add(collF);
+        data.add(projF);
+        data.add(prodF);
+
+        //初始化指示器位置
+        initCursorPos();
+        vp.setOffscreenPageLimit(4);
+        vp.setAdapter(new MyFragmentAdapters(getSupportFragmentManager()));
+        vp.setOnPageChangeListener(new MyPagerChangerListener());
+    }
+
+    /**
+     * 初始化view
+     */
+    private void initView() {
         btn_customer=(TextView) findViewById(R.id.btn_customer);
         btn_partner=(TextView) findViewById(R.id.btn_partner);
         btn_project=(TextView) findViewById(R.id.btn_project);
@@ -72,42 +125,8 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
         iv_over=(ImageView) findViewById(R.id.iv_over);
         back= (TextView) findViewById(R.id.back);
         tab= (LinearLayout) findViewById(R.id.tab);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-
-        setHeightAndWidth();
-
-
-
-
-
-        iv_choose.setOnClickListener(this);
-        iv_search.setOnClickListener(this);
-
-        btn_customer.setOnClickListener(this);
-        btn_partner.setOnClickListener(this);
-        btn_project.setOnClickListener(this);
-        btn_product.setOnClickListener(this);
-        vp=(ViewPager) findViewById(R.id.vp_mywork);
-        data=new ArrayList<>();
-        data.add(cusF);
-        data.add(collF);
-        data.add(projF);
-        data.add(prodF);
-
-        //初始化指示器位置
-        initCursorPos();
-        //iv_over.getLayoutParams().width=screenWidth/4-30;
-       /* RelativeLayout.LayoutParams imageParams=new RelativeLayout.LayoutParams(screenWidth/2, btn2.getMeasuredHeight());
-        iv_over.setLayoutParams(imageParams);*/
-        vp.setOffscreenPageLimit(4);
-        vp.setAdapter(new MyFragmentAdapters(getSupportFragmentManager()));
-        vp.setOnPageChangeListener(new MyPagerChangerListener());
-
+        in_loading_error= (LinearLayout) findViewById(R.id.in_loading_error);
+        vp=(ViewPager) findViewById(vp_mywork);
     }
 
     /**
@@ -140,24 +159,32 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
                 break;
             case R.id.iv_search:
                 //跳转到搜索界面
-                Intent intent=new Intent(this,SearchWorkActivity.class);
-                intent.putExtra("tag",currIndex);
-                startActivity(intent);
+                if (NetWorkUtils.isNetworkConnected(this)&&isLoagedDatas==1){
+                    Intent intent=new Intent(this,SearchWorkActivity.class);
+                    intent.putExtra("tag",currIndex);
+                    startActivity(intent);
+                }else{
+                    App.showToast(getApplicationContext(),"网络连接异常");
+                }
                 break;
             case R.id.iv_choose:
                 //获取当前Fragment对象
-                if (currIndex==0){
-                    CustomerFragment cf=(CustomerFragment)data.get(0);
-                    cf.initPopupWindow();
-                }else if (currIndex==1){
-                    ColleagueFragment co=(ColleagueFragment)data.get(1);
-                    co.initPopupWindow();
-                }else if (currIndex==2){
-                    ProjectFragment project=(ProjectFragment)data.get(2);
-                    project.initPopupWindow();
-                }else if (currIndex==3){
-                    ProductFragment product=(ProductFragment)data.get(3);
-                    product.initPopupWindow();
+                if (NetWorkUtils.isNetworkConnected(this)&&isLoagedDatas==1){
+                    if (currIndex==0){
+                        CustomerFragment cf=(CustomerFragment)data.get(0);
+                        cf.initPopupWindow();
+                    }else if (currIndex==1){
+                        ColleagueFragment co=(ColleagueFragment)data.get(1);
+                        co.initPopupWindow();
+                    }else if (currIndex==2){
+                        ProjectFragment project=(ProjectFragment)data.get(2);
+                        project.initPopupWindow();
+                    }else if (currIndex==3){
+                        ProductFragment product=(ProductFragment)data.get(3);
+                        product.initPopupWindow();
+                    }
+                }else{
+                    App.showToast(getApplicationContext(),"网络连接异常");
                 }
                 break;
         }
@@ -287,5 +314,15 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
             result =  getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        in_loading_error.setVisibility(View.GONE);
+        vp.setVisibility(View.VISIBLE);
+        initData();
     }
 }

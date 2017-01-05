@@ -4,109 +4,148 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/ll_head"
-        android:background="@color/bar_color"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:background="@color/bar_color">
+
         <TextView
             android:id="@+id/back"
             style="@style/bar_left"
-            android:text="返回"/>
+            android:text="返回" />
+
         <TextView
             android:id="@+id/tv_item_name"
             style="@style/bar_center"
-            android:text=""/>
+            android:text="" />
+
         <TextView
             android:id="@+id/tv_setting"
             style="@style/bar_right"
-            android:text="设置"/>
+            android:text="设置" />
     </LinearLayout>
-    <LinearLayout
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/weixin_lianxiren_gray"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+
         <LinearLayout
+            android:id="@+id/ll_all_data"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="1"
+                android:background="#3ff0"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/lv_avg"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:textSize="12sp"
-                    android:gravity="center|left"
-                    android:layout_weight="1"
-                    android:paddingLeft="5dp"
-                    android:text="当前平均:8k"/>
-                <TextView
-                    android:id="@+id/lv_total"
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:textSize="12sp"
-                    android:gravity="center|left"
-                    android:paddingLeft="5dp"
-                    android:text="当前平均:8K"/>
+                    android:background="@color/weixin_lianxiren_gray"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/lv_avg"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center|left"
+                            android:paddingLeft="5dp"
+                            android:text="当前平均:8k"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:id="@+id/lv_total"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center|left"
+                            android:paddingLeft="5dp"
+                            android:text="当前平均:8K"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_number"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="bottom|center"
+                        android:text="3456"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+
+                <Gallery
+                    android:id="@+id/gallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:gravity="bottom"
+                    android:unselectedAlpha="0.5" />
+
+                <TextView
+                    android:id="@+id/tv_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="0.5"
+                    android:background="@color/weixin_lianxiren_gray"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="时间"
+                    android:textSize="12sp" />
             </LinearLayout>
-            <TextView
-                android:id="@+id/tv_number"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center"
-                android:layout_height="match_parent"
-                android:textSize="24sp"
-                android:text="3456"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/vp_xianjing"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1">
+
+            </android.support.v4.view.ViewPager>
+
+            <LinearLayout
+                android:id="@+id/dot_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"></LinearLayout>
+
         </LinearLayout>
 
+        <include
+            android:id="@+id/in_no_datas"
+            android:visibility="gone"
+            layout="@layout/incloud_no_datas"></include>
 
-        <Gallery
-            android:id="@+id/gallery"
-            android:background="#3ff0"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-            android:gravity="bottom"
-            android:unselectedAlpha="0.5" />
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
-            android:gravity="center"
-            android:padding="5dp"
-            android:textSize="12sp"
-            android:text="时间"/>
-    </LinearLayout>
+        <include
+            android:id="@+id/in_loading_error"
+            android:visibility="gone"
+            layout="@layout/incloud_loading_error"></include>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_xianjing"
-        android:layout_width="match_parent"
-        android:layout_margin="5dp"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-    </android.support.v4.view.ViewPager>
-    <LinearLayout
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/dot_layout"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal" >
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

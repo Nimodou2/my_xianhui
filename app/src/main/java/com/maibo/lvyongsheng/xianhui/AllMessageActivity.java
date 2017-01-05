@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +25,7 @@ import com.maibo.lvyongsheng.xianhui.entity.Employee;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.DrawRoundCorner;
+import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -50,8 +50,9 @@ public class AllMessageActivity extends BaseActivity {
     String token, apiURL;
     int user_id;
     List<Order> orderList;
-    ProgressDialog dialog;
     Employee employee;
+    int tag;
+
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
     @Bind(R.id.ll_head_message)
@@ -59,12 +60,29 @@ public class AllMessageActivity extends BaseActivity {
     @Bind(R.id.tv_spacing)
     TextView tv_spacing;
 
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+    @Bind(R.id.ll_all_data)
+    LinearLayout ll_all_data;
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            orderList = (List<Order>) msg.obj;
-            dialog.dismiss();
+            switch (msg.what) {
+                case 0:
+                    ll_all_data.setVisibility(View.GONE);
+                    in_loading_error.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    ll_all_data.setVisibility(View.VISIBLE);
+                    in_loading_error.setVisibility(View.GONE);
+                    orderList = (List<Order>) msg.obj;
+                    break;
+            }
+
         }
     };
 
@@ -73,16 +91,11 @@ public class AllMessageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_message);
         adapterLitterBar(ll_head);
-        setSingleViewHeightAndWidth(tv_spacing,viewHeight*15/255,0);
+        setSingleViewHeightAndWidth(tv_spacing, viewHeight * 15 / 255, 0);
         setSingleViewHeightAndWidth(ll_head_message, viewHeight * 40 / 255, 0);
         CloseAllActivity.getScreenManager().pushActivity(this);
 
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
+        showShortDialog();
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         token = sp.getString("token", null);
         apiURL = sp.getString("apiURL", null);
@@ -96,17 +109,41 @@ public class AllMessageActivity extends BaseActivity {
         tv_order = (TextView) findViewById(R.id.tv_order);
         back = (TextView) findViewById(R.id.back);
 
+
         Intent intent = getIntent();
-        int tag = intent.getIntExtra("tag", -1);
+        tag = intent.getIntExtra("tag", -1);
         Bundle bundle = intent.getExtras();
         employee = (Employee) bundle.get("Employee");
-
+        user_id = employee.getUser_id();
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+
+
+        if (NetWorkUtils.isNetworkConnected(this)) {
+            setListener();
+            if (tag == 1) {
+                setColleageData(employee);
+            }
+            getColleagueOrder(user_id);
+        } else {
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+            dismissShortDialog();
+        }
+
+
+    }
+
+
+    /**
+     * 设置点击监听器
+     */
+    private void setListener() {
         tv_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,13 +158,6 @@ public class AllMessageActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-
-        user_id = employee.getUser_id();
-        if (tag == 1) {
-            setColleageData(employee);
-        }
-        getColleagueOrder(user_id);
     }
 
     //设置员工详细信息
@@ -167,13 +197,6 @@ public class AllMessageActivity extends BaseActivity {
             map.put("right", msg[i]);
             lists.add(map);
         }
-
-//        SimpleAdapter simplead = new SimpleAdapter(this, lists,
-//                R.layout.style_list_detail, new String[]{"left", "right"},
-//                new int[]{R.id.name, R.id.numbers});
-//
-//        lv_people_msg.setDivider(new ColorDrawable(getResources().getColor(R.color.weixin_lianxiren_gray)));
-//        lv_people_msg.setDividerHeight(3);
         lv_people_msg.setAdapter(new MyAdapter(lists));
         ////////////////////////////////////////////////////////////////////////////////////////
     }
@@ -189,7 +212,10 @@ public class AllMessageActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        Message msg = Message.obtain();
+                        msg.what = 0;
+                        handler.sendMessage(msg);
+                        dismissShortDialog();
                     }
 
                     @Override
@@ -219,11 +245,14 @@ public class AllMessageActivity extends BaseActivity {
                                         bed_name, project_code, project_name, customer_name, engineer_name));
                             }
                             Message msg = Message.obtain();
-                            msg.what = 2;
+                            msg.what = 1;
                             msg.obj = list;
                             handler.sendMessage(msg);
 
+                        } else {
+                            showToast(message);
                         }
+                        dismissShortDialog();
                     }
                 });
     }
@@ -234,11 +263,13 @@ public class AllMessageActivity extends BaseActivity {
         CloseAllActivity.getScreenManager().popActivity(this);
     }
 
-    class MyAdapter extends BaseAdapter{
+    class MyAdapter extends BaseAdapter {
         List<Map<String, String>> list;
-        MyAdapter(List<Map<String, String>> list){
-            this.list=list;
+
+        MyAdapter(List<Map<String, String>> list) {
+            this.list = list;
         }
+
         @Override
         public int getCount() {
             return list.size();
@@ -256,17 +287,38 @@ public class AllMessageActivity extends BaseActivity {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            View v=View.inflate(getApplicationContext(),R.layout.style_list_detail,null);
+            View v = View.inflate(getApplicationContext(), R.layout.style_list_detail, null);
             TextView name = (TextView) v.findViewById(R.id.name);
             TextView numbers = (TextView) v.findViewById(R.id.numbers);
-            LinearLayout ll_all= (LinearLayout) v.findViewById(R.id.ll_all);
-            ViewGroup.LayoutParams params=ll_all.getLayoutParams();
-            params.height=viewHeight*20/255;
+            LinearLayout ll_all = (LinearLayout) v.findViewById(R.id.ll_all);
+            ViewGroup.LayoutParams params = ll_all.getLayoutParams();
+            params.height = viewHeight * 20 / 255;
             ll_all.setLayoutParams(params);
-            Map<String,String> map=list.get(i);
+            Map<String, String> map = list.get(i);
             name.setText(map.get("left"));
             numbers.setText(map.get("right"));
             return v;
         }
+    }
+
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        showShortDialog();
+        if (NetWorkUtils.isNetworkConnected(this)) {
+            setListener();
+            if (tag == 1) {
+                setColleageData(employee);
+            }
+            getColleagueOrder(user_id);
+        } else {
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+            dismissShortDialog();
+        }
+
     }
 }

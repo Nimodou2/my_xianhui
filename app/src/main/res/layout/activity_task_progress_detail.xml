@@ -1,128 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/weixin_lianxiren_gray">
+    android:background="@color/weixin_lianxiren_gray"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_head"
-        android:background="@color/bar_color"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:background="@color/bar_color">
+
         <TextView
             android:id="@+id/back"
             style="@style/bar_left"
-            android:text="返回"/>
+            android:text="返回" />
 
         <TextView
             android:id="@+id/cus_name"
             style="@style/bar_center"
-            android:text="进度详细"/>
+            android:text="进度详细" />
 
         <TextView
             android:id="@+id/tv_see"
             style="@style/bar_right"
-            android:text="查看"/>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/ll_all"
-        android:background="#fff"
-        android:layout_width="match_parent"
-        android:paddingTop="5dp"
-        android:gravity="center"
-        android:layout_height="70dp">
-        <ImageView
-            android:layout_marginLeft="10dp"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:src="@mipmap/task"/>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="60dp"
-            android:paddingLeft="10dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/tv_progress_cotent"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:paddingBottom="3dp"
-                android:textColor="#000"
-                android:gravity="left|bottom"
-                android:textSize="16dp"
-                android:text=""/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:orientation="horizontal"
-                android:gravity="top"
-                android:paddingTop="3dp"
-                android:layout_weight="1">
-                <ProgressBar
-                    android:id="@+id/pb_progressbar"
-                    style="@style/StyleProgressBarMini"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="20dp"
-                    android:background="@drawable/shape_progressbar_bg"
-                    android:max="100"
-                    android:progress="0" />
-                <TextView
-                    android:id="@+id/tv_progress_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="10dp"
-                    android:paddingLeft="10dp"
-                    android:textSize="14sp"
-                    android:textColor="@color/progress_black_green"
-                    android:text=""/>
-            </LinearLayout>
-        </LinearLayout>
+            android:text="查看" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_rg_bg"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:gravity="bottom">
-        <RadioGroup
-            android:id="@+id/rg_menu"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/task_btn_white_all_bg"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rb_adviser"
-                style="@style/TaskRadioButton"
-                android:background="@drawable/task_left"
-                android:checked="true"
-                android:textColor="#fff"
-                android:text="顾问"/>
-            <RadioButton
-                android:id="@+id/rb_technician"
-                style="@style/TaskRadioButton"
-                android:layout_marginLeft="-1dp"
-                android:layout_marginRight="-1dp"
-                android:background="@drawable/task_center"
-                android:text="技师"/>
-
-            <RadioButton
-                android:id="@+id/rb_customer"
-                style="@style/TaskRadioButton"
-                android:background="@drawable/task_right"
-                android:text="客人"/>
-        </RadioGroup>
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/lv_item_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </ListView>
+        <LinearLayout
+            android:id="@+id/ll_all_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ll_all"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:background="#fff"
+                android:gravity="center"
+                android:paddingTop="5dp">
+
+                <ImageView
+                    android:layout_width="46dp"
+                    android:layout_height="46dp"
+                    android:layout_marginLeft="10dp"
+                    android:src="@mipmap/task" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_progress_cotent"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="left|bottom"
+                        android:paddingBottom="3dp"
+                        android:text=""
+                        android:textColor="#000"
+                        android:textSize="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="top"
+                        android:orientation="horizontal"
+                        android:paddingTop="3dp">
+
+                        <ProgressBar
+                            android:id="@+id/pb_progressbar"
+                            style="@style/StyleProgressBarMini"
+                            android:layout_width="0dp"
+                            android:layout_height="20dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/shape_progressbar_bg"
+                            android:max="100"
+                            android:progress="0" />
+
+                        <TextView
+                            android:id="@+id/tv_progress_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:text=""
+                            android:textColor="@color/progress_black_green"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_rg_bg"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:gravity="bottom">
+
+                <RadioGroup
+                    android:id="@+id/rg_menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/task_btn_white_all_bg"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_adviser"
+                        style="@style/TaskRadioButton"
+                        android:background="@drawable/task_left"
+                        android:checked="true"
+                        android:text="顾问"
+                        android:textColor="#fff" />
+
+                    <RadioButton
+                        android:id="@+id/rb_technician"
+                        style="@style/TaskRadioButton"
+                        android:layout_marginLeft="-1dp"
+                        android:layout_marginRight="-1dp"
+                        android:background="@drawable/task_center"
+                        android:text="技师" />
+
+                    <RadioButton
+                        android:id="@+id/rb_customer"
+                        style="@style/TaskRadioButton"
+                        android:background="@drawable/task_right"
+                        android:text="客人" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/lv_item_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </ListView>
+        </LinearLayout>
+
+        <include
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
+
+    </FrameLayout>
 </LinearLayout>

@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +24,7 @@ import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.Product;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.DrawRoundCorner;
+import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -51,10 +50,18 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
     Product project, pro, pro1, pro2, pro3;
     List<Custemer> custemers;
     List<Order> orderList;
-    ProgressDialog dialog;
     int id = -1;
+    int item_id;
+    String product_name;
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
+
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+    @Bind(R.id.ll_all_data)
+    LinearLayout ll_all_data;
 
     Handler handler = new Handler() {
         @Override
@@ -91,12 +98,42 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
         setContentView(R.layout.activity_project_message);
         adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
+        showShortDialog();
+        initView();
+
+        Intent intent = getIntent();
+        item_id = intent.getIntExtra("Item_id", -1);
+        product_name = intent.getStringExtra("productName");
+
+        back.setOnClickListener(this);
+        ll_satisfy.setVisibility(View.INVISIBLE);
+        tv_detal_msg.setOnClickListener(this);
+        tv_baobiao.setOnClickListener(this);
+        tv_power.setOnClickListener(this);
+        ll_have_cards_cus.setOnClickListener(this);
+
+        sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
+        token = sp.getString("token", null);
+        apiURL = sp.getString("apiURL", null);
+
+        if (NetWorkUtils.isNetworkConnected(this)) {
+            setOrderListener(item_id, product_name);
+            getServiceData(item_id);
+            getOrderList(item_id);
+        } else {
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+            dismissShortDialog();
+        }
+
+
+    }
+
+    /**
+     * 初始化View
+     */
+    private void initView() {
         tv_head_picture = (TextView) findViewById(R.id.tv_head_picture);
         cus_name = (TextView) findViewById(R.id.cus_name);
         cus_grade = (TextView) findViewById(R.id.cus_grade);
@@ -109,20 +146,18 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
         ll_have_cards_cus = (LinearLayout) findViewById(R.id.ll_have_cards_cus);
         ll_satisfy = (LinearLayout) findViewById(R.id.ll_satisfy);
         cus_head = (ImageView) findViewById(R.id.cus_head);
-        setSingleViewHeightAndWidth(cus_head,viewHeight*30/255,viewHeight*30/255);
+        setSingleViewHeightAndWidth(cus_head, viewHeight * 30 / 255, viewHeight * 30 / 255);
         tv_order = (TextView) findViewById(R.id.tv_order);
         back = (TextView) findViewById(R.id.back);
+    }
 
-        Intent intent = getIntent();
-        final int item_id = intent.getIntExtra("Item_id", -1);
-        final String product_name = intent.getStringExtra("productName");
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+    /**
+     * 设置订单按钮监听器
+     *
+     * @param item_id
+     * @param product_name
+     */
+    private void setOrderListener(final int item_id, final String product_name) {
         tv_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,21 +172,6 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
                 startActivity(intent);
             }
         });
-
-        ll_satisfy.setVisibility(View.INVISIBLE);
-        tv_detal_msg.setOnClickListener(this);
-        tv_baobiao.setOnClickListener(this);
-        tv_power.setOnClickListener(this);
-        ll_have_cards_cus.setOnClickListener(this);
-
-        sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
-        token = sp.getString("token", null);
-        apiURL = sp.getString("apiURL", null);
-
-
-        getServiceData(item_id);
-        getOrderList(item_id);
-
     }
 
     //填充界面数据
@@ -182,7 +202,6 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
                             Bitmap bm = DrawRoundCorner.makeRoundCorner(response, 63);
                             Drawable drawable = new BitmapDrawable(bm);
                             cus_head.setImageDrawable(drawable);
-                            dialog.dismiss();
                         }
                     });
         }
@@ -202,126 +221,143 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        dismissShortDialog();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("product:", response);
+//                        Log.e("product:", response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         JsonObject data = jsonObject.get("data").getAsJsonObject();
-                        //解析本页信息
-                        String fullname = "";
-                        String brand_name = "";
-                        String item_code = "";
-                        String card_total = "";
-                        String avator_url = "";
-                        if (!data.get("fullname").isJsonNull()) {
-                            fullname = data.get("fullname").getAsString();
+                        String status = jsonObject.get("status").getAsString();
+                        String message = jsonObject.get("message").getAsString();
+                        if (status.equals("ok")) {
+                            analysisJson(data);
+                        } else {
+                            showToast(message);
                         }
-                        if (!data.get("brand_name").isJsonNull()) {
-                            brand_name = data.get("brand_name").getAsString();
-                        }
-                        if (!data.get("item_code").isJsonNull()) {
-                            item_code = data.get("item_code").getAsString();
-                        }
-                        if (!data.get("card_total").isJsonNull()) {
-                            card_total = data.get("card_total").getAsString();
-                        }
-                        if (!data.get("avator_url").isJsonNull()) {
-                            avator_url = data.get("avator_url").getAsString();
-                        }
-                        Product pro = new Product(fullname, brand_name, item_code, card_total, avator_url);
-                        Message msg = Message.obtain();
-                        msg.what = 0;
-                        msg.obj = pro;
-                        handler.sendMessage(msg);
-
-                        //解析详细信息
-                        String item_class = "";
-                        String spec = "";
-                        String use_unit = "";
-                        String use_spec = "";
-                        if (!data.get("item_class").isJsonNull()) {
-                            item_class = data.get("item_class").getAsString();
-                        }
-                        if (!data.get("spec").isJsonNull()) {
-                            spec = data.get("spec").getAsString();
-                        }
-                        if (!data.get("use_unit").isJsonNull()) {
-                            use_unit = data.get("use_unit").getAsString();
-                        }
-                        if (!data.get("use_spec").isJsonNull()) {
-                            use_spec = data.get("use_spec").getAsString();
-                        }
-                        Product pro1 = new Product();
-                        pro1.setItem_class(item_class);
-                        pro1.setSpec(spec);
-                        pro1.setUse_unit(use_unit);
-                        pro1.setUse_spec(use_spec);
-                        Message msg1 = Message.obtain();
-                        msg1.what = 1;
-                        msg1.obj = pro1;
-                        handler.sendMessage(msg1);
-                        //解析报表参数
-                        String report_ratio = "";
-                        if (!data.get("report_ratio").isJsonNull()) {
-                            report_ratio = data.get("report_ratio").getAsString();
-                        }
-                        Product pro2 = new Product();
-                        pro2.setReport_ratio(report_ratio);
-                        pro2.setItem_class(item_class);
-                        Message msg2 = Message.obtain();
-                        msg2.what = 2;
-                        msg2.obj = pro2;
-                        handler.sendMessage(msg2);
-                        //解析销售权限
-
-                        JsonArray org_list_array = data.get("org_list").getAsJsonArray();
-                        String[] org_list = new String[org_list_array.size()];
-                        for (int i = 0; i < org_list_array.size(); i++) {
-                            org_list[i] = org_list_array.get(i).getAsString();
-                        }
-                        JsonArray fee_type_array = data.get("fee_type").getAsJsonArray();
-                        String[] fee_type = new String[fee_type_array.size()];
-                        for (int i = 0; i < fee_type_array.size(); i++) {
-                            fee_type[i] = fee_type_array.get(i).getAsString();
-                        }
-                        String card_discount = data.get("card_discount").getAsString();
-                        JsonArray vipcard_type_array = data.get("vipcard_type").getAsJsonArray();
-                        String[] vipcard_type = new String[vipcard_type_array.size()];
-                        for (int i = 0; i < vipcard_type_array.size(); i++) {
-                            vipcard_type[i] = vipcard_type_array.get(i).getAsString();
-                        }
-                        Product pro3 = new Product(org_list, fee_type, card_discount, vipcard_type);
-                        Message msg3 = Message.obtain();
-                        msg3.what = 3;
-                        msg3.obj = pro3;
-                        handler.sendMessage(msg3);
-                        //解析持卡顾客
-                        JsonArray card_customer_list = data.get("card_customer_list").getAsJsonArray();
-                        List<Custemer> cus = new ArrayList<Custemer>();
-                        int customer_id = 0;
-                        String cusname = "";
-                        for (JsonElement jsonElement : card_customer_list) {
-                            JsonObject jo = jsonElement.getAsJsonObject();
-                            if (!jo.get("customer_id").isJsonNull()) {
-                                customer_id = jo.get("customer_id").getAsInt();
-                            }
-                            if (!jo.get("fullname").isJsonNull()) {
-                                cusname = jo.get("fullname").getAsString();
-                            }
-                            Custemer custemer = new Custemer();
-                            custemer.setFullname(cusname);
-                            custemer.setCustomer_id(customer_id);
-                            cus.add(custemer);
-                        }
-                        Message msg4 = Message.obtain();
-                        msg4.what = 4;
-                        msg4.obj = cus;
-                        handler.sendMessage(msg4);
+                        dismissShortDialog();
                     }
+
                 });
+    }
+
+    /**
+     * 解析Json
+     *
+     * @param data
+     */
+    private void analysisJson(JsonObject data) {
+        //解析本页信息
+        String fullname = "";
+        String brand_name = "";
+        String item_code = "";
+        String card_total = "";
+        String avator_url = "";
+        if (!data.get("fullname").isJsonNull()) {
+            fullname = data.get("fullname").getAsString();
+        }
+        if (!data.get("brand_name").isJsonNull()) {
+            brand_name = data.get("brand_name").getAsString();
+        }
+        if (!data.get("item_code").isJsonNull()) {
+            item_code = data.get("item_code").getAsString();
+        }
+        if (!data.get("card_total").isJsonNull()) {
+            card_total = data.get("card_total").getAsString();
+        }
+        if (!data.get("avator_url").isJsonNull()) {
+            avator_url = data.get("avator_url").getAsString();
+        }
+        Product pro = new Product(fullname, brand_name, item_code, card_total, avator_url);
+        Message msg = Message.obtain();
+        msg.what = 0;
+        msg.obj = pro;
+        handler.sendMessage(msg);
+
+        //解析详细信息
+        String item_class = "";
+        String spec = "";
+        String use_unit = "";
+        String use_spec = "";
+        if (!data.get("item_class").isJsonNull()) {
+            item_class = data.get("item_class").getAsString();
+        }
+        if (!data.get("spec").isJsonNull()) {
+            spec = data.get("spec").getAsString();
+        }
+        if (!data.get("use_unit").isJsonNull()) {
+            use_unit = data.get("use_unit").getAsString();
+        }
+        if (!data.get("use_spec").isJsonNull()) {
+            use_spec = data.get("use_spec").getAsString();
+        }
+        Product pro1 = new Product();
+        pro1.setItem_class(item_class);
+        pro1.setSpec(spec);
+        pro1.setUse_unit(use_unit);
+        pro1.setUse_spec(use_spec);
+        Message msg1 = Message.obtain();
+        msg1.what = 1;
+        msg1.obj = pro1;
+        handler.sendMessage(msg1);
+        //解析报表参数
+        String report_ratio = "";
+        if (!data.get("report_ratio").isJsonNull()) {
+            report_ratio = data.get("report_ratio").getAsString();
+        }
+        Product pro2 = new Product();
+        pro2.setReport_ratio(report_ratio);
+        pro2.setItem_class(item_class);
+        Message msg2 = Message.obtain();
+        msg2.what = 2;
+        msg2.obj = pro2;
+        handler.sendMessage(msg2);
+        //解析销售权限
+
+        JsonArray org_list_array = data.get("org_list").getAsJsonArray();
+        String[] org_list = new String[org_list_array.size()];
+        for (int i = 0; i < org_list_array.size(); i++) {
+            org_list[i] = org_list_array.get(i).getAsString();
+        }
+        JsonArray fee_type_array = data.get("fee_type").getAsJsonArray();
+        String[] fee_type = new String[fee_type_array.size()];
+        for (int i = 0; i < fee_type_array.size(); i++) {
+            fee_type[i] = fee_type_array.get(i).getAsString();
+        }
+        String card_discount = data.get("card_discount").getAsString();
+        JsonArray vipcard_type_array = data.get("vipcard_type").getAsJsonArray();
+        String[] vipcard_type = new String[vipcard_type_array.size()];
+        for (int i = 0; i < vipcard_type_array.size(); i++) {
+            vipcard_type[i] = vipcard_type_array.get(i).getAsString();
+        }
+        Product pro3 = new Product(org_list, fee_type, card_discount, vipcard_type);
+        Message msg3 = Message.obtain();
+        msg3.what = 3;
+        msg3.obj = pro3;
+        handler.sendMessage(msg3);
+        //解析持卡顾客
+        JsonArray card_customer_list = data.get("card_customer_list").getAsJsonArray();
+        List<Custemer> cus = new ArrayList<Custemer>();
+        int customer_id = 0;
+        String cusname = "";
+        for (JsonElement jsonElement : card_customer_list) {
+            JsonObject jo = jsonElement.getAsJsonObject();
+            if (!jo.get("customer_id").isJsonNull()) {
+                customer_id = jo.get("customer_id").getAsInt();
+            }
+            if (!jo.get("fullname").isJsonNull()) {
+                cusname = jo.get("fullname").getAsString();
+            }
+            Custemer custemer = new Custemer();
+            custemer.setFullname(cusname);
+            custemer.setCustomer_id(customer_id);
+            cus.add(custemer);
+        }
+        Message msg4 = Message.obtain();
+        msg4.what = 4;
+        msg4.obj = cus;
+        handler.sendMessage(msg4);
     }
 
     @Override
@@ -358,6 +394,9 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
                 intent4.putExtra("tag", 7);
                 intent4.putExtras(bundle4);
                 startActivity(intent4);
+                break;
+            case R.id.back:
+                finish();
                 break;
         }
     }
@@ -409,5 +448,28 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+
+    /**
+     * 网络问题，重新加载
+     *
+     * @param view
+     */
+    public void loadingMore(View view) {
+        showShortDialog();
+        if (NetWorkUtils.isNetworkConnected(this)) {
+            ll_all_data.setVisibility(View.VISIBLE);
+            in_loading_error.setVisibility(View.GONE);
+            setOrderListener(item_id, product_name);
+            getServiceData(item_id);
+            getOrderList(item_id);
+
+        } else {
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+            dismissShortDialog();
+        }
     }
 }

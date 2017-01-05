@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +25,7 @@ import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.Project;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.DrawRoundCorner;
+import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -54,9 +54,14 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
     String project_name;
     int id = -1;
     List<Order> orderList;
-    ProgressDialog dialog;
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+    @Bind(R.id.ll_all_data)
+    LinearLayout ll_all_data;
 
     Handler handler = new Handler() {
         @Override
@@ -93,12 +98,7 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
         setContentView(R.layout.activity_project_message);
         adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
+        showShortDialog();
 
         tv_head_picture = (TextView) findViewById(R.id.tv_head_picture);
         cus_name = (TextView) findViewById(R.id.cus_name);
@@ -111,7 +111,7 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
         tv_percent = (TextView) findViewById(R.id.tv_percent);
         ll_have_cards_cus = (LinearLayout) findViewById(R.id.ll_have_cards_cus);
         cus_head = (ImageView) findViewById(R.id.cus_head);
-        setSingleViewHeightAndWidth(cus_head,viewHeight*30/255,viewHeight*30/255);
+        setSingleViewHeightAndWidth(cus_head, viewHeight * 30 / 255, viewHeight * 30 / 255);
         tv_order = (TextView) findViewById(R.id.tv_order);
         back = (TextView) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -120,20 +120,7 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
                 finish();
             }
         });
-        tv_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //跳转到订单界面
-                Intent intent = new Intent(ProjectMessageActivity.this, OrderActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("projectOrder", (Serializable) orderList);
-                intent.putExtra("projectName", project_name);
-                intent.putExtras(bundle);
-                intent.putExtra("tag", 1);
-                intent.putExtra("project_id", project_id);
-                startActivity(intent);
-            }
-        });
+
 
         tv_detal_msg.setOnClickListener(this);
         tv_baobiao.setOnClickListener(this);
@@ -148,9 +135,39 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
         Intent intent = getIntent();
         project_id = intent.getIntExtra("project_id", -1);
         project_name = intent.getStringExtra("projectName");
-        getServiceData();
-        getProjectOrder(project_id);
 
+        if (NetWorkUtils.isNetworkConnected(this)){
+            setOrderListener();
+            getServiceData();
+            getProjectOrder(project_id);
+        }else{
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+            dismissShortDialog();
+        }
+
+
+    }
+
+    /**
+     * 订单按钮监听器
+     */
+    private void setOrderListener() {
+        tv_order.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //跳转到订单界面
+                Intent intent = new Intent(ProjectMessageActivity.this, OrderActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("projectOrder", (Serializable) orderList);
+                intent.putExtra("projectName", project_name);
+                intent.putExtras(bundle);
+                intent.putExtra("tag", 1);
+                intent.putExtra("project_id", project_id);
+                startActivity(intent);
+            }
+        });
     }
 
     //填充界面数据
@@ -180,7 +197,6 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
                             Bitmap bm = DrawRoundCorner.makeRoundCorner(response, 63);
                             Drawable drawable = new BitmapDrawable(bm);
                             cus_head.setImageDrawable(drawable);
-                            dialog.dismiss();
                         }
                     });
         }
@@ -203,7 +219,7 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        dismissShortDialog();
                     }
 
                     @Override
@@ -213,93 +229,101 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
                         String status = jsonObject.get("status").getAsString();
                         String message = jsonObject.get("message").getAsString();
                         if (status.equals("ok")) {
-                            JsonObject data = jsonObject.get("data").getAsJsonObject();
-                            //解析本页信息
-                            String project_code = data.get("project_code").getAsString();
-                            String fullname = data.get("fullname").getAsString();
-                            String brand_name = data.get("brand_name").getAsString();
-                            int card_total = data.get("card_total").getAsInt();
-                            String satisfy_rate = data.get("satisfy_rate").getAsString();
-                            String avator_url = data.get("avator_url").getAsString();
-                            Project pro = new Project(fullname, brand_name, card_total, satisfy_rate, project_code, avator_url);
-                            Message msg = Message.obtain();
-                            msg.what = 0;
-                            msg.obj = pro;
-                            handler.sendMessage(msg);
-                            //解析详细信息
-                            String project_type = data.get("project_type").getAsString();
-                            String project_class = data.get("project_class").getAsString();
-                            String retail_price = data.get("retail_price").getAsString();
-                            String hours = data.get("hours").getAsString();
-                            String op_type = data.get("op_type").getAsString();
-                            JsonArray formula = data.get("formula").getAsJsonArray();
-                            List<Material> materials = new ArrayList<Material>();
-                            for (JsonElement jsonElement : formula) {
-                                JsonObject jo = jsonElement.getAsJsonObject();
-                                int item_id = jo.get("item_id").getAsInt();
-                                String fullnames = jo.get("fullname").getAsString();
-                                String qty = jo.get("qty").getAsString();
-                                String use_spec = jo.get("use_spec").getAsString();
-                                materials.add(new Material(item_id, fullnames, qty, use_spec));
-                            }
-                            Project pro1 = new Project(project_type, project_class, retail_price, hours, op_type, materials);
-                            Message msg1 = Message.obtain();
-                            msg1.what = 1;
-                            msg1.obj = pro1;
-                            handler.sendMessage(msg1);
-                            //解析报表参数
-                            String report_ratio = data.get("report_ratio").getAsString();
-                            String manual_type = data.get("manual_type").getAsString();
-                            String manual_fee = data.get("manual_fee").getAsString();
-                            Project pro2 = new Project(report_ratio, manual_type, manual_fee);
-                            Message msg2 = Message.obtain();
-                            msg2.what = 2;
-                            msg2.obj = pro2;
-                            handler.sendMessage(msg2);
-                            //解析销售权限
-                            JsonArray org_list_array = data.get("org_list").getAsJsonArray();
-                            String[] org_list = new String[org_list_array.size()];
-                            for (int i = 0; i < org_list_array.size(); i++) {
-                                org_list[i] = org_list_array.get(i).getAsString();
-                            }
-                            JsonArray fee_type_array = data.get("fee_type").getAsJsonArray();
-                            String[] fee_type = new String[fee_type_array.size()];
-                            for (int i = 0; i < fee_type_array.size(); i++) {
-                                fee_type[i] = fee_type_array.get(i).getAsString();
-                            }
-                            String card_discount = data.get("card_discount").getAsString();
-                            JsonArray vipcard_type_array = data.get("vipcard_type").getAsJsonArray();
-                            String[] vipcard_type = new String[vipcard_type_array.size()];
-                            for (int i = 0; i < vipcard_type_array.size(); i++) {
-                                vipcard_type[i] = vipcard_type_array.get(i).getAsString();
-                            }
-                            Project pro3 = new Project(org_list, fee_type, card_discount, vipcard_type);
-                            Message msg3 = Message.obtain();
-                            msg3.what = 3;
-                            msg3.obj = pro3;
-                            handler.sendMessage(msg3);
-                            //解析持卡顾客
-                            JsonArray card_customer_list = data.get("card_customer_list").getAsJsonArray();
-                            List<Custemer> cus = new ArrayList<Custemer>();
-                            for (JsonElement jsonElement : card_customer_list) {
-                                JsonObject jo = jsonElement.getAsJsonObject();
-                                int customer_id = jo.get("customer_id").getAsInt();
-                                String cusname = jo.get("fullname").getAsString();
-                                Custemer custemer = new Custemer();
-                                custemer.setFullname(cusname);
-                                custemer.setCustomer_id(customer_id);
-                                cus.add(custemer);
-                            }
-                            Message msg4 = Message.obtain();
-                            msg4.what = 4;
-                            msg4.obj = cus;
-                            handler.sendMessage(msg4);
-
+                            analysisJson(jsonObject);
                         } else {
                             App.showToast(getApplicationContext(), message);
                         }
+                        dismissShortDialog();
                     }
                 });
+    }
+
+    /**
+     * 解析Json
+     * @param jsonObject
+     */
+    private void analysisJson(JsonObject jsonObject) {
+        JsonObject data = jsonObject.get("data").getAsJsonObject();
+        //解析本页信息
+        String project_code = data.get("project_code").getAsString();
+        String fullname = data.get("fullname").getAsString();
+        String brand_name = data.get("brand_name").getAsString();
+        int card_total = data.get("card_total").getAsInt();
+        String satisfy_rate = data.get("satisfy_rate").getAsString();
+        String avator_url = data.get("avator_url").getAsString();
+        Project pro = new Project(fullname, brand_name, card_total, satisfy_rate, project_code, avator_url);
+        Message msg = Message.obtain();
+        msg.what = 0;
+        msg.obj = pro;
+        handler.sendMessage(msg);
+        //解析详细信息
+        String project_type = data.get("project_type").getAsString();
+        String project_class = data.get("project_class").getAsString();
+        String retail_price = data.get("retail_price").getAsString();
+        String hours = data.get("hours").getAsString();
+        String op_type = data.get("op_type").getAsString();
+        JsonArray formula = data.get("formula").getAsJsonArray();
+        List<Material> materials = new ArrayList<Material>();
+        for (JsonElement jsonElement : formula) {
+            JsonObject jo = jsonElement.getAsJsonObject();
+            int item_id = jo.get("item_id").getAsInt();
+            String fullnames = jo.get("fullname").getAsString();
+            String qty = jo.get("qty").getAsString();
+            String use_spec = jo.get("use_spec").getAsString();
+            materials.add(new Material(item_id, fullnames, qty, use_spec));
+        }
+        Project pro1 = new Project(project_type, project_class, retail_price, hours, op_type, materials);
+        Message msg1 = Message.obtain();
+        msg1.what = 1;
+        msg1.obj = pro1;
+        handler.sendMessage(msg1);
+        //解析报表参数
+        String report_ratio = data.get("report_ratio").getAsString();
+        String manual_type = data.get("manual_type").getAsString();
+        String manual_fee = data.get("manual_fee").getAsString();
+        Project pro2 = new Project(report_ratio, manual_type, manual_fee);
+        Message msg2 = Message.obtain();
+        msg2.what = 2;
+        msg2.obj = pro2;
+        handler.sendMessage(msg2);
+        //解析销售权限
+        JsonArray org_list_array = data.get("org_list").getAsJsonArray();
+        String[] org_list = new String[org_list_array.size()];
+        for (int i = 0; i < org_list_array.size(); i++) {
+            org_list[i] = org_list_array.get(i).getAsString();
+        }
+        JsonArray fee_type_array = data.get("fee_type").getAsJsonArray();
+        String[] fee_type = new String[fee_type_array.size()];
+        for (int i = 0; i < fee_type_array.size(); i++) {
+            fee_type[i] = fee_type_array.get(i).getAsString();
+        }
+        String card_discount = data.get("card_discount").getAsString();
+        JsonArray vipcard_type_array = data.get("vipcard_type").getAsJsonArray();
+        String[] vipcard_type = new String[vipcard_type_array.size()];
+        for (int i = 0; i < vipcard_type_array.size(); i++) {
+            vipcard_type[i] = vipcard_type_array.get(i).getAsString();
+        }
+        Project pro3 = new Project(org_list, fee_type, card_discount, vipcard_type);
+        Message msg3 = Message.obtain();
+        msg3.what = 3;
+        msg3.obj = pro3;
+        handler.sendMessage(msg3);
+        //解析持卡顾客
+        JsonArray card_customer_list = data.get("card_customer_list").getAsJsonArray();
+        List<Custemer> cus = new ArrayList<Custemer>();
+        for (JsonElement jsonElement : card_customer_list) {
+            JsonObject jo = jsonElement.getAsJsonObject();
+            int customer_id = jo.get("customer_id").getAsInt();
+            String cusname = jo.get("fullname").getAsString();
+            Custemer custemer = new Custemer();
+            custemer.setFullname(cusname);
+            custemer.setCustomer_id(customer_id);
+            cus.add(custemer);
+        }
+        Message msg4 = Message.obtain();
+        msg4.what = 4;
+        msg4.obj = cus;
+        handler.sendMessage(msg4);
     }
 
     @Override
@@ -398,5 +422,25 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    /**
+     * 网络问题，重新加载
+     * @param view
+     */
+    public void loadingMore(View view){
+        showShortDialog();
+        if (NetWorkUtils.isNetworkConnected(this)){
+            ll_all_data.setVisibility(View.VISIBLE);
+            in_loading_error.setVisibility(View.GONE);
+            setOrderListener();
+            getServiceData();
+            getProjectOrder(project_id);
+        }else{
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+            dismissShortDialog();
+        }
     }
 }

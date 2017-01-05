@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -194,12 +193,7 @@ public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBa
 
     //提交最值
     public void submit(View view){
-        final ProgressDialog dialog=new ProgressDialog(this);
-        dialog.setMessage("设置中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
+        showShortDialog();
         OkHttpUtils
                 .post()
                 .url(apiURL+"/rest/employee/setdailyreportsetting")
@@ -214,7 +208,8 @@ public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBa
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        dismissShortDialog();
+                        showToast("网络异常,保存失败!");
                     }
 
                     @Override
@@ -225,7 +220,7 @@ public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBa
                         App.showToast(getApplicationContext(),message);
                         setResult(16);
                         finish();
-                        dialog.dismiss();
+                        dismissShortDialog();
                     }
                 });
     }

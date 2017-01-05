@@ -1,6 +1,5 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +26,7 @@ import com.maibo.lvyongsheng.xianhui.entity.Project;
 import com.maibo.lvyongsheng.xianhui.entity.Task;
 import com.maibo.lvyongsheng.xianhui.entity.TaskInfomation;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -44,7 +44,6 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
     SharedPreferences sp;
     String apiURL;
     String token;
-    ProgressDialog dialog;
 
     TextView back, tv_see, tv_progress_cotent, tv_progress_value;
     ProgressBar pb_progressbar;
@@ -64,6 +63,13 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
     LinearLayout ll_rg_bg;
     @Bind(R.id.ll_all)
     LinearLayout ll_all;
+
+    @Bind(R.id.in_no_datas)
+    LinearLayout in_no_datas;
+    @Bind(R.id.in_loading_error)
+    LinearLayout in_loading_error;
+    @Bind(R.id.ll_all_data)
+    LinearLayout ll_all_data;
 
     Handler handler = new Handler() {
         @Override
@@ -112,7 +118,6 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
         int progress = Integer.parseInt(tkInfor.getPercentage());
         tv_progress_value.setText(progress + "%");
         pb_progressbar.setProgress(progress);
-        dialog.dismiss();
     }
 
     @Override
@@ -122,17 +127,21 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
         adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
-        getTaskListDetailFromService(task_ids);
+        if (NetWorkUtils.isNetworkConnected(this)){
+            tv_see.setOnClickListener(this);
+            getTaskListDetailFromService(task_ids);
+            showShortDialog();
+        }else{
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+        }
+
+
     }
 
     private void initView() {
 
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("加载中...");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(true);
-        dialog.setIndeterminate(false);
-        dialog.show();
 
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
@@ -154,7 +163,6 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
         setHeightAndWidth();
 
         back.setOnClickListener(this);
-        tv_see.setOnClickListener(this);
         myCheckedChange();
         Intent intent = getIntent();
         task_ids = intent.getStringExtra("task_id");
@@ -188,7 +196,7 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        dialog.dismiss();
+                     dismissShortDialog();
 
                     }
 
@@ -204,185 +212,194 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
                         if (!jsonObject.get("message").isJsonNull())
                             message = jsonObject.get("message").getAsString();
                         if (status.equals("ok")) {
-                            JsonObject data = jsonObject.get("data").getAsJsonObject();
-                            if (data != null) {
-                                String task_id = "";
-                                String start_date = "";
-                                String end_date = "";
-                                String publish_date = "";
-                                String type = "";
-                                String range = "";
-                                String percentage = "";
-                                String is_update = "";
-                                String target = "";
-                                String range_name = "";
-                                String type_name = "";
-                                String org_id = "";
-                                String reality = "";
-                                if (!data.get("task_id").isJsonNull())
-                                    task_id = data.get("task_id").getAsString();
-                                if (!data.get("org_id").isJsonNull())
-                                    org_id = data.get("org_id").getAsString();
-                                if (!data.get("start_date").isJsonNull())
-                                    start_date = data.get("start_date").getAsString();
-                                if (!data.get("end_date").isJsonNull())
-                                    end_date = data.get("end_date").getAsString();
-                                if (!data.get("publish_date").isJsonNull())
-                                    publish_date = data.get("publish_date").getAsString();
-                                if (!data.get("type").isJsonNull())
-                                    type = data.get("type").getAsString();
-                                if (!data.get("range").isJsonNull())
-                                    range = data.get("range").getAsString();
-                                if (!data.get("percentage").isJsonNull())
-                                    percentage = data.get("percentage").getAsString();
-                                if (!data.get("is_update").isJsonNull())
-                                    is_update = data.get("is_update").getAsString();
-                                if (!data.get("target").isJsonNull())
-                                    target = data.get("target").getAsString();
-                                if (!data.get("reality").isJsonNull())
-                                    reality = data.get("reality").getAsString();
-                                if (!data.get("range_name").isJsonNull())
-                                    range_name = data.get("range_name").getAsString();
-                                if (!data.get("type_name").isJsonNull())
-                                    type_name = data.get("type_name").getAsString();
-
-                                if (data.has("adviser_list")) {
-                                    //此处代表完成任务
-                                    JsonArray adviser_list = data.get("adviser_list").getAsJsonArray();
-                                    JsonArray engineer_list = data.get("engineer_list").getAsJsonArray();
-                                    JsonArray customer_list = data.get("customer_list").getAsJsonArray();
-                                    //解析adviser_list
-                                    List<People> adviser_people_list = new ArrayList<People>();
-                                    for (JsonElement je0 : adviser_list) {
-                                        JsonObject jo0 = je0.getAsJsonObject();
-
-                                        String ids = "";
-                                        String name = "";
-                                        String amount = "";
-                                        if (!jo0.get("id").isJsonNull())
-                                            ids = jo0.get("id").getAsString();
-                                        if (!jo0.get("name").isJsonNull())
-                                            name = jo0.get("name").getAsString();
-                                        if (!jo0.get("amount").isJsonNull())
-                                            amount = jo0.get("amount").getAsString();
-                                        JsonArray detail = jo0.get("detail").getAsJsonArray();
-                                        List<Project> project_list = new ArrayList<Project>();
-                                        for (JsonElement je1 : detail) {
-                                            JsonObject jo1 = je1.getAsJsonObject();
-                                            Project project = new Project();
-                                            int ids1 = -1;
-                                            String name1 = "";
-                                            String amount1 = "";
-                                            if (!jo1.get("id").isJsonNull())
-                                                ids1 = jo1.get("id").getAsInt();
-                                            project.setItem_id(ids1);
-                                            if (!jo1.get("name").isJsonNull())
-                                                name1 = jo1.get("name").getAsString();
-                                            project.setFullname(name1);
-                                            if (!jo1.get("amount").isJsonNull())
-                                                amount1 = jo1.get("amount").getAsString();
-                                            project.setAmount(amount1);
-                                            project_list.add(project);
-                                        }
-                                        adviser_people_list.add(new People(ids, name, amount, project_list));
-
-                                    }
-                                    //解析engineer_list
-                                    List<People> engineer_people_list = new ArrayList<People>();
-                                    for (JsonElement je0 : engineer_list) {
-                                        JsonObject jo0 = je0.getAsJsonObject();
-                                        String ids = "";
-                                        String name = "";
-                                        String amount = "";
-                                        if (!jo0.get("id").isJsonNull())
-                                            ids = jo0.get("id").getAsString();
-                                        if (!jo0.get("name").isJsonNull())
-                                            name = jo0.get("name").getAsString();
-                                        if (!jo0.get("amount").isJsonNull())
-                                            amount = jo0.get("amount").getAsString();
-                                        JsonArray detail = jo0.get("detail").getAsJsonArray();
-                                        List<Project> project_list = new ArrayList<Project>();
-                                        for (JsonElement je1 : detail) {
-                                            JsonObject jo1 = je1.getAsJsonObject();
-                                            Project project = new Project();
-                                            int ids1 = -1;
-                                            String name1 = "";
-                                            String amount1 = "";
-                                            if (!jo1.get("id").isJsonNull())
-                                                ids1 = jo1.get("id").getAsInt();
-                                            project.setItem_id(ids1);
-                                            if (!jo1.get("name").isJsonNull())
-                                                name1 = jo1.get("name").getAsString();
-                                            project.setFullname(name1);
-                                            if (!jo1.get("amount").isJsonNull())
-                                                amount1 = jo1.get("amount").getAsString();
-                                            project.setAmount(amount1);
-                                            project_list.add(project);
-                                        }
-                                        engineer_people_list.add(new People(ids, name, amount, project_list));
-                                    }
-                                    //解析customer_list
-                                    List<People> customer_people_list = new ArrayList<People>();
-                                    for (JsonElement je0 : customer_list) {
-                                        JsonObject jo0 = je0.getAsJsonObject();
-                                        String ids = "";
-                                        String name = "";
-                                        String amount = "";
-                                        if (!jo0.get("id").isJsonNull())
-                                            ids = jo0.get("id").getAsString();
-                                        if (!jo0.get("name").isJsonNull())
-                                            name = jo0.get("name").getAsString();
-                                        if (!jo0.get("amount").isJsonNull())
-                                            amount = jo0.get("amount").getAsString();
-                                        JsonArray detail = jo0.get("detail").getAsJsonArray();
-                                        List<Project> project_list = new ArrayList<Project>();
-                                        for (JsonElement je1 : detail) {
-                                            JsonObject jo1 = je1.getAsJsonObject();
-                                            Project project = new Project();
-                                            int ids1 = -1;
-                                            String name1 = "";
-                                            String amount1 = "";
-                                            if (!jo1.get("id").isJsonNull())
-                                                ids1 = jo1.get("id").getAsInt();
-                                            project.setItem_id(ids1);
-                                            if (!jo1.get("name").isJsonNull())
-                                                name1 = jo1.get("name").getAsString();
-                                            project.setFullname(name1);
-                                            if (!jo1.get("amount").isJsonNull())
-                                                amount1 = jo1.get("amount").getAsString();
-                                            project.setAmount(amount1);
-                                            project_list.add(project);
-                                        }
-                                        customer_people_list.add(new People(ids, name, amount, project_list));
-                                    }
-                                    //此处上传完整数据
-                                    task_info_list.add(new TaskInfomation(task_id, start_date, end_date, publish_date, type,
-                                            range, percentage, is_update, target, range_name, type_name, org_id, reality,
-                                            adviser_people_list, engineer_people_list, customer_people_list));
-                                    Message msg = Message.obtain();
-                                    msg.what = 0;
-                                    msg.obj = task_info_list;
-                                    handler.sendMessage(msg);
-
-                                } else {
-                                    //此处代表没有完成任务
-                                    task_info_list.add(new TaskInfomation(task_id, start_date, end_date, publish_date, type,
-                                            range, percentage, is_update, target, range_name, type_name, org_id, reality));
-                                    Message msg1 = Message.obtain();
-                                    msg1.what = 1;
-                                    msg1.obj = task_info_list;
-                                    handler.sendMessage(msg1);
-                                }
-                            } else {
-                                App.showToast(getApplicationContext(), "暂无数据");
-                                dialog.dismiss();
-                            }
+                            analysisJson(jsonObject, task_info_list);
                         } else {
                             App.showToast(getApplicationContext(), message);
-                            dialog.dismiss();
                         }
+                        dismissShortDialog();
                     }
                 });
+    }
+
+    /**
+     * 解析Json
+     * @param jsonObject
+     * @param task_info_list
+     */
+    private void analysisJson(JsonObject jsonObject, List<TaskInfomation> task_info_list) {
+        JsonObject data = jsonObject.get("data").getAsJsonObject();
+        if (data != null) {
+            String task_id = "";
+            String start_date = "";
+            String end_date = "";
+            String publish_date = "";
+            String type = "";
+            String range = "";
+            String percentage = "";
+            String is_update = "";
+            String target = "";
+            String range_name = "";
+            String type_name = "";
+            String org_id = "";
+            String reality = "";
+            if (!data.get("task_id").isJsonNull())
+                task_id = data.get("task_id").getAsString();
+            if (!data.get("org_id").isJsonNull())
+                org_id = data.get("org_id").getAsString();
+            if (!data.get("start_date").isJsonNull())
+                start_date = data.get("start_date").getAsString();
+            if (!data.get("end_date").isJsonNull())
+                end_date = data.get("end_date").getAsString();
+            if (!data.get("publish_date").isJsonNull())
+                publish_date = data.get("publish_date").getAsString();
+            if (!data.get("type").isJsonNull())
+                type = data.get("type").getAsString();
+            if (!data.get("range").isJsonNull())
+                range = data.get("range").getAsString();
+            if (!data.get("percentage").isJsonNull())
+                percentage = data.get("percentage").getAsString();
+            if (!data.get("is_update").isJsonNull())
+                is_update = data.get("is_update").getAsString();
+            if (!data.get("target").isJsonNull())
+                target = data.get("target").getAsString();
+            if (!data.get("reality").isJsonNull())
+                reality = data.get("reality").getAsString();
+            if (!data.get("range_name").isJsonNull())
+                range_name = data.get("range_name").getAsString();
+            if (!data.get("type_name").isJsonNull())
+                type_name = data.get("type_name").getAsString();
+
+            if (data.has("adviser_list")) {
+                //此处代表完成任务
+                JsonArray adviser_list = data.get("adviser_list").getAsJsonArray();
+                JsonArray engineer_list = data.get("engineer_list").getAsJsonArray();
+                JsonArray customer_list = data.get("customer_list").getAsJsonArray();
+                //解析adviser_list
+                List<People> adviser_people_list = new ArrayList<People>();
+                for (JsonElement je0 : adviser_list) {
+                    JsonObject jo0 = je0.getAsJsonObject();
+
+                    String ids = "";
+                    String name = "";
+                    String amount = "";
+                    if (!jo0.get("id").isJsonNull())
+                        ids = jo0.get("id").getAsString();
+                    if (!jo0.get("name").isJsonNull())
+                        name = jo0.get("name").getAsString();
+                    if (!jo0.get("amount").isJsonNull())
+                        amount = jo0.get("amount").getAsString();
+                    JsonArray detail = jo0.get("detail").getAsJsonArray();
+                    List<Project> project_list = new ArrayList<Project>();
+                    for (JsonElement je1 : detail) {
+                        JsonObject jo1 = je1.getAsJsonObject();
+                        Project project = new Project();
+                        int ids1 = -1;
+                        String name1 = "";
+                        String amount1 = "";
+                        if (!jo1.get("id").isJsonNull())
+                            ids1 = jo1.get("id").getAsInt();
+                        project.setItem_id(ids1);
+                        if (!jo1.get("name").isJsonNull())
+                            name1 = jo1.get("name").getAsString();
+                        project.setFullname(name1);
+                        if (!jo1.get("amount").isJsonNull())
+                            amount1 = jo1.get("amount").getAsString();
+                        project.setAmount(amount1);
+                        project_list.add(project);
+                    }
+                    adviser_people_list.add(new People(ids, name, amount, project_list));
+
+                }
+                //解析engineer_list
+                List<People> engineer_people_list = new ArrayList<People>();
+                for (JsonElement je0 : engineer_list) {
+                    JsonObject jo0 = je0.getAsJsonObject();
+                    String ids = "";
+                    String name = "";
+                    String amount = "";
+                    if (!jo0.get("id").isJsonNull())
+                        ids = jo0.get("id").getAsString();
+                    if (!jo0.get("name").isJsonNull())
+                        name = jo0.get("name").getAsString();
+                    if (!jo0.get("amount").isJsonNull())
+                        amount = jo0.get("amount").getAsString();
+                    JsonArray detail = jo0.get("detail").getAsJsonArray();
+                    List<Project> project_list = new ArrayList<Project>();
+                    for (JsonElement je1 : detail) {
+                        JsonObject jo1 = je1.getAsJsonObject();
+                        Project project = new Project();
+                        int ids1 = -1;
+                        String name1 = "";
+                        String amount1 = "";
+                        if (!jo1.get("id").isJsonNull())
+                            ids1 = jo1.get("id").getAsInt();
+                        project.setItem_id(ids1);
+                        if (!jo1.get("name").isJsonNull())
+                            name1 = jo1.get("name").getAsString();
+                        project.setFullname(name1);
+                        if (!jo1.get("amount").isJsonNull())
+                            amount1 = jo1.get("amount").getAsString();
+                        project.setAmount(amount1);
+                        project_list.add(project);
+                    }
+                    engineer_people_list.add(new People(ids, name, amount, project_list));
+                }
+                //解析customer_list
+                List<People> customer_people_list = new ArrayList<People>();
+                for (JsonElement je0 : customer_list) {
+                    JsonObject jo0 = je0.getAsJsonObject();
+                    String ids = "";
+                    String name = "";
+                    String amount = "";
+                    if (!jo0.get("id").isJsonNull())
+                        ids = jo0.get("id").getAsString();
+                    if (!jo0.get("name").isJsonNull())
+                        name = jo0.get("name").getAsString();
+                    if (!jo0.get("amount").isJsonNull())
+                        amount = jo0.get("amount").getAsString();
+                    JsonArray detail = jo0.get("detail").getAsJsonArray();
+                    List<Project> project_list = new ArrayList<Project>();
+                    for (JsonElement je1 : detail) {
+                        JsonObject jo1 = je1.getAsJsonObject();
+                        Project project = new Project();
+                        int ids1 = -1;
+                        String name1 = "";
+                        String amount1 = "";
+                        if (!jo1.get("id").isJsonNull())
+                            ids1 = jo1.get("id").getAsInt();
+                        project.setItem_id(ids1);
+                        if (!jo1.get("name").isJsonNull())
+                            name1 = jo1.get("name").getAsString();
+                        project.setFullname(name1);
+                        if (!jo1.get("amount").isJsonNull())
+                            amount1 = jo1.get("amount").getAsString();
+                        project.setAmount(amount1);
+                        project_list.add(project);
+                    }
+                    customer_people_list.add(new People(ids, name, amount, project_list));
+                }
+                //此处上传完整数据
+                task_info_list.add(new TaskInfomation(task_id, start_date, end_date, publish_date, type,
+                        range, percentage, is_update, target, range_name, type_name, org_id, reality,
+                        adviser_people_list, engineer_people_list, customer_people_list));
+                Message msg = Message.obtain();
+                msg.what = 0;
+                msg.obj = task_info_list;
+                handler.sendMessage(msg);
+
+            } else {
+                //此处代表没有完成任务
+                task_info_list.add(new TaskInfomation(task_id, start_date, end_date, publish_date, type,
+                        range, percentage, is_update, target, range_name, type_name, org_id, reality));
+                Message msg1 = Message.obtain();
+                msg1.what = 1;
+                msg1.obj = task_info_list;
+                handler.sendMessage(msg1);
+            }
+        } else {
+            App.showToast(getApplicationContext(), "暂无数据");
+
+        }
     }
 
     /**
@@ -439,7 +456,13 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
                 finish();
                 break;
             case R.id.tv_see:
-                getTaskDetailFromService(task_ids);
+                if (NetWorkUtils.isNetworkConnected(this)){
+                    showShortDialog();
+                    getTaskDetailFromService(task_ids);
+                }else{
+                    showToast(R.string.net_connect_error);
+                }
+
                 break;
         }
     }
@@ -460,7 +483,7 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-
+                        dismissShortDialog();
                     }
 
                     @Override
@@ -535,6 +558,7 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
                         } else {
                             App.showToast(getApplicationContext(), message);
                         }
+                        dismissShortDialog();
                     }
                 });
     }
@@ -569,5 +593,19 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
+    }
+
+    public void loadingMore(View view){
+        if (NetWorkUtils.isNetworkConnected(this)){
+            ll_all_data.setVisibility(View.VISIBLE);
+            in_loading_error.setVisibility(View.GONE);
+            tv_see.setOnClickListener(this);
+            getTaskListDetailFromService(task_ids);
+            showShortDialog();
+        }else{
+            ll_all_data.setVisibility(View.GONE);
+            in_loading_error.setVisibility(View.VISIBLE);
+            showToast(R.string.net_connect_error);
+        }
     }
 }

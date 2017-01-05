@@ -22,7 +22,8 @@ import butterknife.Bind;
  */
 public class OrderActivity extends BaseActivity implements View.OnClickListener{
     ListView lv_order;
-    TextView cus_name,tv_files,tv_notdata,back;
+    TextView cus_name,tv_files,back;
+    LinearLayout tv_notdata;
     List<Order> productOrder,projectOrder,collOrder,customerOrder;
     int project_id;
     int tag;
@@ -40,7 +41,7 @@ public class OrderActivity extends BaseActivity implements View.OnClickListener{
         lv_order=(ListView)findViewById(R.id.lv_order);
         cus_name=(TextView) findViewById(R.id.cus_name);
         tv_files=(TextView) findViewById(R.id.tv_files);
-        tv_notdata=(TextView) findViewById(R.id.tv_notdata);
+        tv_notdata=(LinearLayout) findViewById(R.id.tv_notdata);
         back= (TextView) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override

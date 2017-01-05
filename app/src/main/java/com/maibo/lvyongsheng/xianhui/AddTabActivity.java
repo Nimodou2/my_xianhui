@@ -160,6 +160,7 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener{
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
+                        App.showToast(getApplicationContext(),"网络连接异常");
                     }
 
                     @Override

@@ -20,6 +20,17 @@
             style="@style/bar_right"
             android:text="订单"/>
     </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_all_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
     <LinearLayout
         style="@style/message_head">
         <FrameLayout
@@ -197,4 +208,16 @@
         android:layout_height="0dp"
         android:layout_weight="8.5"
         android:background="@color/weixin_lianxiren_gray"/>
+    </LinearLayout>
+        <include
+            android:id="@+id/in_no_datas"
+            android:visibility="gone"
+            layout="@layout/incloud_no_datas"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            android:visibility="gone"
+            layout="@layout/incloud_loading_error"></include>
+
+    </FrameLayout>
 </LinearLayout>

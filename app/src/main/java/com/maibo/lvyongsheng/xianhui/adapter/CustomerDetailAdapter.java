@@ -96,21 +96,14 @@ public class CustomerDetailAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        ViewHolder holder;
-        if (view == null) {
-            holder = new ViewHolder();
-            view = View.inflate(context.getApplicationContext(), R.layout.style_day_table_list, null);
-            holder.name = (TextView) view.findViewById(R.id.name);
-            holder.numbers = (TextView) view.findViewById(R.id.numbers);
-            holder.ll_cards_type = (LinearLayout) view.findViewById(R.id.ll_cards_type);
-            holder.ll_item= (LinearLayout) view.findViewById(R.id.ll_item);
-            view.setTag(holder);
-        } else {
-            holder = (ViewHolder) view.getTag();
-        }
-        ViewGroup.LayoutParams params=holder.ll_item.getLayoutParams();
+        view = View.inflate(context.getApplicationContext(), R.layout.style_day_table_list, null);
+        TextView name = (TextView) view.findViewById(R.id.name);
+        TextView numbers = (TextView) view.findViewById(R.id.numbers);
+        LinearLayout ll_cards_type = (LinearLayout) view.findViewById(R.id.ll_cards_type);
+        LinearLayout ll_item= (LinearLayout) view.findViewById(R.id.ll_item);
+        ViewGroup.LayoutParams params=ll_item.getLayoutParams();
         params.height=viewHeight*20/255;
-        holder.ll_item.setLayoutParams(params);
+        ll_item.setLayoutParams(params);
         //填充数据
         if (a == 1 && b == 0) {
             Cards cards = huiYuan.get(i);
@@ -122,13 +115,13 @@ public class CustomerDetailAdapter extends BaseAdapter {
                 tv.setPadding(30, 0, 0, 0);
                 tv.setTextSize(14);
                 tv.setGravity(Gravity.CENTER_VERTICAL);
-                holder.ll_cards_type.addView(tv, 0);
-                holder.name.setText(cards.getFullname());
-                holder.numbers.setText("余" + cards.getAmount() + "元");
+                ll_cards_type.addView(tv, 0);
+                name.setText(cards.getFullname());
+                numbers.setText("余" + cards.getAmount() + "元");
                 return view;
             } else {
-                holder.name.setText(cards.getFullname());
-                holder.numbers.setText("余" + cards.getAmount() + "元");
+                name.setText(cards.getFullname());
+                numbers.setText("余" + cards.getAmount() + "元");
                 return view;
             }
         } else if (a == 1 && b == 1) {
@@ -141,14 +134,14 @@ public class CustomerDetailAdapter extends BaseAdapter {
                 tv.setBackgroundResource(R.color.weixin_lianxiren_gray);
                 tv.setPadding(30, 0, 0, 0);
                 tv.setTextSize(14);
-                holder.ll_cards_type.addView(tv, 0);
-                holder.name.setText(cards.getFullname());
-                holder.numbers.setText("余" + cards.getAmount() + "元");
+                ll_cards_type.addView(tv, 0);
+                name.setText(cards.getFullname());
+                numbers.setText("余" + cards.getAmount() + "元");
                 return view;
             } else if (i > 0 && i < huiYuan.size()) {
                 Cards cards = huiYuan.get(i);
-                holder.name.setText(cards.getFullname());
-                holder.numbers.setText("余" + cards.getAmount() + "元");
+                name.setText(cards.getFullname());
+                numbers.setText("余" + cards.getAmount() + "元");
                 return view;
             } else if (i == huiYuan.size()) {
                 Cards cards = liaoCheng.get(i - huiYuan.size());
@@ -159,20 +152,20 @@ public class CustomerDetailAdapter extends BaseAdapter {
                 tv.setPadding(30, 0, 0, 0);
                 tv.setTextSize(14);
                 tv.setGravity(Gravity.CENTER_VERTICAL);
-                holder.ll_cards_type.addView(tv, 0);
-                holder.name.setText(cards.getFullname());
+                ll_cards_type.addView(tv, 0);
+                name.setText(cards.getFullname());
                 int yuci = 0;
                 for (int j = 0; j < cards.getCard().size(); j++)
                     yuci += cards.getCard().get(j).getTimes();
-                holder.numbers.setText(yuci + "次");
+                numbers.setText(yuci + "次");
                 return view;
             } else {
                 Cards cards = liaoCheng.get(i - huiYuan.size());
-                holder.name.setText(cards.getFullname());
+                name.setText(cards.getFullname());
                 int yuci = 0;
                 for (int j = 0; j < cards.getCard().size(); j++)
                     yuci += cards.getCard().get(j).getTimes();
-                holder.numbers.setText(yuci + "次");
+                numbers.setText(yuci + "次");
                 return view;
             }
         } else if (a == 0 && b == 1) {
@@ -185,19 +178,19 @@ public class CustomerDetailAdapter extends BaseAdapter {
                 tv.setTextSize(14);
                 tv.setGravity(Gravity.CENTER_VERTICAL);
                 Cards cards = liaoCheng.get(i);
-                holder.name.setText(cards.getFullname());
+                name.setText(cards.getFullname());
                 int yuci = 0;
                 for (int j = 0; j < cards.getCard().size(); j++)
                     yuci += cards.getCard().get(j).getTimes();
-                holder.numbers.setText(yuci + "次");
+                numbers.setText(yuci + "次");
                 return view;
             } else {
                 Cards cards = liaoCheng.get(i);
-                holder.name.setText(cards.getFullname());
+                name.setText(cards.getFullname());
                 int yuci = 0;
                 for (int j = 0; j < cards.getCard().size(); j++)
                     yuci += cards.getCard().get(j).getTimes();
-                holder.numbers.setText(yuci + "次");
+                numbers.setText(yuci + "次");
                 return view;
             }
         }
