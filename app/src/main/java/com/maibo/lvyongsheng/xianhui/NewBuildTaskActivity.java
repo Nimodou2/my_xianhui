@@ -741,14 +741,6 @@ public class NewBuildTaskActivity extends BaseActivity implements View.OnClickLi
             null_data += " " + strings[list_index.get(i)];
         }
         return null_data;
-
-//        if (!TextUtils.isEmpty(range_save)&&!TextUtils.isEmpty(type_save)&&!TextUtils.isEmpty(target)
-//                &&!TextUtils.isEmpty(start_time)&&!TextUtils.isEmpty(finish_time)&&!TextUtils.isEmpty(joiner_save)){
-//            return true;
-//        }else{
-//            App.showToast(getApplicationContext(),"数据不完整");
-//            return false;
-//        }
     }
 
     /**

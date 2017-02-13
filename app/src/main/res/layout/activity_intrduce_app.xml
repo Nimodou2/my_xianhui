@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/weixin_lianxiren_gray"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:id="@+id/ll_head"
+    android:background="@color/bar_color"
+    android:layout_width="match_parent"
+    android:layout_height="40dp">
+    <TextView
+        android:id="@+id/back"
+        android:text="返回"
+        style="@style/bar_left" />
+    <TextView
+        style="@style/bar_center"
+        android:text="关于闲惠"/>
+    <TextView
+        style="@style/bar_right" />
+</LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:paddingTop="16dp"
+        android:paddingBottom="2dp"
+        android:src="@mipmap/single_one"/>
+    <TextView
+        android:id="@+id/tv_app_version"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:text="闲惠企业版 2.0.2"/>
+    <TextView
+        android:id="@+id/tv_intrduce_function"
+        android:text="功能介绍"
+        style="@style/settingfragment_textview_style" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+    <TextView
+        android:id="@+id/tv_system_nitification"
+        android:text="系统通知"
+        style="@style/settingfragment_textview_style" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="bottom"
+        android:layout_weight="26">
+        <TextView
+            android:id="@+id/tv_one"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:textColor="@color/gray_weixin"
+            android:text="迈薄科技 版权所有"/>
+        <TextView
+            android:layout_below="@+id/tv_one"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:paddingTop="6dp"
+            android:paddingBottom="15dp"
+            android:textColor="@color/gray_weixin"
+            android:text="Copyright © 2014-2016 MyBook.All Rights Reserved."/>
+    </RelativeLayout>
+
+</LinearLayout>

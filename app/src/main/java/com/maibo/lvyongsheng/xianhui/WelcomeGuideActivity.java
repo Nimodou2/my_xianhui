@@ -39,7 +39,6 @@ public class WelcomeGuideActivity extends Activity implements OnClickListener {
 			R.layout.guid_view2, R.layout.guid_view3, R.layout.guid_view4 };
 	// 底部小点图片
 	private ImageView[] dots;
-
 	// 记录当前选中位置
 	private int currentIndex;
 

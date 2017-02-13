@@ -24,6 +24,7 @@ import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMSingleMessageQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.maibo.lvyongsheng.xianhui.HelperActivity;
+import com.maibo.lvyongsheng.xianhui.NewHandRemindActivity;
 import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.RemindActivity;
 import com.maibo.lvyongsheng.xianhui.TaskActivity;
@@ -366,7 +367,7 @@ public class ConversationItemHolder extends LCIMCommonViewHolder {
                                     }else if (map.get("notice_type").equals("tutorial")){
                                         //暂时不做处理,等待web页面完成之后再打开
                                         LCIMConversationItemCache.getInstance().clearUnread(conversation.getConversationId());
-//                                        getContext().startActivity(new Intent(getContext(), NewHandRemindActivity.class));
+                                        getContext().startActivity(new Intent(getContext(), NewHandRemindActivity.class));
                                         return;
                                     }
                                 }

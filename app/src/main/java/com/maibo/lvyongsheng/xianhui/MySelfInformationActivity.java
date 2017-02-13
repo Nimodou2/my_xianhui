@@ -70,7 +70,6 @@ public class MySelfInformationActivity extends BaseActivity implements View.OnCl
         String  myname=sp.getString("displayname",null);
         if (!TextUtils.isEmpty(myname))
             tv_name.setText(myname);
-//        Picasso.with(this).load(avator_url).into(avatarImageView);
         //下载头像
         if (!TextUtils.isEmpty(avator_url)){
             OkHttpUtils
@@ -109,7 +108,6 @@ public class MySelfInformationActivity extends BaseActivity implements View.OnCl
                 String url=apiURL+"/rest/employee/uploadavator";
                 Map<String, Object> map=new HashMap<String, Object>();
                 map.put("token",token);
-                Log.e("filename:",filename);
                 //上传头像
                 //file(url,filename,file,token);
                 post_file(url,map,file);

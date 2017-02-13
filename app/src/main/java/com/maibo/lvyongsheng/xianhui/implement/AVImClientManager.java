@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMClientEventHandler;
@@ -32,7 +31,7 @@ public class AVImClientManager extends AVIMClientEventHandler {
     Activity mow_activity;
     String apiURL;
     String token;
-    SharedPreferences sp1, sp2, sp3, sp4, sp5;
+    SharedPreferences sp1, sp2, sp3, sp4, sp5,sp6;
     Context appContext;
 
     public AVImClientManager(Context appContext) {
@@ -56,6 +55,7 @@ public class AVImClientManager extends AVIMClientEventHandler {
         sp3 = appContext.getSharedPreferences("checkBox", MODE_PRIVATE);
         sp4 = appContext.getSharedPreferences("changeAccount", MODE_PRIVATE);
         sp5 = appContext.getSharedPreferences("app", MODE_PRIVATE);
+        sp6 = appContext.getSharedPreferences("dataBase", Context.MODE_PRIVATE);
 
         if (i == 4111) {
             if (!sp1.getBoolean("isDestroyMainActivity", false)) {
@@ -101,12 +101,13 @@ public class AVImClientManager extends AVIMClientEventHandler {
         String guid_close = sp1.getString("guid", null);
         if (guid_close != null)
             closeLeancloud(guid_close);
-        //退出应用,清楚所用缓存
+        //退出应用,清除所用缓存
         sp1.edit().clear().commit();
         sp2.edit().clear().commit();
         sp3.edit().clear().commit();
         sp4.edit().clear().commit();
         sp5.edit().clear().commit();
+        sp6.edit().clear().commit();
 
         CustomUserProvider.getInstance().customUserProvider = null;
         //清除聊天记录
@@ -128,7 +129,7 @@ public class AVImClientManager extends AVIMClientEventHandler {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("AVIMClient:", response);
+//                        Log.e("AVIMClient:", response);
                     }
                 });
 

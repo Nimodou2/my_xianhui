@@ -14,9 +14,10 @@ public class Cards implements Serializable{
     private int item_id;
     private String fullname;
     private List<Card> card;
+    private String times;
 
     public Cards(int card_sort, String card_class, String amount, String card_num,
-                 int item_id, String fullname, List<Card> card) {
+                 int item_id, String fullname,String times, List<Card> card) {
         this.card_sort = card_sort;
         this.card_class = card_class;
         this.amount = amount;
@@ -24,6 +25,15 @@ public class Cards implements Serializable{
         this.item_id = item_id;
         this.fullname = fullname;
         this.card = card;
+        this.times=times;
+    }
+
+    public String getTimes() {
+        return times;
+    }
+
+    public void setTimes(String times) {
+        this.times = times;
     }
 
     public int getCard_sort() {

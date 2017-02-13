@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/weixin_lianxiren_gray"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/ll_head"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/bar_color">
+        <TextView
+            android:id="@id/back"
+            style="@style/bar_left"
+            android:text="返回"/>
+        <TextView
+            style="@style/bar_center"
+            android:text="反馈"/>
+        <TextView
+            android:id="@+id/tv_confirm"
+            style="@style/bar_right"
+            android:text="确定"/>
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:text="我们会认真阅读每一份反馈!"/>
+    <EditText
+        android:id="@+id/et_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#fff"
+        android:textSize="16dp"
+        android:focusable="true"
+        android:padding="10dp"
+        android:textColorHint="@color/gray_weixin"
+        android:gravity="start"
+        android:layout_weight="1"/>
+</LinearLayout>

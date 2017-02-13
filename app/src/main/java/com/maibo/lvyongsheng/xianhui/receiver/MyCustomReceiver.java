@@ -33,6 +33,7 @@ public class MyCustomReceiver extends BroadcastReceiver {
                 //Log.e("消息：","Action: " + action + " ;channel: " + channel+" data: "+json.getString("alert"));
                 //1、解析消息体
                 String jsonBody=intent.getExtras().getString("com.avos.avoscloud.Data");
+                Log.e("jsonBody:",jsonBody);
                 SharedPreferences.Editor editor=sp.edit();
                 editor.putString("jsonBody",jsonBody);
                 editor.commit();

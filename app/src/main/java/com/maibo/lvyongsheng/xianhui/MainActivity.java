@@ -35,15 +35,16 @@ import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.myinterface.SampleMultiplePermissionListener;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
+import com.maibo.lvyongsheng.xianhui.serviceholdermessage.ServiceDatas;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.leancloud.chatkit.activity.LCIMConversationActivity;
+import cn.leancloud.chatkit.cache.LCIMConversationItemCache;
 import cn.leancloud.chatkit.utils.LCIMConstants;
 import de.greenrobot.event.EventBus;
-import okhttp3.Call;
 
 public class MainActivity extends BaseFragment implements View.OnClickListener{
 
@@ -95,7 +96,7 @@ public class MainActivity extends BaseFragment implements View.OnClickListener{
 
         initView();
         //获取通知传递过来的值
-        processExtraData();
+//        processExtraData();
         initFragment();
         //注册消息推送服务
         registPushService();
@@ -256,7 +257,7 @@ public class MainActivity extends BaseFragment implements View.OnClickListener{
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        processExtraData();
+        //processExtraData();
     }
 
     @Override
@@ -309,30 +310,32 @@ public class MainActivity extends BaseFragment implements View.OnClickListener{
         editor.putBoolean("isDestroyMainActivity",true);
         editor.commit();
         EventBus.getDefault().unregister(this);
-
         CloseAllActivity.getScreenManager().popActivity(this);
+        //每次销毁MainActivity时都要上传一下ConverstionId
+        uploadConversationId();
 
     }
 
-    private void uploadConversationIdToService(String conv_id) {
-        OkHttpUtils
-                .post()
-                .url(apiURL + "/rest/employee/setconversationlist")
-                .addParams("token", token)
-                .addParams("conv_id", conv_id)
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        Log.e("saveConverId", response);
-                    }
-                });
+    /**
+     * 上传ConversationId
+     */
+    private void uploadConversationId() {
+        List<String> convIdList = LCIMConversationItemCache.getInstance().getSortedConversationList();
+        if(convIdList.size()!=0){
+            StringBuffer buffer=new StringBuffer();
+            for (int i=0;i<convIdList.size();i++){
+                if (i!=convIdList.size()-1){
+                    buffer.append(convIdList.get(i)+",");
+                }else{
+                    buffer.append(convIdList.get(i));
+                }
+            }
+            //上传
+            ServiceDatas sd=new ServiceDatas(this);
+            sd.uploadConversationIdToService(buffer.toString().trim());
+        }
     }
+
     /**
      * 注册权限监听器
      */
@@ -394,6 +397,14 @@ public class MainActivity extends BaseFragment implements View.OnClickListener{
             }
             Dexter.checkPermissions(allPermissionsListener, Manifest.permission.CAMERA,
                     Manifest.permission.READ_EXTERNAL_STORAGE);
+        }else if (event.getTag().equals(Constants.UPLOAD_CONVERSAYION_ID)){
+            if (event.getResponse().equals("error")){
+                App.showToast(this,"网络错误");
+            }else if (event.getResponse().equals("right")){
+                Log.e("right","上传成功");
+            }else{
+                App.showToast(this,event.getResponse());
+            }
         }
 
     }

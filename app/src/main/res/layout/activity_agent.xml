@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/dan_gray">
     <LinearLayout
+        android:id="@+id/ll_head"
         android:background="@color/bar_color"
         android:layout_width="match_parent"
         android:layout_height="40dp">

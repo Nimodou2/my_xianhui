@@ -4,57 +4,6 @@
     android:layout_height="match_parent">
 
 
-    <FrameLayout
-        android:id="@+id/fl_frame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/ll_head"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/bar_color">
-
-            <TextView
-                android:id="@+id/back"
-                style="@style/bar_left"
-                android:text="返回" />
-
-            <TextView
-                android:id="@+id/tv_head_work"
-                style="@style/bar_center"
-                android:text="工作" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <ImageView
-                    android:id="@+id/iv_search"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.5"
-                    android:gravity="center"
-                    android:paddingBottom="9dp"
-                    android:paddingLeft="30dp"
-                    android:paddingTop="9dp"
-                    android:src="@mipmap/search" />
-
-                <ImageView
-                    android:id="@+id/iv_choose"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:padding="11dp"
-                    android:src="@mipmap/choose" />
-            </LinearLayout>
-
-        </LinearLayout>
-    </FrameLayout>
-
     <LinearLayout
         android:id="@+id/tab"
         android:layout_width="match_parent"
@@ -113,5 +62,67 @@
             layout="@layout/incloud_loading_error"
             android:visibility="gone"></include>
 
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:id="@+id/ll_head"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/bar_color">
+
+            <TextView
+                android:id="@+id/back"
+                style="@style/bar_left"
+                android:text="返回" />
+
+            <TextView
+                android:id="@+id/tv_head_work"
+                style="@style/bar_center"
+                android:layout_weight="0.5"
+                android:text="工作" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/iv_choose_date"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:src="@mipmap/icon_date"
+                    />
+                <ImageView
+                    android:id="@+id/iv_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+                    android:src="@mipmap/search" />
+
+                <ImageView
+                    android:id="@+id/iv_choose"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:src="@mipmap/choose" />
+            </LinearLayout>
+
+        </LinearLayout>
     </FrameLayout>
 </RelativeLayout>

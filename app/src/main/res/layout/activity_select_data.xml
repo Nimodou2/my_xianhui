@@ -3,9 +3,131 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <cn.qqtheme.framework.widget.WheelView
-        android:id="@+id/wheelview_single"
+   <LinearLayout
+       android:id="@+id/ll_head"
+       android:layout_width="match_parent"
+       android:layout_height="0dp"
+       android:background="#fff"
+       android:orientation="vertical"
+       android:layout_weight="1.2">
+       <LinearLayout
+           android:id="@+id/ll_start_date"
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_weight="1">
+           <TextView
+               android:id="@+id/tv_start_dot"
+               android:visibility="visible"
+               android:layout_width="15dp"
+               android:layout_marginLeft="10dp"
+               android:background="@drawable/blue_circle"
+               android:layout_height="15dp"
+               android:textSize="18dp" />
+           <TextView
+               android:layout_width="0dp"
+               android:layout_weight="1"
+               android:paddingLeft="10dp"
+               android:layout_height="wrap_content"
+               android:textSize="18dp"
+               android:textColor="#000"
+               android:text="开始"/>
+           <TextView
+               android:id="@+id/tv_start_date"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:paddingRight="10dp"
+               android:textSize="18dp"
+               android:textColor="@color/gray_weixin"
+               android:text="2016/01/05"/>
+       </LinearLayout>
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="1dp"
+           android:background="@color/weixin_lianxiren_gray"/>
+
+       <LinearLayout
+           android:id="@+id/ll_end_date"
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:orientation="horizontal"
+           android:gravity="center"
+           android:layout_weight="1">
+           <TextView
+               android:id="@+id/tv_end_dot"
+               android:layout_width="15dp"
+               android:visibility="invisible"
+               android:layout_marginLeft="10dp"
+               android:background="@drawable/blue_circle"
+               android:layout_height="15dp"
+               android:textSize="18dp" />
+           <TextView
+               android:layout_width="0dp"
+               android:layout_weight="1"
+               android:paddingLeft="10dp"
+               android:layout_height="wrap_content"
+               android:textSize="18dp"
+               android:textColor="#000"
+               android:text="结束"/>
+           <TextView
+               android:id="@+id/tv_end_date"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:paddingRight="10dp"
+               android:textSize="18dp"
+               android:textColor="@color/gray_weixin"
+               android:text="2016/01/05"/>
+
+       </LinearLayout>
+
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="1dp"
+           android:background="@color/weixin_lianxiren_gray"/>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:orientation="horizontal"
+           android:paddingBottom="5dp"
+           android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_reset"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorRed"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="18dp"
+                android:text="重置"/>
+           <TextView
+               android:id="@+id/tv_confirm"
+               android:layout_width="0dp"
+               android:layout_height="match_parent"
+               android:background="@color/dan_lan"
+               android:layout_weight="1"
+               android:gravity="center"
+               android:textColor="#fff"
+               android:textSize="18dp"
+               android:text="确认"/>
+       </LinearLayout>
+   </LinearLayout>
+    <TextView
+        android:id="@+id/tv_body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="2"/>
+
+    <DatePicker
+        android:id="@+id/date_picker"
+        android:background="#fff"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center" >
+    </DatePicker>
 
 </LinearLayout>

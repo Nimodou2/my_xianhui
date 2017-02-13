@@ -42,6 +42,8 @@
         <activity android:name="com.maibo.lvyongsheng.xianhui.AddProductActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.ListDetailActivity"/>
         <activity android:name=".SearchPeopleActivity"/>
+        <activity android:name=".MyCaptureActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <!--<activity android:name=".ConversationListFragment"-->
             <!--android:launchMode="singleTop"/>-->
         <!--<activity android:name=".ContactPersonFragment"-->
@@ -51,13 +53,17 @@
 
         <activity android:name="com.maibo.lvyongsheng.xianhui.MainActivity"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan"
-           />
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="cn.leancloud.chatkit.chat_notification_action"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity android:name="com.maibo.lvyongsheng.xianhui.IdentifyActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.IDNumberActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.RemindActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.AgentActivity"/>
-        <activity android:name="com.maibo.lvyongsheng.xianhui.WorkActivity"/>
+        <activity android:name="com.maibo.lvyongsheng.xianhui.WorkActivity" />
         <activity android:name="com.maibo.lvyongsheng.xianhui.MaxSettingActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.DetailMessageActivity"/>
         <activity android:name="com.maibo.lvyongsheng.xianhui.PeopleMessageActivity"/>
@@ -86,6 +92,12 @@
         <activity android:name=".TaskPeopleDetailActivity"/>
         <activity android:name=".SearchWorkActivity"/>
         <activity android:name=".NewHandRemindActivity"/>
+        <activity android:name=".selectDataActivity"
+            android:theme="@style/Transparent"/>
+        <activity android:name=".FeedbackProblemActivity"/>
+        <activity android:name=".IntrduceAppActivity"/>
+        <activity android:name=".FunctionIntrduceActivity"/>
+        <activity android:name=".SystemNotificationActivity"/>
 
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>

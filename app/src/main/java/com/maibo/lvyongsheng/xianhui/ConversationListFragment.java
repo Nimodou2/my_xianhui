@@ -34,7 +34,6 @@ import com.maibo.lvyongsheng.xianhui.implement.MyDividerItem;
 import com.maibo.lvyongsheng.xianhui.implement.TitlePopup;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.serviceholdermessage.ServiceDatas;
-import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -170,16 +169,13 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
         if (!TextUtils.isEmpty(webToken)) {
             tv_qute_pc.setVisibility(View.VISIBLE);
         }
-
     }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_scanner:
                 titlePopup.show(view);
                 break;
-
             case R.id.tv_qute_pc:
                 startActivity(new Intent(getActivity(), QuitPCActivity.class));
                 //退出PC端
@@ -214,7 +210,7 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
     public void doSomething() {
         //权限已获得
         // //权限已获得
-        Intent intent = new Intent(getActivity(), CaptureActivity.class);
+        Intent intent = new Intent(getActivity(), MyCaptureActivity.class);
         startActivityForResult(intent, 1);
     }
 
@@ -396,6 +392,7 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
         for (String convId : convIdList) {
             conversationList.add(LCChatKit.getInstance().getClient().getConversation(convId));
         }
+
         itemAdapter.setDataList(conversationList);
         itemAdapter.notifyDataSetChanged();
     }
@@ -408,33 +405,6 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
      */
     public void onEvent(LCIMOfflineMessageCountChangeEvent updateEvent) {
         updateConversationList();
-    }
-
-    /**
-     * 插入会话id
-     */
-    private void inSertConversation() {
-        //判断是否为首次登录
-        Boolean isFirstLogin = sp.getBoolean("isFirstLoginClient", false);
-        if (isFirstLogin && CustomUserProvider.myConversationID.length() > 0) {
-            String conversationId = CustomUserProvider.myConversationID;
-
-            String subStringStr = conversationId.substring(1);
-            String[] conver_id = subStringStr.split(",");
-            for (int i = 0; i < conver_id.length; i++) {
-                //此处可插入数据
-                LCIMConversationItemCache.getInstance().insertConversation(conver_id[i]);
-            }
-
-//            LCIMConversationItemCache.getInstance().insertConversation("58130408a22b9d00677a5228");
-//            LCIMConversationItemCache.getInstance().insertConversation("582594cefab00f41dd859c94");
-////            LCIMConversationItemCache.getInstance().insertConversation("57ee0ecafab00f41dd84c9ec");
-//            LCIMConversationItemCache.getInstance().insertConversation("57e9c27cfab00f41dd8494c8");
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("isFirstLoginClient", false);
-            editor.commit();
-        }
-
     }
 
 }

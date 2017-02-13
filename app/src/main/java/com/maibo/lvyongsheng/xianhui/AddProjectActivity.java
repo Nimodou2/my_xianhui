@@ -156,6 +156,9 @@ public class AddProjectActivity extends BaseActivity {
         lv_item_plan.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
 
+    /**
+     * 获取计划添加项目/产品列表
+     */
     public void initData() {
         Intent intent = getIntent();
         cusId = intent.getIntExtra("customer_id", 0);
@@ -176,6 +179,7 @@ public class AddProjectActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+//                        Log.e("AddProject",response);
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         //获取顾客使用项目的数据
                         String status=object.get("status").getAsString();
@@ -191,6 +195,10 @@ public class AddProjectActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * 解析项目数据
+     * @param object
+     */
     public void getProjectData(JsonObject object) {
         //该顾客所消费的项目信息集合（注：包括所有的项目信息）
         List<CustemProjects> dataCustemProject = new ArrayList<CustemProjects>();

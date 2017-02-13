@@ -44,6 +44,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 //    AvatarImageView avatarImageView;
 
     TextView tv_edite,tv_change,tv_myname,tv_change_password;
+    TextView tv_feedback_problem,tv_about_app;
     SharedPreferences sp,sp1;
     String apiURL;
     String token;
@@ -76,6 +77,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         tv_edite= (TextView) view.findViewById(R.id.tv_edite);
         tv_change_password= (TextView) view.findViewById(R.id.tv_change_password);
         LinearLayout ll_setting= (LinearLayout) view.findViewById(R.id.ll_setting);
+        tv_feedback_problem= (TextView) view.findViewById(R.id.tv_feedback_problem);
+        tv_about_app= (TextView) view.findViewById(R.id.tv_about_app);
+
         MainActivity parentActivity=(MainActivity)getActivity();
         ViewGroup.LayoutParams params=ll_setting.getLayoutParams();
         params.height=((Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight())/35)*2;
@@ -83,6 +87,8 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
         tv_edite.setOnClickListener(this);
         tv_change_password.setOnClickListener(this);
+        tv_feedback_problem.setOnClickListener(this);
+        tv_about_app.setOnClickListener(this);
         //获取到了图片的正确位置
         sp= getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         sp1=getActivity().getSharedPreferences("cropPicturnPath",Context.MODE_PRIVATE);
@@ -122,12 +128,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(),AgentActivity.class));
                 break;
             case R.id.tv_edite:
-//                PermissionGen.needPermission(SettingFragment.this, 50,
-//                        new String[] {
-//                                Manifest.permission.CAMERA,
-//                                Manifest.permission.READ_EXTERNAL_STORAGE
-//                        }
-//                );
 
                 EventDatas eventDatas=new EventDatas(Constants.OPEN_CAMERA_AND_READ_EXTERNAL_STORAGE_PERMISSION,"");
                 EventBus.getDefault().post(eventDatas);
@@ -135,6 +135,14 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             case R.id.tv_change_password:
                 //弹出密码验证框
                 showDialog();
+                break;
+            case R.id.tv_feedback_problem:
+                //跳转到问题反馈界面
+                startActivity(new Intent(getActivity(),FeedbackProblemActivity.class));
+                break;
+            case R.id.tv_about_app:
+                //跳转到关于闲惠界面
+                startActivity(new Intent(getActivity(),IntrduceAppActivity.class));
                 break;
         }
     }

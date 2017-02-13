@@ -154,18 +154,18 @@ public class CustomerDetailAdapter extends BaseAdapter {
                 tv.setGravity(Gravity.CENTER_VERTICAL);
                 ll_cards_type.addView(tv, 0);
                 name.setText(cards.getFullname());
-                int yuci = 0;
-                for (int j = 0; j < cards.getCard().size(); j++)
-                    yuci += cards.getCard().get(j).getTimes();
-                numbers.setText(yuci + "次");
+//                int yuci = 0;
+//                for (int j = 0; j < cards.getCard().size(); j++)
+//                    yuci += cards.getCard().get(j).getTimes();
+                numbers.setText(cards.getTimes() + "次");
                 return view;
             } else {
                 Cards cards = liaoCheng.get(i - huiYuan.size());
                 name.setText(cards.getFullname());
-                int yuci = 0;
-                for (int j = 0; j < cards.getCard().size(); j++)
-                    yuci += cards.getCard().get(j).getTimes();
-                numbers.setText(yuci + "次");
+//                int yuci = 0;
+//                for (int j = 0; j < cards.getCard().size(); j++)
+//                    yuci += cards.getCard().get(j).getTimes();
+                numbers.setText(cards.getTimes() + "次");
                 return view;
             }
         } else if (a == 0 && b == 1) {
@@ -179,18 +179,18 @@ public class CustomerDetailAdapter extends BaseAdapter {
                 tv.setGravity(Gravity.CENTER_VERTICAL);
                 Cards cards = liaoCheng.get(i);
                 name.setText(cards.getFullname());
-                int yuci = 0;
-                for (int j = 0; j < cards.getCard().size(); j++)
-                    yuci += cards.getCard().get(j).getTimes();
-                numbers.setText(yuci + "次");
+//                int yuci = 0;
+//                for (int j = 0; j < cards.getCard().size(); j++)
+//                    yuci += cards.getCard().get(j).getTimes();
+                numbers.setText(cards.getTimes() + "次");
                 return view;
             } else {
                 Cards cards = liaoCheng.get(i);
                 name.setText(cards.getFullname());
-                int yuci = 0;
-                for (int j = 0; j < cards.getCard().size(); j++)
-                    yuci += cards.getCard().get(j).getTimes();
-                numbers.setText(yuci + "次");
+//                int yuci = 0;
+//                for (int j = 0; j < cards.getCard().size(); j++)
+//                    yuci += cards.getCard().get(j).getTimes();
+                numbers.setText(cards.getTimes() + "次");
                 return view;
             }
         }

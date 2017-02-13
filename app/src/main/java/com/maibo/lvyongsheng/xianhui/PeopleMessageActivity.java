@@ -67,50 +67,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:
-                    list1 = (List<HelperCustomer>) msg.obj;
-                    HelperCustomer customer = list1.get(0);
-                    //下载头像
-                    OkHttpUtils
-                            .get()
-                            .url(customer.getAvator_url())
-                            .build()
-                            .execute(new BitmapCallback() {
-                                @Override
-                                public void onError(Call call, Exception e, int id) {
-
-                                }
-
-                                @Override
-                                public void onResponse(Bitmap response, int id) {
-                                    Bitmap bm = DrawRoundCorner.makeRoundCorner(response, 63);
-                                    Drawable drawable = new BitmapDrawable(bm);
-                                    cus_head.setImageDrawable(drawable);
-                                    dismissShortDialog();
-                                }
-                            });
-                    customer_name = customer.getFullname();
-                    cus_name.setText(customer.getFullname());
-                    cus_grade.setText("会员等级: " + customer.getVip_star());
-                    cus_files_num.setText("档案号: " + customer.getCert_no());
-                    cus_manager.setText(customer.getManager());
-                    cus_cards_num.setText("共" + customer.getCard_total() + "张卡");
-                    if (!TextUtils.isEmpty(customer.getLast_consume_time())) {
-                        cus_record.setText(customer.getLast_consume_time().replace(".", "-"));
-                    } else {
-                        cus_record.setText("暂无");
-                    }
-                    if (!customer.getSchedule_date().equals("false")) {
-                        cus_order.setText(customer.getSchedule_date());
-                    } else {
-                        cus_order.setText("暂无");
-                    }
-
-                    if (customer.getPlaned() == 0)
-                        cus_plan.setText("未计划");
-                    else if (customer.getPlaned() == 1) {
-                        cus_plan.setText("已计划");
-                    }
-
+                    dealCustomerHandleMessage(msg);
                     break;
                 case 1:
                     orderList = (List<Order>) msg.obj;
@@ -120,6 +77,57 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             }
         }
     };
+
+    /**
+     * 处理顾客基本信息
+     *
+     * @param msg
+     */
+    private void dealCustomerHandleMessage(Message msg) {
+        list1 = (List<HelperCustomer>) msg.obj;
+        HelperCustomer customer = list1.get(0);
+        //下载头像
+        OkHttpUtils
+                .get()
+                .url(customer.getAvator_url())
+                .build()
+                .execute(new BitmapCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Bitmap response, int id) {
+                        Bitmap bm = DrawRoundCorner.makeRoundCorner(response, 63);
+                        Drawable drawable = new BitmapDrawable(bm);
+                        cus_head.setImageDrawable(drawable);
+                        dismissShortDialog();
+                    }
+                });
+        customer_name = customer.getFullname();
+        cus_name.setText(customer.getFullname());
+        cus_grade.setText("会员等级: " + customer.getVip_star());
+        cus_files_num.setText("档案号: " + customer.getCert_no());
+        cus_manager.setText(customer.getManager());
+        cus_cards_num.setText("共" + customer.getCard_total() + "张卡");
+        if (!TextUtils.isEmpty(customer.getLast_consume_time())) {
+            cus_record.setText(customer.getLast_consume_time().replace(".", "-"));
+        } else {
+            cus_record.setText("暂无");
+        }
+        if (!customer.getSchedule_date().equals("false")) {
+            cus_order.setText(customer.getSchedule_date());
+        } else {
+            cus_order.setText("暂无");
+        }
+
+        if (customer.getPlaned() == 0)
+            cus_plan.setText("未计划");
+        else if (customer.getPlaned() == 1) {
+            cus_plan.setText("已计划");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,12 +244,11 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                     public void onResponse(String response, int id) {
 //                        Log.e("顾客资料:",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
-
-                        String status=jsonObject.get("status").getAsString();
-                        String message=jsonObject.get("message").getAsString();
-                        if (status.equals("ok")){
+                        String status = jsonObject.get("status").getAsString();
+                        String message = jsonObject.get("message").getAsString();
+                        if (status.equals("ok")) {
                             analysisJson(jsonObject);
-                        }else{
+                        } else {
                             showToast(message);
                         }
                         dismissShortDialog();
@@ -252,6 +259,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
 
     /**
      * 解析Json
+     *
      * @param jsonObject
      */
     private void analysisJson(JsonObject jsonObject) {
@@ -269,6 +277,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         String last_consume_date = "";
         int card_total = 0;
         String customer_manager = "";
+        String schedule_status="";
         if (!basic.get("customer_id").isJsonNull())
             customer_id = basic.get("customer_id").getAsInt();
         if (!basic.get("fullname").isJsonNull())
@@ -291,8 +300,10 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             card_total = data.get("card_total").getAsInt();
         if (!data.get("customer_manager").isJsonNull())
             customer_manager = data.get("customer_manager").getAsString();
+        if (!data.get("schedule_status").isJsonNull())
+            schedule_status=data.get("schedule_status").getAsString();
         list.add(new HelperCustomer(cert_no, vip_star, customer_id, fullname, avator_url, guid, schedule_date,
-                planed, card_total, customer_manager, last_consume_date));
+                planed, card_total, customer_manager, last_consume_date,schedule_status));
         Message msg = Message.obtain();
         msg.what = 0;
         msg.obj = list;
@@ -324,6 +335,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void onResponse(String response, int id) {
+//                        Log.e("PeopleMessage",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String statuss = jsonObject.get("status").getAsString();
                         String message = jsonObject.get("message").getAsString();

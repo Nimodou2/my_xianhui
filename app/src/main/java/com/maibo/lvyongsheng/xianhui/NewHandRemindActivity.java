@@ -1,28 +1,29 @@
 package com.maibo.lvyongsheng.xianhui;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * Created by LYS on 2016/12/16.
  */
 
-public class NewHandRemindActivity extends Activity {
+public class NewHandRemindActivity extends BaseActivity {
 
     @Bind(R.id.webview) WebView webView;
     @Bind(R.id.pro_bar) ProgressBar pro_bar;
+    @Bind(R.id.ll_head)
+    LinearLayout ll_head;
 
 
     @Override
@@ -30,11 +31,19 @@ public class NewHandRemindActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_hand_remind);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        ButterKnife.bind(this);
         initView();
     }
 
     private void initView() {
+        adapterLitterBar(ll_head);
+//        initWebView();
+
+    }
+
+    /**
+     * 初始化webview
+     */
+    private void initWebView() {
         //为了支持JavaScript
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -76,6 +85,5 @@ public class NewHandRemindActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

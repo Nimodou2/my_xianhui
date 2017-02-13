@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,16 +24,20 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.maibo.lvyongsheng.xianhui.App;
 import com.maibo.lvyongsheng.xianhui.PeopleMessageActivity;
 import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.WorkActivity;
 import com.maibo.lvyongsheng.xianhui.adapter.CustomerAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.MyGridViewAdapter;
+import com.maibo.lvyongsheng.xianhui.constants.Constants;
+import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.entity.HelperCustomer;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntity;
@@ -45,6 +51,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
 /**
@@ -52,7 +59,7 @@ import okhttp3.Call;
  */
 public class CustomerFragment extends Fragment implements WorkRefreshListView.OnRefreshListener {
     WorkRefreshListView lv_customer_list;
-    SharedPreferences sp;
+    SharedPreferences sp,sp_db;
     String token, apiURL;
     CustomerAdapter myAdapter;
     List<HelperCustomer> list1;
@@ -80,8 +87,8 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
 
     int screenHeight;
     ////////////////////////////////////////////////
-
     private Context context = null;
+    Gson gson;
     //private PopupWindow popupWindow;
 
     /////////////////////////////////////////////////
@@ -91,27 +98,8 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    List<HelperCustomer> list = (List<HelperCustomer>) msg.obj;
-                    currentPageNum = msg.arg1;
-                    totalPage = msg.arg2;
-                    if (isLoadingMore && list != null) {
-                        list1.addAll(list);
-                        myAdapter.notifyDataSetChanged();
-                    } else {
-                        list1.clear();
-                        list1 = list;
-                        lv_customer_list.setAdapter(myAdapter = new CustomerAdapter(getContext(), list1, screenHeight));
-                    }
-                    lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                            customer_id1 = list1.get(i - 1).getCustomer_id();
-                            Intent intent = new Intent(getActivity(), PeopleMessageActivity.class);
-                            intent.putExtra("customer_id", customer_id1);
-                            startActivity(intent);
-                        }
-                    });
-                    lv_customer_list.completeRefresh();
+                    //接收顾客信息数据
+                    getCustomerMsg(msg);
                     break;
                 case 2:
                     //此处暂时无用
@@ -121,43 +109,89 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     startActivity(intent);
                     break;
                 case 3:
-                    ses = (List<SelectEntitys>) msg.obj;
-                    //用于展开和闭合
-                    SelectEntitys seTwo = ses.get(1);
-                    seTwoList = new ArrayList<>();
-                    //用于显示筛选结果
-                    if (msg.arg1 == 1) {
-                        tv_choose_tesult.setText("筛选结果：" + ses.get(0).getFilterResult() + "人");
-                    }
-                    if (ses.get(1).getList().size() > 6) {
-                        for (int i = 0; i < 6; i++) {
-                            seTwoList.add(seTwo.getList().get(i));
-                        }
-                    } else {
-                        seTwoList = seTwo.getList();
-                    }
-                    if (gd_list != null)
-                        gd_list.setAdapter(adapter1 = new MyGridViewAdapter(getActivity(), ses.get(0).getList()));
-                    if (gd_list2 != null) {
-                        if (isOpen == 0) {
-                            gd_list2.setAdapter(adapter2 = new MyGridViewAdapter(getActivity(), seTwoList));
-                        } else {
-                            gd_list2.setAdapter(adapter2 = new MyGridViewAdapter(getActivity(), ses.get(1).getList()));
-                        }
-                    }
-                    if (gd_list3 != null)
-                        gd_list3.setAdapter(adapter1 = new MyGridViewAdapter(getActivity(), ses.get(2).getList()));
-                    if (gd_list4 != null)
-                        gd_list4.setAdapter(adapter1 = new MyGridViewAdapter(getActivity(), ses.get(3).getList()));
+                    //接收筛选结果
+                    getFilterDatasMsg(msg);
                     break;
             }
         }
 
     };
 
+    /**
+     * 接收顾客信息数据
+     * @param msg
+     */
+    private void getCustomerMsg(Message msg) {
+        List<HelperCustomer> list = (List<HelperCustomer>) msg.obj;
+        currentPageNum = msg.arg1;
+        totalPage = msg.arg2;
+        //当加载第一页的时候保存数据
+        if (currentPageNum==1){
+            String current_db= gson.toJson(list);
+            SharedPreferences.Editor editor=sp_db.edit();
+            editor.putString("helpCustomer",current_db);
+            editor.commit();
+        }
+        if (isLoadingMore && list != null) {
+            list1.addAll(list);
+            myAdapter.notifyDataSetChanged();
+        } else {
+            list1.clear();
+            list1 = list;
+            lv_customer_list.setAdapter(myAdapter = new CustomerAdapter(getContext(), list1, screenHeight));
+        }
+        lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                customer_id1 = list1.get(i - 1).getCustomer_id();
+                Intent intent = new Intent(getActivity(), PeopleMessageActivity.class);
+                intent.putExtra("customer_id", customer_id1);
+                startActivity(intent);
+            }
+        });
+        lv_customer_list.completeRefresh();
+    }
+
+    /**
+     * 接收筛选结果
+     * @param msg
+     */
+    private void getFilterDatasMsg(Message msg) {
+        ses = (List<SelectEntitys>) msg.obj;
+        //用于展开和闭合
+        SelectEntitys seTwo = ses.get(1);
+        seTwoList = new ArrayList<>();
+        //用于显示筛选结果
+        if (msg.arg1 == 1) {
+            tv_choose_tesult.setText("筛选结果：" + ses.get(0).getFilterResult() + "人");
+        }
+        if (ses.get(1).getList().size() > 6) {
+            for (int i = 0; i < 6; i++) {
+                seTwoList.add(seTwo.getList().get(i));
+            }
+        } else {
+            seTwoList = seTwo.getList();
+        }
+        if (gd_list != null)
+            gd_list.setAdapter(adapter1 = new MyGridViewAdapter(getActivity(), ses.get(0).getList()));
+        if (gd_list2 != null) {
+            if (isOpen == 0) {
+                gd_list2.setAdapter(adapter2 = new MyGridViewAdapter(getActivity(), seTwoList));
+            } else {
+                gd_list2.setAdapter(adapter2 = new MyGridViewAdapter(getActivity(), ses.get(1).getList()));
+            }
+        }
+        if (gd_list3 != null)
+            gd_list3.setAdapter(adapter1 = new MyGridViewAdapter(getActivity(), ses.get(2).getList()));
+        if (gd_list4 != null)
+            gd_list4.setAdapter(adapter1 = new MyGridViewAdapter(getActivity(), ses.get(3).getList()));
+        return;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_customer, container, false);
+
         list1 = new ArrayList<>();
         lv_customer_list = (WorkRefreshListView) view.findViewById(R.id.lv_customer_list);
         lv_customer_list.setOnRefreshListener(this);
@@ -167,8 +201,18 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         screenHeight = Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight();
 
         sp = getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
+        sp_db=getActivity().getSharedPreferences("dataBase",Context.MODE_PRIVATE);
         token = sp.getString("token", null);
         apiURL = sp.getString("apiURL", null);
+        //第一次进入时加载数据库的数据
+        gson=new Gson();
+        String dbHC=sp_db.getString("helpCustomer",null);
+        if (dbHC!=null){
+            List<HelperCustomer> lc=gson.fromJson(dbHC,new TypeToken<List<HelperCustomer>>() {
+            }.getType());
+            Log.e("customer.size",lc.size()+"");
+            lv_customer_list.setAdapter(new CustomerAdapter(getContext(), lc, screenHeight));
+        }
         myDialog = new MyProgressDialog(getActivity());
         dialog = new ProgressDialog(getActivity());
         dialog.setMessage("加载中...");
@@ -176,8 +220,9 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         dialog.setCancelable(true);
         dialog.setIndeterminate(false);
         dialog.show();
-        getServiceData("", "", "", "", 1);
+        getServiceData("", "", "", "","","", 1);
         getChooseData("", "", "", "", 0);
+        EventBus.getDefault().register(this);
         return view;
     }
 
@@ -185,7 +230,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
     public void onPullRefresh() {
         //下拉刷新
         isLoadingMore = false;
-        getServiceData("", "", "", "", 1);
+        getServiceData("", "", "", "","","", 1);
     }
 
     @Override
@@ -193,7 +238,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         //上滑加载更多
         isLoadingMore = true;
         if (currentPageNum != totalPage) {
-            getServiceData("", "", "", "", currentPageNum + 1);
+            getServiceData("", "", "", "", "","",currentPageNum + 1);
         } else {
             App.showToast(getActivity(), "已加载全部!");
             lv_customer_list.completeRefresh();
@@ -253,7 +298,8 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
     }
 
     //获取客户详细资料
-    public void getServiceData(String org_id, String adviser_id, String vip_star, String arrival_time, int pageNum) {
+    public void getServiceData(String org_id, String adviser_id, String vip_star, String arrival_time,
+                               String arrival_time_ge,String arrival_time_le,int pageNum) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/gethelpercustomerlist")
@@ -262,6 +308,8 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                 .addParams("adviser_id", adviser_id)
                 .addParams("vip_star", vip_star)
                 .addParams("arrival_time", arrival_time)
+                .addParams("arrival_time_ge",arrival_time_ge)
+                .addParams("arrival_time_le",arrival_time_le)
                 .addParams("pageNumber", pageNum + "")
                 .build()
                 .execute(new StringCallback() {
@@ -344,7 +392,8 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     schedule_time = job.get("schedule_time").getAsString();
                 if (!job.get("status").isJsonNull())
                     status = job.get("status").getAsInt();
-                list.add(new HelperCustomer(org_name, vip_star, customer_id, fullname, avator_url, days, project_total, status));
+
+                list.add(new HelperCustomer(org_name, vip_star, customer_id, fullname, avator_url, days, project_total, status,System.currentTimeMillis()));
             }
             Message msg = Message.obtain();
             msg.what = 1;
@@ -524,7 +573,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer4.length() > 0)
                         values44 = buffer4.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    //getServiceData(values11,values22,values33,values44);
                 } else if (ses.get(0).getList().get(i).getSelected() && !ses.get(0).getList().get(i).getDisabled()) {
                     //刷新适配器，显示筛选结果
                     buffer1 = buffer1.replace("," + ses.get(0).getList().get(i).getValue(), "");
@@ -542,7 +590,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer4.length() > 0)
                         values44 = buffer4.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    // getServiceData(values11,values22,values33,values44);
                 }
 
             }
@@ -568,7 +615,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer4.length() > 0)
                         values44 = buffer4.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    //getServiceData(values11,values22,values33,values44);
                 } else if (ses.get(1).getList().get(i).getSelected() && !ses.get(1).getList().get(i).getDisabled()) {
                     //刷新适配器，显示筛选结果
                     buffer2 = buffer2.replace("," + ses.get(1).getList().get(i).getValue(), "");
@@ -586,7 +632,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer4.length() > 0)
                         values44 = buffer4.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    //getServiceData(values11,values22,values33,values44);
                 }
             }
         });
@@ -611,7 +656,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer4.length() > 0)
                         values44 = buffer4.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    //getServiceData(values11,values22,values33,values44);
                 } else if (ses.get(2).getList().get(i).getSelected() && !ses.get(2).getList().get(i).getDisabled()) {
                     //刷新适配器，显示筛选结果
                     buffer3 = buffer3.replace("," + ses.get(2).getList().get(i).getValue(), "");
@@ -629,7 +673,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer4.length() > 0)
                         values44 = buffer4.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    //getServiceData(values11,values22,values33,values44);
                 }
             }
         });
@@ -654,7 +697,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer3.length() > 0)
                         values33 = buffer3.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    //getServiceData(values11,values22,values33,values44);
                 } else if (ses.get(3).getList().get(i).getSelected() && !ses.get(3).getList().get(i).getDisabled()) {
                     //刷新适配器，显示筛选结果
                     buffer4 = buffer4.replace("," + ses.get(3).getList().get(i).getValue(), "");
@@ -672,7 +714,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     if (buffer3.length() > 0)
                         values33 = buffer3.substring(1);
                     getChooseData(values11, values22, values33, values44, 1);
-                    //getServiceData(values11,values22,values33,values44);
                 }
             }
         });
@@ -734,7 +775,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     values44 = buffer4.substring(1);
                 }
                 isLoadingMore = false;
-                getServiceData(values11, values22, values33, values44, 1);
+                getServiceData(values11, values22, values33, values44,"","", 1);
                 popupWindow.dismiss();
 
             }
@@ -770,18 +811,26 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         return result;
     }
 
-    //搜索——>更新数据
-    public void refreshData() {
-        Bundle bundle = getArguments();
-        String name = bundle.getString("name");
-        //List<HelperCustomer> listNew=new ArrayList<>();
-       /* for (int i=0;i<list1.size();i++){
-            if (list1.get(i).getFullname().equals(name)){
-                listNew.add(list1.get(i));
-            }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEvent(EventDatas event) {
+        if (event.getTag().equals(Constants.SELECT_DATA_ACTIVITY_RESET)){
+            //重置
+            getServiceData("","","","","","",1);
+
+        }else if (event.getTag().equals(Constants.SELECT_DATA_ACTIVITY_CONFIRM)){
+            //日期筛选
+            String select_date=event.getResponse();
+            if (TextUtils.isEmpty(select_date)) return;
+            String[] str_date=select_date.split(",");
+            getServiceData("","","","",str_date[0],str_date[1],1);
+
         }
-        list1.clear();
-        list1.addAll(listNew);
-        myAdapter.notifyDataSetChanged();*/
+
     }
 }

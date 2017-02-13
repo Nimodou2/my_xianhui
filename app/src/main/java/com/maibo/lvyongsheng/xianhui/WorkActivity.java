@@ -28,8 +28,6 @@ import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.maibo.lvyongsheng.xianhui.R.id.vp_mywork;
-
 
 /**
  * Created by LYS on 2016/9/12.
@@ -40,7 +38,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
     LinearLayout ll_head,tab,in_loading_error;
     ViewPager vp;
     TextView back;
-    ImageView iv_search,iv_choose;
+    ImageView iv_search,iv_choose,iv_choose_date;
     List<Fragment> data;
     ImageView iv_over;
     //屏幕宽度
@@ -69,10 +67,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
             in_loading_error.setVisibility(View.VISIBLE);
             vp.setVisibility(View.GONE);
         }
-
-
     }
-
     /**
      * 初始化数据
      */
@@ -98,6 +93,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
         btn_partner.setOnClickListener(this);
         btn_project.setOnClickListener(this);
         btn_product.setOnClickListener(this);
+        iv_choose_date.setOnClickListener(this);
         data=new ArrayList<>();
         data.add(cusF);
         data.add(collF);
@@ -125,8 +121,9 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
         iv_over=(ImageView) findViewById(R.id.iv_over);
         back= (TextView) findViewById(R.id.back);
         tab= (LinearLayout) findViewById(R.id.tab);
+        iv_choose_date= (ImageView) findViewById(R.id.iv_choose_date);
         in_loading_error= (LinearLayout) findViewById(R.id.in_loading_error);
-        vp=(ViewPager) findViewById(vp_mywork);
+        vp=(ViewPager) findViewById(R.id.vp_mywork);
     }
 
     /**
@@ -168,27 +165,41 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
                 }
                 break;
             case R.id.iv_choose:
-                //获取当前Fragment对象
-                if (NetWorkUtils.isNetworkConnected(this)&&isLoagedDatas==1){
-                    if (currIndex==0){
-                        CustomerFragment cf=(CustomerFragment)data.get(0);
-                        cf.initPopupWindow();
-                    }else if (currIndex==1){
-                        ColleagueFragment co=(ColleagueFragment)data.get(1);
-                        co.initPopupWindow();
-                    }else if (currIndex==2){
-                        ProjectFragment project=(ProjectFragment)data.get(2);
-                        project.initPopupWindow();
-                    }else if (currIndex==3){
-                        ProductFragment product=(ProductFragment)data.get(3);
-                        product.initPopupWindow();
-                    }
-                }else{
-                    App.showToast(getApplicationContext(),"网络连接异常");
-                }
+                getCurrentFragment();
+                break;
+            case R.id.iv_choose_date:
+                Intent intent=new Intent(this,selectDataActivity.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(0,0);
                 break;
         }
     }
+
+    /**
+     * 获取当前Fragment
+     */
+    private void getCurrentFragment() {
+        //获取当前Fragment对象
+        if (NetWorkUtils.isNetworkConnected(this)&&isLoagedDatas==1){
+            if (currIndex==0){
+                CustomerFragment cf=(CustomerFragment)data.get(0);
+                cf.initPopupWindow();
+            }else if (currIndex==1){
+                ColleagueFragment co=(ColleagueFragment)data.get(1);
+                co.initPopupWindow();
+            }else if (currIndex==2){
+                ProjectFragment project=(ProjectFragment)data.get(2);
+                project.initPopupWindow();
+            }else if (currIndex==3){
+                ProductFragment product=(ProductFragment)data.get(3);
+                product.initPopupWindow();
+            }
+        }else{
+            App.showToast(getApplicationContext(),"网络连接异常");
+        }
+    }
+
     //初始化指示器位置
     public void initCursorPos() {
         // 初始化动画
@@ -250,6 +261,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
             Animation animation = null;
             switch (position) {
                 case 0:
+                    iv_choose_date.setVisibility(View.VISIBLE);
                     if (currIndex == 1) {
                         animation = new TranslateAnimation(one, 0, 0, 0);
                     } else if (currIndex == 2) {
@@ -259,6 +271,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
                     }
                     break;
                 case 1:
+                    iv_choose_date.setVisibility(View.INVISIBLE);
                     if (currIndex == 0) {
                         animation = new TranslateAnimation(offset, one, 0, 0);
                     } else if (currIndex == 2) {
@@ -268,6 +281,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
                     }
                     break;
                 case 2:
+                    iv_choose_date.setVisibility(View.INVISIBLE);
                     if (currIndex == 0) {
                         animation = new TranslateAnimation(offset, two, 0, 0);
                     } else if (currIndex == 1) {
@@ -277,6 +291,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
                     }
                     break;
                 case 3:
+                    iv_choose_date.setVisibility(View.INVISIBLE);
                     if (currIndex == 0) {
                         animation = new TranslateAnimation(offset, three, 0, 0);
                     } else if (currIndex == 1) {
@@ -325,4 +340,5 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
         vp.setVisibility(View.VISIBLE);
         initData();
     }
+
 }

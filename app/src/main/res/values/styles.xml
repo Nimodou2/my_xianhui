@@ -236,4 +236,58 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_weight">2</item>
     </style>
+    //设置半透明Activity
+    <!--<item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>-->
+    <!--Theme.Holo.NoActionBar-->
+    <style name="Transparent" parent="@android:style/Theme.Holo.NoActionBar">
+
+        <item name="android:windowBackground">@color/transparent_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+
+        <item name="android:editTextStyle">@style/Widget.EditText.Black</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="colorPrimary">@color/bar_color</item>
+        <item name="colorPrimaryDark">@color/bar_color</item>
+        <item name="colorAccent">@color/bar_color</item>
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+
+
+    </style>
+
+    <!--<style name="Theme.SelectDate" parent="@android:style/Theme.Holo.NoActionBar">-->
+        <!--<item name="android:editTextStyle">@style/Widget.EditText.Black</item>-->
+    <!--</style>-->
+
+    <style name="Widget.EditText.Black" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/contents_text</item>
+    </style>
+
+    //设置界面下方条目样式
+    <style name="settingfragment_textview_style">
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:background">#fff</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">3</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:gravity">center|left</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:drawableRight">@mipmap/nav_to_message_arrow_dark</item>
+    </style>
+    //顾客资料界面各条目右侧TextView样式
+    <style name="peopleMessageRightText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:drawableRight">@mipmap/nav_to_message_arrow_dark</item>
+        <item name="android:gravity">center</item>
+        <item name="android:drawablePadding">20dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:textSize">16dp</item>
+
+    </style>
 </resources>

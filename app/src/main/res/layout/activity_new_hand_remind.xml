@@ -2,9 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/weixin_lianxiren_gray"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/bar_color">
@@ -23,20 +25,41 @@
     <!--style="@android:style/Widget.ProgressBar.Horizontal"-->
     <!--Widget.Holo.ProgressBar.Horizontal-->
     <!--默认应用总色调Widget.DeviceDefault.ProgressBar.Horizontal-->
-    <ProgressBar
-        android:id="@+id/pro_bar"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_gravity="center"
-        android:progress="50"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
-        android:layout_height="7dp" />
-
-    <WebView
-        android:id="@+id/webview"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ProgressBar
+                android:id="@+id/pro_bar"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:progress="50"
+                style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+                android:layout_height="7dp" />
 
-    </WebView>
+            <WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </WebView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:padding="10dp"
+                android:text="该版本暂无新手提示..."/>
+        </LinearLayout>
+    </FrameLayout>
+
 
 </LinearLayout>

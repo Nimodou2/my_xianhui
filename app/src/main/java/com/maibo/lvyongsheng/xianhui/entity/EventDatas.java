@@ -7,6 +7,7 @@ package com.maibo.lvyongsheng.xianhui.entity;
 public class EventDatas {
     private String tag;
     private String response;
+    private String messageStatus;
 
     public EventDatas() {
     }
@@ -14,6 +15,12 @@ public class EventDatas {
     public EventDatas(String tag, String response) {
         this.tag = tag;
         this.response = response;
+    }
+
+    public EventDatas(String tag,String messageStatus,String response) {
+        this.tag = tag;
+        this.response = response;
+        this.messageStatus = messageStatus;
     }
 
     public String getTag() {
@@ -30,5 +37,13 @@ public class EventDatas {
 
     public void setResponse(String response) {
         this.response = response;
+    }
+
+    public String getMessageStatus() {
+        return messageStatus;
+    }
+
+    public void setMessageStatus(String messageStatus) {
+        this.messageStatus = messageStatus;
     }
 }

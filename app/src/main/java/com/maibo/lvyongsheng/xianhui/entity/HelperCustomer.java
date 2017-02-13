@@ -1,9 +1,12 @@
 package com.maibo.lvyongsheng.xianhui.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by LYS on 2016/10/3.
  */
-public class HelperCustomer {
+//extends SugarRecord
+public class HelperCustomer implements Serializable {
     private String org_name;
     private int org_id;
     private String vip_star;
@@ -17,22 +20,29 @@ public class HelperCustomer {
     private String schedule_date;
     private String schedule_time;
     private int status;
+    private Long current_time;
+    private String schedule_status;
     //新增
     private int planed;
     private int card_total;
     private String manager;
     private String cert_no;
 
-    public String getCert_no() {
-        return cert_no;
-    }
-
-    public void setCert_no(String cert_no) {
-        this.cert_no = cert_no;
+    public HelperCustomer(String org_name, String vip_star, int customer_id, String fullname,
+                          String avator_url, String days, int project_total, int status,Long current_time) {
+        this.org_name = org_name;
+        this.vip_star = vip_star;
+        this.customer_id = customer_id;
+        this.fullname = fullname;
+        this.avator_url = avator_url;
+        this.days = days;
+        this.project_total = project_total;
+        this.status = status;
+        this.current_time=current_time;
     }
 
     public HelperCustomer(String cert_no, String vip_star, int customer_id, String fullname, String avator_url, String guid,
-                          String schedule_date, int planed, int card_total, String manager,String last_consume_time) {
+                          String schedule_date, int planed, int card_total, String manager,String last_consume_time,String schedule_status) {
         this.cert_no=cert_no;
         this.vip_star = vip_star;
         this.customer_id = customer_id;
@@ -44,6 +54,31 @@ public class HelperCustomer {
         this.card_total = card_total;
         this.manager = manager;
         this.last_consume_time=last_consume_time;
+        this.schedule_status=schedule_status;
+    }
+
+    public String getSchedule_status() {
+        return schedule_status;
+    }
+
+    public void setSchedule_status(String schedule_status) {
+        this.schedule_status = schedule_status;
+    }
+
+    public Long getCurrent_time() {
+        return current_time;
+    }
+
+    public void setCurrent_time(Long current_time) {
+        this.current_time = current_time;
+    }
+
+    public String getCert_no() {
+        return cert_no;
+    }
+
+    public void setCert_no(String cert_no) {
+        this.cert_no = cert_no;
     }
 
     public int getPlaned() {
@@ -68,18 +103,6 @@ public class HelperCustomer {
 
     public void setManager(String manager) {
         this.manager = manager;
-    }
-
-    public HelperCustomer(String org_name, String vip_star, int customer_id, String fullname,
-                          String avator_url, String days, int project_total, int status) {
-        this.org_name = org_name;
-        this.vip_star = vip_star;
-        this.customer_id = customer_id;
-        this.fullname = fullname;
-        this.avator_url = avator_url;
-        this.days = days;
-        this.project_total = project_total;
-        this.status = status;
     }
 
     public String getOrg_name() {

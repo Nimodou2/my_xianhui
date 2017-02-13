@@ -18,6 +18,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.Notice;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.view.RefreshListView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -93,7 +94,7 @@ public class RemindActivity extends BaseActivity implements RefreshListView.OnRe
                             whatNotice = data.get(i - 1);
                             String extra_type = whatNotice.getExtra_type();
                             String customer_id1 = whatNotice.getCustomer_id();
-                            if (extra_type.equals("schedule")) {
+                            if (extra_type.equals("schedule") && Util.isNumber(customer_id1)) {
                                 int customer_id = Integer.parseInt(customer_id1);
                                 Intent intent = new Intent(RemindActivity.this, PeopleMessageActivity.class);
                                 intent.putExtra("customer_id", customer_id);

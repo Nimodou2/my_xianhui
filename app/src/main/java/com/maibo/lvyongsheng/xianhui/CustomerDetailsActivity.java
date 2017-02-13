@@ -76,7 +76,6 @@ public class CustomerDetailsActivity extends BaseActivity {
                 case 0:
                     //卡包
                     list11 = (List<Cards>) msg.obj;
-                    Log.e("list11",list11+"");
                     if (list11.size()>0){
                         setCardPackageAdapter();
                     }else{
@@ -516,6 +515,7 @@ public class CustomerDetailsActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+//                        Log.e("Customer",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         List<Cards> list1 = new ArrayList<Cards>();
                         String status=jsonObject.get("status").getAsString();
@@ -547,6 +547,7 @@ public class CustomerDetailsActivity extends BaseActivity {
                 String card_num = "";
                 int item_id = 0;
                 String fullname = "";
+                String timess="";
                 if (!jo.get("card_sort").isJsonNull())
                     card_sort = jo.get("card_sort").getAsInt();
                 if (!jo.get("card_class").isJsonNull())
@@ -559,6 +560,8 @@ public class CustomerDetailsActivity extends BaseActivity {
                     item_id = jo.get("item_id").getAsInt();
                 if (!jo.get("fullname").isJsonNull())
                     fullname = jo.get("fullname").getAsString();
+                if (!jo.get("times").isJsonNull())
+                    timess=jo.get("times").getAsString();
 
                 JsonArray project_list = jo.get("project_list").getAsJsonArray();
                 List<Card> list2 = new ArrayList<Card>();
@@ -578,7 +581,7 @@ public class CustomerDetailsActivity extends BaseActivity {
                         times = jsonObject1.get("times").getAsInt();
                     list2.add(new Card(fullname1, times, card_class, card_num, price, item_id1));
                 }
-                list1.add(new Cards(card_sort, card_class, amount, card_num, item_id, fullname, list2));
+                list1.add(new Cards(card_sort, card_class, amount, card_num, item_id, fullname, timess,list2));
             }
         }
         Message msg = Message.obtain();

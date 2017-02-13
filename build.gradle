@@ -6,9 +6,11 @@ buildscript {
         // 这里是 LeanCloud 的包仓库
         maven {
             url "http://mvn.leancloud.cn/nexus/content/repositories/public"
+
         }
+        maven { url "https://jitpack.io" }
         dependencies {
-            classpath 'com.android.tools.build:gradle:2.2.0'
+            classpath 'com.android.tools.build:gradle:2.2.2'
 
         }
 

@@ -271,7 +271,7 @@ public class SearchWorkActivity extends BaseActivity {
                                         schedule_time=job.get("schedule_time").getAsString();
                                     if (!job.get("status").isJsonNull())
                                         status = job.get("status").getAsInt();
-                                    list.add(new HelperCustomer(org_name, vip_star, customer_id, fullname, avator_url, days, project_total, status));
+                                    list.add(new HelperCustomer(org_name, vip_star, customer_id, fullname, avator_url, days, project_total, status,System.currentTimeMillis()));
                                 }
                                 Message msg = Message.obtain();
                                 msg.what = 0;

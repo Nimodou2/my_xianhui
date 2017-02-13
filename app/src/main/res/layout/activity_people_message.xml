@@ -103,14 +103,7 @@
 
                 <TextView
                     android:id="@+id/cus_manager"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-                    android:gravity="center"
-                    android:paddingRight="10dp"
-                    android:text=""
-                    android:textSize="16dp" />
+                    style="@style/peopleMessageRightText" />
             </LinearLayout>
 
             <TextView
@@ -133,14 +126,7 @@
 
                 <TextView
                     android:id="@+id/cus_cards_num"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-                    android:gravity="center"
-                    android:paddingRight="10dp"
-                    android:text=""
-                    android:textSize="16dp" />
+                    style="@style/peopleMessageRightText" />
             </LinearLayout>
 
             <TextView
@@ -163,14 +149,7 @@
 
                 <TextView
                     android:id="@+id/cus_record"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-                    android:gravity="center"
-                    android:paddingRight="10dp"
-                    android:text=""
-                    android:textSize="16dp" />
+                    style="@style/peopleMessageRightText" />
             </LinearLayout>
 
             <TextView
@@ -193,14 +172,7 @@
 
                 <TextView
                     android:id="@+id/cus_plan"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-                    android:gravity="center"
-                    android:paddingRight="10dp"
-                    android:text=""
-                    android:textSize="16dp" />
+                    style="@style/peopleMessageRightText" />
             </LinearLayout>
 
             <TextView
@@ -223,14 +195,7 @@
 
                 <TextView
                     android:id="@+id/cus_order"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-                    android:gravity="center"
-                    android:paddingRight="10dp"
-                    android:text=""
-                    android:textSize="16dp" />
+                    style="@style/peopleMessageRightText" />
             </LinearLayout>
 
             <TextView
@@ -253,14 +218,7 @@
 
                 <TextView
                     android:id="@+id/cus_dingdan"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-                    android:gravity="center"
-                    android:paddingRight="10dp"
-                    android:text=""
-                    android:textSize="16dp" />
+                    style="@style/peopleMessageRightText" />
             </LinearLayout>
 
             <TextView
