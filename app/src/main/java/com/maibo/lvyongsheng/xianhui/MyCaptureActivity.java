@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
@@ -24,6 +25,8 @@ public class MyCaptureActivity extends AppCompatActivity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_capture);
+        CloseAllActivity.getScreenManager().pushActivity(this);
+
         LinearLayout ll_head= (LinearLayout) findViewById(R.id.ll_head);
         TextView back= (TextView) findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
@@ -78,5 +81,11 @@ public class MyCaptureActivity extends AppCompatActivity{
             result =  getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

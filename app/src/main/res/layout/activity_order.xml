@@ -33,41 +33,34 @@
             style="@style/bar_right" />
     </LinearLayout>
 
-    <FrameLayout
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swip_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/lv_order"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#00000000"
-            android:dividerHeight="0dp">
+            android:layout_height="match_parent">
 
-        </ListView>
+            <ListView
+                android:id="@+id/lv_order"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#00000000"
+                android:dividerHeight="0dp"
+                android:paddingBottom="10dp">
 
-        <LinearLayout
-            android:id="@+id/tv_notdata"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="invisible"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="暂无数据"
-                android:textColor="@color/gray_weixin"
-                android:textSize="18dp" />
+            </ListView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="请及时联系系统管理员..."
-                android:textColor="@color/gray_weixin"
-                android:textSize="18dp" />
-        </LinearLayout>
-    </FrameLayout>
+            <include
+                android:id="@+id/in_no_datas"
+                layout="@layout/incloud_no_datas"
+                android:visibility="gone"></include>
 
+            <include
+                android:id="@+id/in_loading_error"
+                layout="@layout/incloud_loading_error"
+                android:visibility="gone"></include>
+        </FrameLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

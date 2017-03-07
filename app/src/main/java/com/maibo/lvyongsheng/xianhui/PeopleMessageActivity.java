@@ -3,13 +3,11 @@ package com.maibo.lvyongsheng.xianhui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,20 +17,21 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.maibo.lvyongsheng.xianhui.constants.Constants;
+import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.entity.HelperCustomer;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
-import com.maibo.lvyongsheng.xianhui.implement.DrawRoundCorner;
 import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
+import com.squareup.picasso.Picasso;
 import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.BitmapCallback;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
 /**
@@ -41,10 +40,10 @@ import okhttp3.Call;
 public class PeopleMessageActivity extends BaseActivity implements View.OnClickListener {
     SharedPreferences sp;
     String token, apiURL;
-    int customer_id;
+    int customer_id = -1;
     String customer_name;
     List<HelperCustomer> list1;
-    List<Order> orderList;
+//    List<Order> orderList;
     ImageView cus_head;
     LinearLayout ll_cards, tv_consume_record, ll_plan_project, ll_yuyue, ll_kefu_manager, ll_order;
     TextView cus_name, cus_grade, cus_files_num, cus_manager,
@@ -70,9 +69,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                     dealCustomerHandleMessage(msg);
                     break;
                 case 1:
-                    orderList = (List<Order>) msg.obj;
-                    if (orderList.size() != 0) cus_dingdan.setText(orderList.get(0).getStatus());
-                    else cus_dingdan.setText("暂无");
+//                    orderList = (List<Order>) msg.obj;
+//                    if (orderList.size() != 0) cus_dingdan.setText(orderList.get(0).getStatus());
+//                    else cus_dingdan.setText("暂无");
                     break;
             }
         }
@@ -87,24 +86,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         list1 = (List<HelperCustomer>) msg.obj;
         HelperCustomer customer = list1.get(0);
         //下载头像
-        OkHttpUtils
-                .get()
-                .url(customer.getAvator_url())
-                .build()
-                .execute(new BitmapCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(Bitmap response, int id) {
-                        Bitmap bm = DrawRoundCorner.makeRoundCorner(response, 63);
-                        Drawable drawable = new BitmapDrawable(bm);
-                        cus_head.setImageDrawable(drawable);
-                        dismissShortDialog();
-                    }
-                });
+        Picasso.with(this).load(customer.getAvator_url()).into(cus_head);
         customer_name = customer.getFullname();
         cus_name.setText(customer.getFullname());
         cus_grade.setText("会员等级: " + customer.getVip_star());
@@ -127,6 +109,10 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         else if (customer.getPlaned() == 1) {
             cus_plan.setText("已计划");
         }
+        if (customer.getSchedule_status().equals("0")) cus_dingdan.setText("未开始");
+        else if (customer.getSchedule_status().equals("1")) cus_dingdan.setText("进行中");
+        else if (customer.getSchedule_status().equals("2")) cus_dingdan.setText("已结束");
+        else cus_dingdan.setText("暂无");
     }
 
     @Override
@@ -134,12 +120,13 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
 
         initView();
+        EventBus.getDefault().register(this);
         //判断当前网络状态
         if (NetWorkUtils.isNetworkConnected(this)) {
             initListener();
             if (customer_id != -1) {
                 getServicerData(customer_id);
-                getCustomerOrder(customer_id);
+//                getCustomerOrder(customer_id);
             } else {
                 showToast("数据异常");
                 dismissShortDialog();
@@ -173,6 +160,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         setContentView(R.layout.activity_people_message);
         Intent intent = getIntent();
         customer_id = intent.getIntExtra("customer_id", -1);
+//        Log.e("customer_id1111",customer_id+"");
         adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
@@ -242,7 +230,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
 
                     @Override
                     public void onResponse(String response, int id) {
-//                        Log.e("顾客资料:",response);
+//                        Log.e("顾客资料:", response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String status = jsonObject.get("status").getAsString();
                         String message = jsonObject.get("message").getAsString();
@@ -277,7 +265,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         String last_consume_date = "";
         int card_total = 0;
         String customer_manager = "";
-        String schedule_status="";
+        String schedule_status = "";
         if (!basic.get("customer_id").isJsonNull())
             customer_id = basic.get("customer_id").getAsInt();
         if (!basic.get("fullname").isJsonNull())
@@ -301,9 +289,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         if (!data.get("customer_manager").isJsonNull())
             customer_manager = data.get("customer_manager").getAsString();
         if (!data.get("schedule_status").isJsonNull())
-            schedule_status=data.get("schedule_status").getAsString();
+            schedule_status = data.get("schedule_status").getAsString();
         list.add(new HelperCustomer(cert_no, vip_star, customer_id, fullname, avator_url, guid, schedule_date,
-                planed, card_total, customer_manager, last_consume_date,schedule_status));
+                planed, card_total, customer_manager, last_consume_date, schedule_status));
         Message msg = Message.obtain();
         msg.what = 0;
         msg.obj = list;
@@ -317,9 +305,14 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         if (!TextUtils.isEmpty(adviserName))
             cus_manager.setText(adviserName);
 
+
     }
 
-    //获取客户订单
+    /**
+     * 获取客户订单
+     *
+     * @param customer_id
+     */
     public void getCustomerOrder(int customer_id) {
         OkHttpUtils
                 .post()
@@ -359,6 +352,8 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                                     String avator_url = "";
                                     String guid = "";
                                     String engineer_name = "";
+                                    String org_name = "";
+                                    int raw_status = -1;
                                     if (!jo.get("schedule_id").isJsonNull())
                                         schedule_id = jo.get("schedule_id").getAsInt();
                                     if (!jo.get("start_time").isJsonNull())
@@ -385,9 +380,13 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                                         customer_name = jo.get("customer_name").getAsString();
                                     if (!jo.get("engineer_name").isJsonNull())
                                         engineer_name = jo.get("engineer_name").getAsString();
-
+                                    if (!jo.get("org_name").isJsonNull())
+                                        org_name = jo.get("org_name").getAsString();
+                                    if (!jo.get("raw_status").isJsonNull())
+                                        raw_status = jo.get("raw_status").getAsInt();
                                     list.add(new Order(schedule_id, status, start_time, end_time, engineer_id,
-                                            bed_name, project_code, project_name, avator_url, guid, customer_id, customer_name, engineer_name));
+                                            bed_name, project_code, project_name, avator_url, guid, customer_id,
+                                            customer_name, engineer_name, org_name, raw_status));
                                 }
                                 Message msg = Message.obtain();
                                 msg.what = 1;
@@ -442,8 +441,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                 //跳到订单界面
                 Intent intent5 = new Intent(this, OrderActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("customerOrder", (Serializable) orderList);
+//                bundle.putSerializable("customerOrder", (Serializable) orderList);
                 intent5.putExtra("customer_name", list1.get(0).getFullname());
+                intent5.putExtra("customer_id", customer_id);
                 intent5.putExtra("tag", 3);
                 intent5.putExtras(bundle);
                 startActivity(intent5);
@@ -452,8 +452,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                 //跳到订单界面
                 Intent intent6 = new Intent(this, OrderActivity.class);
                 Bundle bundle1 = new Bundle();
-                bundle1.putSerializable("customerOrder", (Serializable) orderList);
+//                bundle1.putSerializable("customerOrder", (Serializable) orderList);
                 intent6.putExtra("customer_name", list1.get(0).getFullname());
+                intent6.putExtra("customer_id", customer_id);
                 intent6.putExtra("tag", 3);
                 intent6.putExtras(bundle1);
                 startActivity(intent6);
@@ -465,6 +466,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         CloseAllActivity.getScreenManager().popActivity(this);
     }
 
@@ -481,7 +483,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             initListener();
             if (customer_id != -1) {
                 getServicerData(customer_id);
-                getCustomerOrder(customer_id);
+//                getCustomerOrder(customer_id);
             } else {
                 showToast("数据异常");
                 dismissShortDialog();
@@ -492,6 +494,18 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             showToast("网络连接异常");
             dismissShortDialog();
 
+        }
+    }
+
+    //
+    public void onEvent(EventDatas event) {
+        if (event.getTag().equals(Constants.ORDER_STATUS)){
+            String new_status=event.getResponse();
+            Log.e("new_statusss",new_status);
+            if (new_status.equals("0")) cus_dingdan.setText("未开始");
+            else if (new_status.equals("1")) cus_dingdan.setText("进行中");
+            else if (new_status.equals("2")) cus_dingdan.setText("已结束");
+            else cus_dingdan.setText("暂无");
         }
     }
 }

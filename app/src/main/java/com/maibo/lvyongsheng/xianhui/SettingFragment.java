@@ -143,6 +143,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             case R.id.tv_about_app:
                 //跳转到关于闲惠界面
                 startActivity(new Intent(getActivity(),IntrduceAppActivity.class));
+//                startActivity(new Intent(getActivity(),StartProjectActivity.class));
                 break;
         }
     }

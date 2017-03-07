@@ -41,7 +41,7 @@ public class App extends Application {
     SharedPreferences sp = getSharedPreferences("baseDate",MODE_PRIVATE);
     String guid=sp.getString("guid",null);
 
-    AVOSCloud.setDebugLogEnabled(true);
+    AVOSCloud.setDebugLogEnabled(false);
     AVIMClient.setMessageQueryCacheEnable(true);
 //    LCChatKit.getInstance().init(getApplicationContext(), APP_ID, APP_KEY);
     init(getApplicationContext(), APP_ID, APP_KEY);
@@ -58,7 +58,6 @@ public class App extends Application {
             .build();
 
     OkHttpUtils.initClient(okHttpClient);
-
     //针对Android 6.0获取相机权限
     Dexter.initialize(getApplicationContext());
 
@@ -91,6 +90,11 @@ public class App extends Application {
 
     }
   }
+
+  /**
+   * 获取手机相关信息
+   * @return
+     */
   private  String getUserAgent() {
     String userAgent = "";
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

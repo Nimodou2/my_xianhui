@@ -34,7 +34,7 @@ public class ZzLetterSideBar extends View {
 
     private Paint paint;
 
-    public static String[] b = {"↑","A", "B", "C", "D", "E", "F", "G", "H", "I",
+    public static String[] b = {"↑", "A", "B", "C", "D", "E", "F", "G", "H", "I",
             "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
             "W", "X", "Y", "Z", "#"};
 
@@ -62,7 +62,6 @@ public class ZzLetterSideBar extends View {
         setShowString(b);
     }
 
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -79,8 +78,10 @@ public class ZzLetterSideBar extends View {
             //准备画笔
             paint = new Paint();
             paint.setTextSize(itemHeight - 4);
-//            paint.setColor(getResources().getColor(R.color.gray_weixin));
-            paint.setColor(Color.rgb(84,84,84));
+            paint.setColor(Color.rgb(84, 84, 84));
+//            Paint.FILTER_BITMAP_FLAG是使位图过滤的位掩码标志
+//            Paint.ANTI_ALIAS_FLAG是使位图抗锯齿的标志
+//            Paint.DITHER_FLAG是使位图进行有利的抖动的位掩码标志
             paint.setFlags(Paint.ANTI_ALIAS_FLAG);
             //准备画布
             Canvas mCanvas = new Canvas();
@@ -95,6 +96,7 @@ public class ZzLetterSideBar extends View {
             canvas.drawBitmap(letterBitmap, 0, 0, paint);
         }
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
@@ -137,7 +139,7 @@ public class ZzLetterSideBar extends View {
         this.letters = letters;
     }
 
-    public void setLetterTouchListener(OnLetterTouchListener letterTouchListener){
+    public void setLetterTouchListener(OnLetterTouchListener letterTouchListener) {
         this.letterTouchListener = letterTouchListener;
     }
 }

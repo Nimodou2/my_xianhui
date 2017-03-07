@@ -17,6 +17,7 @@ public class Constants {
     public static final String UPLOAD_CONVERSAYION_ID="upload_conversation_id";
     public static final String GET_CONVERSATION_ID="get_conversation_id";
     public static final String GET_CONVERSATION_ID_SMS="get_conversation_id_sms";
+    public static final String ORDER_STATUS="100";
 
 
 

@@ -32,7 +32,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="3"
                 android:layout_height="match_parent"
-
                 android:textSize="16dp"
                 android:paddingRight="10dp"
                 android:gravity="center_vertical|right"
@@ -92,5 +91,44 @@
             android:textSize="16dp"
             android:paddingLeft="10dp"
             android:text="技师:和珍"/>
+
+        <LinearLayout
+            android:id="@+id/ll_foot"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_start_cancel"
+                android:padding="5dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:background="@color/colorLightYellow"
+                android:textColor="#fff"
+                android:text="开始" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="0.8"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tv_finish"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:padding="5dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@color/colorLightYellow"
+                android:textColor="#fff"
+                android:textSize="16dp"
+                android:text="结束" />
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

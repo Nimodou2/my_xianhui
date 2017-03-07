@@ -40,6 +40,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maibo.lvyongsheng.xianhui.implement.Util;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -390,7 +392,9 @@ public class AvatarImageView extends ImageView {
             case AvatarImageView.REQUEST_IMAGE_AFTER_CROP:
                 //更新头像
                 if (data != null && data.getExtras() != null) {
-                    Bitmap photo = data.getExtras().getParcelable("data");
+//                    Bitmap photo = data.getExtras().getParcelable("data");
+                    Uri myUri=data.getData();
+                    Bitmap photo= Util.decodeUriAsBitmap(myUri,getContext());
                     this.setImageBitmap(photo);
                     if (afterCropListener != null) {
                         afterCropListener.afterCrop(photo);
@@ -423,7 +427,7 @@ public class AvatarImageView extends ImageView {
         intentCamera.putExtra("outputX", 200);
         intentCamera.putExtra("outputY", 200);
         intentCamera.putExtra(MediaStore.EXTRA_OUTPUT, output);// 输出地址
-        intentCamera.putExtra("return-data", true);
+        intentCamera.putExtra("return-data", false);
         ((Activity) this.mContext).startActivityForResult(intentCamera,
                 AvatarImageView.REQUEST_IMAGE_AFTER_CROP);
         //保存裁剪后的图片地址

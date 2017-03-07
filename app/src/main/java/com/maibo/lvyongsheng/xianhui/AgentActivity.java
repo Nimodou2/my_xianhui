@@ -553,6 +553,8 @@ public class AgentActivity extends BaseActivity implements View.OnClickListener 
                             String guID = "";
                             String avator_url = "";
                             String displayname = "";
+                            String agent_id="";
+                            String agent_name="";
                             if (!data.get("token").isJsonNull())
                                 token = data.get("token").getAsString();
                             if (!data.get("api_url").isJsonNull())
@@ -563,6 +565,13 @@ public class AgentActivity extends BaseActivity implements View.OnClickListener 
                                 avator_url = data.get("avator_url").getAsString();
                             if (!data.get("display_name").isJsonNull())
                                 displayname = data.get("display_name").getAsString();
+                            if (data.get("agent_info").isJsonObject()){
+                                JsonObject agent_info=data.get("agent_info").getAsJsonObject();
+                                if (!agent_info.get("agent_id").isJsonNull())
+                                    agent_id=agent_info.get("agent_id").getAsString();
+                                if (!agent_info.get("agent_name").isJsonNull())
+                                    agent_name=agent_info.get("agent_name").getAsString();
+                            }
                             //保存登录成功状态、基础数据
                             editor.putString("userName", name);
                             editor.putString("password", password);
@@ -574,6 +583,8 @@ public class AgentActivity extends BaseActivity implements View.OnClickListener 
                             editor.putString("guid", guID);
                             editor.putString("avator_url", avator_url);
                             editor.putString("displayname", displayname);
+                            editor.putString("agent_id",agent_id);
+                            editor.putString("agent_name",agent_name);
                             editor.commit();
 
                             //清除聊天记录

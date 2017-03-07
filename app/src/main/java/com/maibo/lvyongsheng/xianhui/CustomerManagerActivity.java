@@ -168,6 +168,10 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         setViewHeightAndWidth(views,height,width);
     }
 
+    /**
+     * 获取客户经理列表
+     * @param customer_id
+     */
     public void getAdviserList(int customer_id) {
         OkHttpUtils
                 .post()
@@ -186,7 +190,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
 
                     @Override
                     public void onResponse(String response, int id) {
-                        //Log.e("顾问",response);
+                        Log.e("顾问列表",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status = jsonObject.get("status").getAsString();
                         String message = jsonObject.get("message").getAsString();
@@ -260,6 +264,8 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
             final ImageView iv_checked = (ImageView) v.findViewById(R.id.iv_checked);
             if (list1.get(i).getSelected()) {
                 iv_checked.setVisibility(View.VISIBLE);
+            }else{
+                iv_checked.setVisibility(View.INVISIBLE);
             }
             return v;
         }
@@ -270,7 +276,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
     protected void onPause() {
         super.onPause();
         //保存更改的顾问
-        int clickWhat = 0;
+        int clickWhat = -1;
         if (buffer!=null){
             for (int i = 0; i < buffer.length; i++) {
                 if (buffer[i] == 1) {
@@ -280,8 +286,13 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
                     editor.commit();
                 }
             }
-
-            setCustomerAdviser(clickWhat);
+            if (clickWhat!=-1){
+                setCustomerAdviser(clickWhat);
+            }else{
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("adviserName", null);
+                editor.commit();
+            }
         }
 
     }

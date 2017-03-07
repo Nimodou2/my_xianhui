@@ -293,7 +293,7 @@ public class MainActivity extends BaseFragment implements View.OnClickListener{
 
     @Override
     public void onAttachFragment(Fragment fragment) {
-        super.onAttachFragment(fragment);
+//        super.onAttachFragment(fragment);
         if (converFragment == null && fragment instanceof ConversationListFragment) {
             converFragment = (ConversationListFragment) fragment;
         } else if (LianFragment == null && fragment instanceof ContactPersonFragment) {
@@ -353,27 +353,6 @@ public class MainActivity extends BaseFragment implements View.OnClickListener{
                                     .withOpenSettingsButton("设置")
                                     .build());
         }
-
-
-//        //单个权限
-//        contactsPermissionListener = new CompositePermissionListener(feedbackViewPermissionListener,
-//                SnackbarOnDeniedPermissionListener.Builder.with(rootView,
-//                        "请在设置中开启权限")
-//                        .withOpenSettingsButton("设置")
-//                        .withCallback(new Snackbar.Callback() {
-//                            @Override
-//                            public void onShown(Snackbar snackbar) {
-//                                super.onShown(snackbar);
-//                            }
-//
-//                            @Override
-//                            public void onDismissed(Snackbar snackbar, int event) {
-//                                super.onDismissed(snackbar, event);
-//
-//                            }
-//                        })
-//                        .build());
-
     }
 
     /**

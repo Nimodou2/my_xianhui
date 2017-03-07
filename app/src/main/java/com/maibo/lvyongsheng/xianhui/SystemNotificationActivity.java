@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+
 import butterknife.Bind;
 
 /**
@@ -19,6 +21,7 @@ public class SystemNotificationActivity extends BaseActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         setContentView(R.layout.activity_system_notification);
         initView();
     }
@@ -37,5 +40,10 @@ public class SystemNotificationActivity extends BaseActivity implements View.OnC
                 finish();
                 break;
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

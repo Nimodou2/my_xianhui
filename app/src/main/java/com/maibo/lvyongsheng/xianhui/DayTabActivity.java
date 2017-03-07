@@ -37,6 +37,7 @@ import com.maibo.lvyongsheng.xianhui.entity.LTabList;
 import com.maibo.lvyongsheng.xianhui.entity.Radar;
 import com.maibo.lvyongsheng.xianhui.entity.TabMax;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
+import com.maibo.lvyongsheng.xianhui.utils.ACache;
 import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -82,7 +83,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
     LinearLayout in_loading_error;
     @Bind(R.id.ll_all_data)
     LinearLayout ll_all_data;
-
+    ACache aCache;//缓存数据
 
     Handler handler = new Handler() {
 
@@ -158,11 +159,18 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.day_table_new2);
         adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        showLongDialog();
 
         initView();
+        aCache=ACache.get(this);
+        String mResponse=aCache.getAsString(notice_id+"");
+        if (TextUtils.isEmpty(mResponse)){
+            showLongDialog();
+            getServiceData();
+        }else{
+            JsonObject object = new JsonParser().parse(mResponse).getAsJsonObject();
+            analisysJsonDatas(object);
+        }
 
-        getServiceData();
 
 
     }
@@ -339,7 +347,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
                 .post()
                 .url(apiURL + "/rest/employee/getdailyreportdata")
                 .addParams("token", token)
-                .addParams("notice_id", notice_id + "")//第二个参数待填
+                .addParams("notice_id", notice_id + "")
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -358,6 +366,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
                         String message = object.get("message").getAsString();
                         if (msg_status.equals("ok")) {
                             analisysJsonDatas(object);
+                            aCache.put(notice_id+"",response,10);
                         } else {
                             App.showToast(getApplicationContext(), message);
                         }

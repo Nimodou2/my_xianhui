@@ -3,7 +3,6 @@ package com.maibo.lvyongsheng.xianhui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -120,7 +119,6 @@ public class SearchPeopleActivity extends BaseActivity {
                 if (isContent!=-1){
                     //记录下来当前i值和进入该判断语句的次数
                     times++;
-                    Log.e("次数",i+"");
                 }
             }
             searchPeoples.add(new SearchPeople(times,i));

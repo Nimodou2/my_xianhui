@@ -213,7 +213,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     public void onResponse(String response, int id) {
                         SharedPreferences.Editor editor = sp.edit();
                         SharedPreferences.Editor editor1 = sp1.edit();
-
+                        Log.e("LoginActivity",response);
                         //登录判断
                         JsonObject obj = new JsonParser().parse(response).getAsJsonObject();
                         String status = obj.get("status").getAsString().trim();
@@ -242,6 +242,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             String avator_url = data.get("avator_url").getAsString();
                             int init_login_password = data.get("init_login_password").getAsInt();
                             String displayname = data.get("display_name").getAsString();
+                            JsonObject agent_info=data.get("agent_info").getAsJsonObject();
+                            String agent_id=agent_info.get("agent_id").getAsString();
+                            String agent_name=agent_info.get("agent_name").getAsString();
                             if (init_login_password == 0) {
                                 //保存登录成功状态、基础数据
                                 //Log.e("普通登录:",response);
@@ -255,6 +258,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 editor.putString("guid", guID);
                                 editor.putString("avator_url", avator_url);
                                 editor.putString("displayname", displayname);
+                                editor.putString("agent_id",agent_id);
+                                editor.putString("agent_name",agent_name);
                                 editor.commit();
                                 editor1.commit();
                                 getMyCustomerList(apiURL, token, displayname, guID);

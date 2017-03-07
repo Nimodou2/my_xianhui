@@ -244,59 +244,6 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
             lv_customer_list.completeRefresh();
         }
     }
-
-    //获取客户订单,此处无用
-    public void getCustomerOrder(int customer_id) {
-        OkHttpUtils
-                .post()
-                .url(apiURL + "/rest/employee/gethelpercustomerschedulelist")
-                .addParams("token", token)
-                .addParams("customer_id", customer_id + "")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
-                        String statuss = jsonObject.get("status").getAsString();
-                        String message = jsonObject.get("message").getAsString();
-                        if (statuss.equals("ok")) {
-                            JsonObject data = jsonObject.get("data").getAsJsonObject();
-                            JsonArray rows = data.get("rows").getAsJsonArray();
-                            List<Order> list = new ArrayList<Order>();
-                            for (JsonElement jsonElement : rows) {
-                                JsonObject jo = jsonElement.getAsJsonObject();
-                                int schedule_id = jo.get("schedule_id").getAsInt();
-                                //int customer_id=jo.get("customer_id").getAsInt();
-                                String status = jo.get("status").getAsString();
-                                String start_time = jo.get("start_time").getAsString();
-                                String end_time = jo.get("end_time").getAsString();
-                                String engineer_id = jo.get("engineer_id").getAsString();
-                                String bed_name = jo.get("bed_name").getAsString();
-                                String project_code = jo.get("project_code").getAsString();
-                                String project_name = jo.get("project_name").getAsString();
-                                //String customer_name=jo.get("customer_name").getAsString();
-                                String engineer_name = jo.get("engineer_name").getAsString();
-
-                                list.add(new Order(schedule_id, customer_id1, status, start_time, end_time, engineer_id,
-                                        bed_name, project_code, project_name, customer_name, engineer_name));
-                            }
-                            Message msg = Message.obtain();
-                            msg.what = 2;
-                            msg.obj = list;
-                            handler.sendMessage(msg);
-
-                        } else {
-                            App.showToast(getActivity(), message);
-                        }
-                    }
-                });
-    }
-
     //获取客户详细资料
     public void getServiceData(String org_id, String adviser_id, String vip_star, String arrival_time,
                                String arrival_time_ge,String arrival_time_le,int pageNum) {
@@ -318,10 +265,9 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                         App.showToast(getActivity(), "网络连接异常");
                         dialog.dismiss();
                     }
-
                     @Override
                     public void onResponse(String response, int id) {
-                        // Log.e("顾客:",response);
+//                        Log.e("token:",token+" url:"+apiURL);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status = jsonObject.get("status").getAsString();
                         String message = jsonObject.get("message").getAsString();
@@ -484,7 +430,9 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
 
     }
 
-
+    /**
+     * 初始化popwindow
+     */
     public void initPopupWindow() {
         View popupWindowView = getLayoutInflater(getArguments()).inflate(R.layout.style_pop, null);
         //设置popwindow的宽和高

@@ -18,6 +18,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.Agent;
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -76,6 +77,7 @@ public class FeedbackProblemActivity extends BaseActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback_problem);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
         initBaseData();
     }
@@ -181,7 +183,6 @@ public class FeedbackProblemActivity extends BaseActivity implements View.OnClic
 
                     @Override
                     public void onResponse(String response, int id) {
-//                        Log.e("FeedBack",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String status = "";
                         String message = "";
@@ -224,7 +225,6 @@ public class FeedbackProblemActivity extends BaseActivity implements View.OnClic
 
                     @Override
                     public void onResponse(String response, int id) {
-//                        Log.e("getServiceData",response);
                         //解析
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String message = jsonObject.get("message").getAsString();
@@ -232,7 +232,7 @@ public class FeedbackProblemActivity extends BaseActivity implements View.OnClic
                         if (status.equals("ok")) {
                             if (!jsonObject.get("data").isJsonNull()) {
                                 JsonArray jsonArray = jsonObject.get("data").getAsJsonArray();
-                                List<Agent> list1 = new ArrayList<Agent>();
+                                List<Agent> list1 = new ArrayList<>();
                                 for (JsonElement jsonElement : jsonArray) {
                                     JsonObject jo = jsonElement.getAsJsonObject();
                                     String agent_id = jo.get("agent_id").getAsString();
@@ -253,5 +253,11 @@ public class FeedbackProblemActivity extends BaseActivity implements View.OnClic
                         dismissShortDialog();
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
     }
 }

@@ -156,15 +156,22 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
         ll_scanner = (LinearLayout) view.findViewById(R.id.ll_scanner);
         tv_qute_pc = (TextView) view.findViewById(R.id.tv_qute_pc);
         ll_conversation= (LinearLayout) view.findViewById(R.id.ll_conversation);
+        TextView tv_head= (TextView) view.findViewById(R.id.tv_head);
         MainActivity parentActivity=(MainActivity)getActivity();
-        ViewGroup.LayoutParams params=ll_conversation.getLayoutParams();
-        params.height=((Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight())/35)*2;
+        ViewGroup.LayoutParams params = ll_conversation.getLayoutParams();
+        int llHeight = ((Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight()) / 35) * 2;
+        params.height = llHeight;
         ll_conversation.setLayoutParams(params);
+        int headHeight=(Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight()-llHeight)/22;
+        ViewGroup.LayoutParams params1=tv_head.getLayoutParams();
+        params1.height=headHeight;
+        tv_head.setLayoutParams(params1);
 
         ll_scanner.setOnClickListener(this);
         tv_qute_pc.setOnClickListener(this);
         titlePopup = new TitlePopup(getContext(), LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         titlePopup.addAction(new ActionItem(getContext(), "扫一扫", R.drawable.man_yes));
+        titlePopup.addAction(new ActionItem(getContext(),"发起群聊",R.drawable.man_yes));
         //titlePopup条目点击事件
         if (!TextUtils.isEmpty(webToken)) {
             tv_qute_pc.setVisibility(View.VISIBLE);
@@ -195,6 +202,9 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
                             }
                     );
 
+                }else if (position==1){
+                    //TODO
+                    startActivity(new Intent(getActivity(),CreateGroupChatActivity.class));
                 }
             }
         });

@@ -24,7 +24,8 @@
 
         <activity
             android:name="com.maibo.lvyongsheng.xianhui.SplashActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -44,6 +45,8 @@
         <activity android:name=".SearchPeopleActivity"/>
         <activity android:name=".MyCaptureActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <activity android:name=".StartProjectActivity"/>
+        <activity android:name=".CreateGroupChatActivity"/>
         <!--<activity android:name=".ConversationListFragment"-->
             <!--android:launchMode="singleTop"/>-->
         <!--<activity android:name=".ContactPersonFragment"-->

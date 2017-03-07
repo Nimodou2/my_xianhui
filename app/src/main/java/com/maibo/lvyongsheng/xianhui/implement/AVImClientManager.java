@@ -149,7 +149,7 @@ public class AVImClientManager extends AVIMClientEventHandler {
             @Override
             public void done(AVIMClient client, AVIMException e) {
                 if (e == null) {
-                    //登录成功
+                    //退出成功
                     client.close(new AVIMClientCallback() {
                         @Override
                         public void done(AVIMClient client, AVIMException e) {

@@ -15,6 +15,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.view.ClipView;
 import com.maibo.lvyongsheng.xianhui.view.TouchImageView;
 
@@ -24,35 +25,49 @@ import java.io.File;
 /**
  * Created by LYS on 2016/11/14.
  */
-public class ClipPictureActivity extends Activity implements View.OnTouchListener{
+public class ClipPictureActivity extends Activity implements View.OnTouchListener {
     // 头部
-    private TextView tv_right,tv_title;
-    private ImageView srcPic,iv_left;
+    private TextView tv_right, tv_title;
+    private ImageView srcPic, iv_left;
 
     private ClipView clipview;
 
     private Matrix matrix = new Matrix();
     private Matrix savedMatrix = new Matrix();
 
-    /** 动作标志：无 */
+    /**
+     * 动作标志：无
+     */
     private static final int NONE = 0;
-    /** 动作标志：拖动 */
+    /**
+     * 动作标志：拖动
+     */
     private static final int DRAG = 1;
-    /** 动作标志：缩放 */
+    /**
+     * 动作标志：缩放
+     */
     private static final int ZOOM = 2;
-    /** 初始化动作标志 */
+    /**
+     * 初始化动作标志
+     */
     private int mode = NONE;
-    /** 记录起始坐标 */
+    /**
+     * 记录起始坐标
+     */
     private PointF start = new PointF();
-    /** 记录缩放时两指中间点坐标 */
+    /**
+     * 记录缩放时两指中间点坐标
+     */
     private PointF mid = new PointF();
     private float oldDist = 1f;//缩放倍数
     private Bitmap bitmap;
     private String url = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clip_picture);
+        CloseAllActivity.getScreenManager().pushActivity(this);
         initview();
         ViewTreeObserver observer = srcPic.getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -67,10 +82,10 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
 
     private void initview() {
 
-        tv_right= (TextView) findViewById(R.id.tv_right);
-        tv_title= (TextView) findViewById(R.id.tv_title);
-        srcPic= (TouchImageView) findViewById(R.id.src_pic);
-        iv_left= (ImageView) findViewById(R.id.iv_left);
+        tv_right = (TextView) findViewById(R.id.tv_right);
+        tv_title = (TextView) findViewById(R.id.tv_title);
+        srcPic = (TouchImageView) findViewById(R.id.src_pic);
+        iv_left = (ImageView) findViewById(R.id.iv_left);
         tv_title.setText("图片裁剪");
         srcPic.setOnTouchListener(this);
         url = getIntent().getStringExtra("picPath");
@@ -87,6 +102,7 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
             }
         });
     }
+
     private void save() {
         Bitmap clipBitmap = getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -97,6 +113,7 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
         sendBroadcast(intent);
         finish();
     }
+
     /**
      * 获取裁剪框内截图
      *
@@ -120,6 +137,7 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
         view.destroyDrawingCache();
         return finalBitmap;
     }
+
     @Override
     public boolean onTouch(View v, MotionEvent motionEvent) {
         ImageView view = (ImageView) v;
@@ -160,6 +178,7 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
         view.setImageMatrix(matrix);
         return true;
     }
+
     /**
      * 多点触控时，计算最先放下的两指距离
      *
@@ -183,6 +202,7 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
         float y = event.getY(0) + event.getY(1);
         point.set(x / 2, y / 2);
     }
+
     /**
      * 初始化截图区域，并将源图按裁剪框比例缩放
      *
@@ -226,15 +246,17 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
         this.addContentView(clipview, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
+
     /**
      * 根据图片路径获取图片对象
+     *
      * @param path
      * @return
      */
     private Bitmap getBitmapByPath(String path) {
         File file = new File(path);
-        Bitmap bm=null;
-        if(file.exists()){
+        Bitmap bm = null;
+        if (file.exists()) {
             bm = BitmapFactory.decodeFile(path);
         }
 //        BitmapFactory.Options options = new BitmapFactory.Options();
@@ -243,4 +265,9 @@ public class ClipPictureActivity extends Activity implements View.OnTouchListene
         return bm;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CloseAllActivity.getScreenManager().popActivity(this);
+    }
 }

@@ -416,9 +416,9 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
                     public void onError(Call call, Exception e, int id) {
 
                     }
-
                     @Override
                     public void onResponse(String response, int id) {
+//                        Log.e("productOrder",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         JsonObject data = jsonObject.get("data").getAsJsonObject();
                         JsonArray rows = data.get("rows").getAsJsonArray();
@@ -449,7 +449,6 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
     }
-
 
     /**
      * 网络问题，重新加载

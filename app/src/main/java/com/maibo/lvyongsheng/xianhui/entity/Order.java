@@ -25,9 +25,11 @@ public class Order implements Serializable{
     private String project_name;
     private String avator_url;
     private String guid;
+    private String org_name;
+    private int raw_status;
 
     public Order(int schedule_id, int customer_id, String status, String start_time, String end_time, String engineer_id, String bed_name,
-                 String project_code, String project_name, String customer_name, String engineer_name) {
+                 String project_code, String project_name, String customer_name, String engineer_name,String org_name,int raw_status) {
         this.schedule_id = schedule_id;
         this.customer_id = customer_id;
         this.status = status;
@@ -39,10 +41,14 @@ public class Order implements Serializable{
         this.project_name = project_name;
         this.customer_name = customer_name;
         this.engineer_name = engineer_name;
+        this.org_name=org_name;
+        this.raw_status=raw_status;
+
     }
 
     public Order(int schedule_id, String status, String start_time, String end_time, String engineer_id,
-                 String bed_name, String project_code, String project_name, String avator_url, String guid, int customer_id, String customer_name, String engineer_name) {
+                 String bed_name, String project_code, String project_name, String avator_url, String guid,
+                 int customer_id, String customer_name, String engineer_name,String org_name,int raw_status) {
 
         this.customer_id = customer_id;
         this.status = status;
@@ -57,10 +63,30 @@ public class Order implements Serializable{
         this.schedule_id = schedule_id;
         this.customer_name = customer_name;
         this.engineer_name = engineer_name;
+        this.org_name=org_name;
+        this.raw_status=raw_status;
 
     }
-    /*Order(schedule_id, customer_id,status, start_time, end_time,  engineer_id,
-                                        bed_name,  project_code,  project_name,  customer_name,  engineer_name)*/
+    public Order(String flowno, int cstid, String engineer_id,
+                 int item_id, String item_name, String qty, String customer_name, String status) {
+        this.flowno = flowno;
+        this.cstid = cstid;
+        this.engineer_id = engineer_id;
+        this.item_id = item_id;
+        this.item_name = item_name;
+        this.qty = qty;
+        this.customer_name = customer_name;
+        this.status = status;
+    }
+
+    public String getOrg_name() {
+        return org_name;
+    }
+
+    public void setOrg_name(String org_name) {
+        this.org_name = org_name;
+    }
+
     public int getSchedule_id() {
         return schedule_id;
     }
@@ -115,18 +141,6 @@ public class Order implements Serializable{
 
     public void setProject_name(String project_name) {
         this.project_name = project_name;
-    }
-
-    public Order(String flowno, int cstid, String engineer_id,
-                 int item_id, String item_name, String qty, String customer_name, String status) {
-        this.flowno = flowno;
-        this.cstid = cstid;
-        this.engineer_id = engineer_id;
-        this.item_id = item_id;
-        this.item_name = item_name;
-        this.qty = qty;
-        this.customer_name = customer_name;
-        this.status = status;
     }
 
     public String getFlowno() {
@@ -199,5 +213,13 @@ public class Order implements Serializable{
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getRaw_status() {
+        return raw_status;
+    }
+
+    public void setRaw_status(int raw_status) {
+        this.raw_status = raw_status;
     }
 }

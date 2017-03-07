@@ -69,7 +69,6 @@ public class TitlePopup extends PopupWindow {
 		setTouchable(true);
 		//设置弹窗外可点击
 		setOutsideTouchable(true);
-
 		//获得屏幕的宽度和高度
 		mScreenWidth = Util.getScreenWidth(mContext);
 		mScreenHeight = Util.getScreenHeight(mContext);
@@ -110,7 +109,6 @@ public class TitlePopup extends PopupWindow {
 	public void show(View view){
 		//获得点击屏幕的位置坐标
 		view.getLocationOnScreen(mLocation);
-
 		//设置矩形的大小
 		mRect.set(mLocation[0], mLocation[1], mLocation[0] + view.getWidth(),mLocation[1] + view.getHeight());
 
@@ -120,7 +118,7 @@ public class TitlePopup extends PopupWindow {
 		}
 
 		//显示弹窗的位置
-		showAtLocation(view, popupGravity, mScreenWidth - LIST_PADDING - (getWidth()/2), mRect.bottom);
+		showAtLocation(view, popupGravity, mScreenWidth*2/3+20, mRect.bottom);
 	}
 
 	/**
@@ -142,7 +140,7 @@ public class TitlePopup extends PopupWindow {
 					//设置文本居中
 					textView.setGravity(Gravity.CENTER);
 					//设置文本域的范围
-					textView.setPadding(0, 20, 0, 20);
+					textView.setPadding(0, 40, 0, 40);
 					//设置文本在一行内显示（不换行）
 					textView.setSingleLine(true);
 				}else{

@@ -8,6 +8,7 @@ public class EventDatas {
     private String tag;
     private String response;
     private String messageStatus;
+    private int tag2;
 
     public EventDatas() {
     }
@@ -21,6 +22,14 @@ public class EventDatas {
         this.tag = tag;
         this.response = response;
         this.messageStatus = messageStatus;
+    }
+
+    public int getTag2() {
+        return tag2;
+    }
+
+    public void setTag2(int tag2) {
+        this.tag2 = tag2;
     }
 
     public String getTag() {

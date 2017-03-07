@@ -21,7 +21,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.Custemer;
 import com.maibo.lvyongsheng.xianhui.entity.Material;
-import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.Project;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.DrawRoundCorner;
@@ -53,7 +52,6 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
     int project_id;
     String project_name;
     int id = -1;
-    List<Order> orderList;
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
     @Bind(R.id.in_no_datas)
@@ -83,9 +81,6 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
                     break;
                 case 4:
                     custemers = (List<Custemer>) msg.obj;
-                    break;
-                case 5:
-                    orderList = (List<Order>) msg.obj;
                     break;
             }
 
@@ -139,7 +134,7 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
         if (NetWorkUtils.isNetworkConnected(this)){
             setOrderListener();
             getServiceData();
-            getProjectOrder(project_id);
+//            getProjectOrder(project_id);
         }else{
             ll_all_data.setVisibility(View.GONE);
             in_loading_error.setVisibility(View.VISIBLE);
@@ -160,11 +155,10 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
                 //跳转到订单界面
                 Intent intent = new Intent(ProjectMessageActivity.this, OrderActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("projectOrder", (Serializable) orderList);
                 intent.putExtra("projectName", project_name);
                 intent.putExtras(bundle);
                 intent.putExtra("tag", 1);
-                intent.putExtra("project_id", project_id);
+                intent.putExtra("project_id",project_id);
                 startActivity(intent);
             }
         });
@@ -220,6 +214,7 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         dismissShortDialog();
+                        showToast(R.string.net_connect_error);
                     }
 
                     @Override
@@ -368,56 +363,6 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
         }
     }
 
-    //获取订单信息
-    public void getProjectOrder(int project_id) {
-        OkHttpUtils
-                .post()
-                .url(apiURL + "/rest/employee/gethelperprojectorders")
-                .addParams("token", token)
-                .addParams("project_id", project_id + "")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
-                        String statuss = jsonObject.get("status").getAsString();
-                        String message = jsonObject.get("message").getAsString();
-                        if (statuss.equals("ok")) {
-                            JsonObject data = jsonObject.get("data").getAsJsonObject();
-                            JsonArray rows = data.get("rows").getAsJsonArray();
-                            List<Order> list = new ArrayList<Order>();
-                            for (JsonElement jsonElement : rows) {
-                                JsonObject jo = jsonElement.getAsJsonObject();
-                                int schedule_id = jo.get("schedule_id").getAsInt();
-                                int customer_id = jo.get("customer_id").getAsInt();
-                                String status = jo.get("status").getAsString();
-                                String start_time = jo.get("start_time").getAsString();
-                                String end_time = jo.get("end_time").getAsString();
-                                String engineer_id = jo.get("engineer_id").getAsString();
-                                String bed_name = jo.get("bed_name").getAsString();
-                                String project_code = jo.get("project_code").getAsString();
-                                String project_name = jo.get("project_name").getAsString();
-                                String customer_name = jo.get("customer_name").getAsString();
-                                String engineer_name = jo.get("engineer_name").getAsString();
-
-                                list.add(new Order(schedule_id, customer_id, status, start_time, end_time, engineer_id,
-                                        bed_name, project_code, project_name, customer_name, engineer_name));
-                            }
-                            Message msg = Message.obtain();
-                            msg.what = 5;
-                            msg.obj = list;
-                            handler.sendMessage(msg);
-
-                        }
-                    }
-                });
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -435,7 +380,6 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
             in_loading_error.setVisibility(View.GONE);
             setOrderListener();
             getServiceData();
-            getProjectOrder(project_id);
         }else{
             ll_all_data.setVisibility(View.GONE);
             in_loading_error.setVisibility(View.VISIBLE);

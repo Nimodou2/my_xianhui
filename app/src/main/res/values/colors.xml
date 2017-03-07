@@ -71,4 +71,6 @@
     <color name="radar_chart_text">#615650</color>
     <color name="text_color">#6B6B6B</color>
     <color name="transparent_background">#50000000</color>
+    <color name="textcolor2">#057AF0</color>
+    <color name="weixingreen">#0FB00E</color>
 </resources>

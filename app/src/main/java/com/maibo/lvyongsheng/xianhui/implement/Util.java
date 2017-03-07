@@ -1,8 +1,12 @@
 package com.maibo.lvyongsheng.xianhui.implement;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.text.TextUtils;
 
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -160,4 +164,29 @@ public class Util {
         }
     }
 
+    /**
+     * uri转bitmap
+     * @param uri
+     * @param context
+     * @return
+     */
+    public static Bitmap decodeUriAsBitmap(Uri uri, Context context){
+
+        Bitmap bitmap = null;
+
+        try {
+
+            bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri));
+
+        } catch (FileNotFoundException e) {
+
+            e.printStackTrace();
+
+            return null;
+
+        }
+
+        return bitmap;
+
+    }
 }

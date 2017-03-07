@@ -13,7 +13,6 @@ import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 
 import butterknife.ButterKnife;
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by LYS on 2016/12/29.
@@ -70,13 +69,13 @@ public class BaseActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+//        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 
     protected void onViewCreated() {}
@@ -130,9 +129,9 @@ public class BaseActivity extends Activity {
         return result;
     }
     //因为EventBus注册后必须存在接收函数，下面内容就是个摆设
-    public void onEvent(EmptyEvent event) {}
-    public class EmptyEvent {
-    }
+//    public void onEvent(EmptyEvent event) {}
+//    public class EmptyEvent {
+//    }
 
 
     /**

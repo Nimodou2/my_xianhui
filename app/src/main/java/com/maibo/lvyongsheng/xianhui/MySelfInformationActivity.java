@@ -61,6 +61,10 @@ public class MySelfInformationActivity extends BaseActivity implements View.OnCl
         tv_name= (TextView) findViewById(R.id.tv_name);
         back= (TextView) findViewById(R.id.back);
         avatarImageView= (AvatarImageView) findViewById(R.id.avatarIv);
+        avatarImageView.setTitleColor("#353535");
+        avatarImageView.setLineColor("#EBEBEB");
+        avatarImageView.setBtnTextColor("#30A2F0");
+        avatarImageView.setTitleLineColor("#989898");
         //获取到了图片的正确位置
         sp= getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         sp1=getSharedPreferences("cropPicturnPath",Context.MODE_PRIVATE);
