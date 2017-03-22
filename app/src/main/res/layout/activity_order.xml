@@ -17,26 +17,26 @@
             android:text="返回" />
 
         <TextView
-            android:id="@+id/cus_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="张三"
+            android:text="订单详情"
             android:textColor="#fff"
             android:textSize="18dp" />
 
         <TextView
-            android:id="@+id/tv_files"
-            style="@style/bar_right" />
+            android:id="@+id/cus_name"
+            style="@style/bar_right"
+            android:text="会员名" />
     </LinearLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swip_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+        <!--android:id="@+id/swip_refresh"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -45,12 +45,68 @@
             <ListView
                 android:id="@+id/lv_order"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:divider="#00000000"
-                android:dividerHeight="0dp"
-                android:paddingBottom="10dp">
+                android:dividerHeight="20dp"
+                android:paddingBottom="100dp"
+                android:paddingTop="20dp">
 
             </ListView>
+
+            <RelativeLayout
+                android:id="@+id/rl_foot"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    android:background="@mipmap/circle_bg" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@mipmap/rectangle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom">
+
+                    <ImageView
+                        android:id="@+id/iv_cancle"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="1"
+                        android:background="#0000"
+                        android:paddingBottom="5dp"
+                        android:src="@mipmap/cancelbtn_disabl" />
+
+                    <ImageView
+                        android:id="@+id/iv_start_or_finish"
+                        android:layout_width="0dp"
+                        android:layout_height="85dp"
+                        android:layout_weight="1"
+                        android:background="#0000"
+                        android:paddingBottom="5dp"
+                        android:src="@mipmap/begain_btn" />
+
+                    <ImageView
+                        android:id="@+id/iv_detail"
+                        android:layout_width="0dp"
+                        android:layout_height="55dp"
+                        android:layout_weight="1"
+                        android:background="#0000"
+                        android:paddingBottom="5dp"
+                        android:src="@mipmap/details_btn" />
+                </LinearLayout>
+            </RelativeLayout>
 
             <include
                 android:id="@+id/in_no_datas"
@@ -62,5 +118,5 @@
                 layout="@layout/incloud_loading_error"
                 android:visibility="gone"></include>
         </FrameLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 </LinearLayout>

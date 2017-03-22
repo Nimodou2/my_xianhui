@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -22,15 +21,12 @@ import com.maibo.lvyongsheng.xianhui.entity.Consume;
 import com.maibo.lvyongsheng.xianhui.entity.CustemProjects;
 import com.maibo.lvyongsheng.xianhui.entity.Project;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
-import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/9/13.
@@ -49,8 +45,8 @@ public class AddProjectActivity extends BaseActivity {
     int cusId;
     List<CustemProjects> list1;
     private ProjectAddListViewExpandAdapter adapter;
-    @Bind(R.id.tv_head)
-    TextView tv_head;
+    //    List<SaleTab> saleList;
+    String customer_name;
 
     @Bind(R.id.in_no_datas)
     LinearLayout in_no_datas;
@@ -70,10 +66,11 @@ public class AddProjectActivity extends BaseActivity {
                 case 1:
                     ll_all_data.setVisibility(View.VISIBLE);
                     in_loading_error.setVisibility(View.GONE);
-                    setProjectsAdapter(msg);
+                    list1 = (List<CustemProjects>) msg.obj;
                     break;
                 case 2:
-                    sel_product= (int[]) msg.obj;
+                    sel_product = (int[]) msg.obj;
+                    setProjectsAdapter();
                     break;
             }
         }
@@ -81,55 +78,71 @@ public class AddProjectActivity extends BaseActivity {
 
     /**
      * 设置项目适配器
-     * @param msg
      */
-    private void setProjectsAdapter(Message msg) {
-        list1 = (List<CustemProjects>) msg.obj;
-        if (list1.size()==0){
+    private void setProjectsAdapter() {
+
+        if (list1.size() == 0) {
             ll_all_data.setVisibility(View.GONE);
             in_no_datas.setVisibility(View.VISIBLE);
             return;
         }
         List<Project> dataPr = list1.get(0).getList();
         //处理项目数据 排列顺序：1、带卡项且选中的 2、已计划的 3、带卡项的 4、其它
-        pro1=new ArrayList<>();
-        List<Project> pro2=new ArrayList<>();
-        List<Project> pro3=new ArrayList<>();
-        List<Project> pro4=new ArrayList<>();
-        int[] sel1=list1.get(0).getSelected();
-        for (int i=0;i<dataPr.size();i++){
-        //是否有卡项
-        int ka=dataPr.get(i).getCard_list().size();
-        int lanjie=0;
-        //是否被选中
-        for (int j=0;j<sel1.length;j++){
-            //被选中
-            if(sel1[j]==dataPr.get(i).getItem_id()){
-               //带卡项
-                if (ka>0){
-                    pro1.add(dataPr.get(i));
-                }else{
-                    //只是被选中
-                    pro2.add(dataPr.get(i));
+        pro1 = new ArrayList<>();
+        List<Project> pro2 = new ArrayList<>();
+        List<Project> pro3 = new ArrayList<>();
+        List<Project> pro4 = new ArrayList<>();
+        int[] sel1 = list1.get(0).getSelected();
+        for (int i = 0; i < dataPr.size(); i++) {
+            //是否有卡项
+            int ka = dataPr.get(i).getCard_list().size();
+            int lanjie = 0;
+            //是否被选中
+            for (int j = 0; j < sel1.length; j++) {
+                //被选中
+                if (sel1[j] == dataPr.get(i).getItem_id()) {
+                    //带卡项
+                    if (ka > 0) {
+                        pro1.add(dataPr.get(i));
+                    } else {
+                        //只是被选中
+                        pro2.add(dataPr.get(i));
+                    }
+                    lanjie = 2;
                 }
-                lanjie=2;
             }
-        }
-            if(ka>0&&lanjie!=2){
-                if(ka>0){
+            if (ka > 0 && lanjie != 2) {
+                if (ka > 0) {
                     //只是带卡项的
                     pro3.add(dataPr.get(i));
                 }
-            }else if (lanjie!=2){
+            } else if (lanjie != 2) {
                 pro4.add(dataPr.get(i));
             }
-    }
+        }
         //排序后的数据
         pro1.addAll(pro2);
         pro1.addAll(pro3);
         pro1.addAll(pro4);
         //获取已选中的计划项目
         sel = list1.get(0).getSelected();
+        //进一步处理数据，在Pro1数据中增加历史记录
+        List<Consume> consumes = list1.get(0).getConsumes();
+        if (consumes.size() > 0) {
+            int num = 1;
+            pro1.add(0, new Project(null, -1, "消费记录", 0, ""));
+            for (int i = 0; i < consumes.size(); i++) {
+                pro1.add(i + 1, new Project(null, -2, consumes.get(i).getFullname(), 0, consumes.get(i).getSaledate()));
+                num++;
+                if (i == 2) i = consumes.size() + 1;
+            }
+            pro1.add(num, new Project(null, -3, "更多消费记录", 0, ""));
+            pro1.add(num + 1, new Project(null, -4, "项目计划", 0, ""));
+
+        } else {
+            pro1.add(0, new Project(null, -4, "项目计划", 0, ""));
+        }
+
         initView();
     }
 
@@ -138,9 +151,7 @@ public class AddProjectActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_project);
-        setSingleViewHeightAndWidth(tv_head,viewHeight*15/255,0);
         CloseAllActivity.getScreenManager().pushActivity(this);
-       showShortDialog();
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
@@ -151,52 +162,38 @@ public class AddProjectActivity extends BaseActivity {
     private void initView() {
         sp1 = getSharedPreferences("checkBox", MODE_PRIVATE);
         lv_item_plan = (ExpandableListView) findViewById(R.id.lv_item_plan);
-        adapter = new ProjectAddListViewExpandAdapter(AddProjectActivity.this, pro1, sel,lv_item_plan,viewHeight);
+        adapter = new ProjectAddListViewExpandAdapter(AddProjectActivity.this, pro1, sel, lv_item_plan, viewHeight, cusId, customer_name);
         lv_item_plan.setAdapter(adapter);
         lv_item_plan.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+    }
+
+
+    public void initData() {
+        Intent intent = getIntent();
+        cusId = intent.getIntExtra("customer_id", 0);
+        customer_name = intent.getStringExtra("customer_name");
+        String response = intent.getStringExtra("response");
+        getProjectDatas(response);
     }
 
     /**
      * 获取计划添加项目/产品列表
      */
-    public void initData() {
-        Intent intent = getIntent();
-        cusId = intent.getIntExtra("customer_id", 0);
-        OkHttpUtils
-                .post()
-                .url(apiURL + "/rest/employee/getplanaddlist")
-                .addParams("token", token)
-                .addParams("customer_id", cusId + "")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        Message msg=Message.obtain();
-                        msg.what=0;
-                        handler.sendMessage(msg);
-                        dismissShortDialog();
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-//                        Log.e("AddProject",response);
-                        JsonObject object = new JsonParser().parse(response).getAsJsonObject();
-                        //获取顾客使用项目的数据
-                        String status=object.get("status").getAsString();
-                        String message=object.get("message").getAsString();
-                        if (status.equals("ok")){
-                            getProjectData(object);
-                        }else{
-                            showToast(message);
-                        }
-
-                        dismissShortDialog();
-                    }
-                });
+    private void getProjectDatas(String response) {
+        JsonObject object = new JsonParser().parse(response).getAsJsonObject();
+        //获取顾客使用项目的数据
+        String status = object.get("status").getAsString();
+        String message = object.get("message").getAsString();
+        if (status.equals("ok")) {
+            getProjectData(object);
+        } else {
+            showToast(message);
+        }
     }
 
     /**
      * 解析项目数据
+     *
      * @param object
      */
     public void getProjectData(JsonObject object) {
@@ -222,7 +219,7 @@ public class AddProjectActivity extends BaseActivity {
                 for (JsonElement jsonElement1 : array1) {
                     JsonObject jsonObjects = jsonElement1.getAsJsonObject();
                     String fullname1 = jsonObjects.get("fullname").getAsString();
-                    int times=jsonObjects.get("times").getAsInt();
+                    int times = jsonObjects.get("times").getAsInt();
                     String card_class = jsonObjects.get("card_class").getAsString();
                     String card_num = jsonObjects.get("card_num").getAsString();
                     String price = jsonObjects.get("price").getAsString();
@@ -231,7 +228,7 @@ public class AddProjectActivity extends BaseActivity {
                     cards.add(new Card(fullname1, times, card_class, card_num, price, item_ids));
                 }
             }
-            dataProject.add(new Project(cards, item_id, fullname, item_type));
+            dataProject.add(new Project(cards, item_id, fullname, item_type, ""));
         }
         //解析project中的consume中的数据
         JsonArray consume = project.get("consume").getAsJsonArray();
@@ -258,32 +255,33 @@ public class AddProjectActivity extends BaseActivity {
         msg1.obj = dataCustemProject;
         handler.sendMessage(msg1);
         //解析产品中被计划的数据
-        JsonObject product=data.get("product").getAsJsonObject();
+        JsonObject product = data.get("product").getAsJsonObject();
         JsonArray selected_product = product.get("selected").getAsJsonArray();
-        int[] sel_product=new int[selected_product.size()];
-        int pp=-1;
-        for (JsonElement js5:selected_product){
+        int[] sel_product = new int[selected_product.size()];
+        int pp = -1;
+        for (JsonElement js5 : selected_product) {
             pp++;
-            int json5=js5.getAsInt();
-            sel_product[pp]=json5;
+            int json5 = js5.getAsInt();
+            sel_product[pp] = json5;
         }
-        Message msg2=Message.obtain();
-        msg2.what=2;
-        msg2.obj=sel_product;
+        Message msg2 = Message.obtain();
+        msg2.what = 2;
+        msg2.obj = sel_product;
         handler.sendMessage(msg2);
 
 
     }
+
 
     @Override
     protected void onPause() {
         super.onPause();
 
         //提交项目计划
-        if (adapter==null)
+        if (adapter == null)
             return;
         HashMap<Integer, Integer> itemID = adapter.getItemID();
-        if (itemID==null)
+        if (itemID == null)
             return;
         int j = 0;
         int k = -1;
@@ -311,21 +309,22 @@ public class AddProjectActivity extends BaseActivity {
             }
         }
         //将产品中被选项传递到AddTabActivity
-        StringBuffer buffer_product=new StringBuffer();
-        for (int i=0;i<sel_product.length;i++){
-            buffer_product.append(","+sel_product[i]);
+        StringBuffer buffer_product = new StringBuffer();
+        for (int i = 0; i < sel_product.length; i++) {
+            buffer_product.append("," + sel_product[i]);
         }
-        String buffer_product_no=buffer_product.toString();
-        if (sel_product.length>0){
-            buffer_product_no=buffer_product_no.substring(1);
+        String buffer_product_no = buffer_product.toString();
+        if (sel_product.length > 0) {
+            buffer_product_no = buffer_product_no.substring(1);
         }
         String buffer = sb.toString();
-        SharedPreferences.Editor  editor=sp.edit();
-        editor.putString("bufferProject",buffer);
-        editor.putString("buffer_product_no",buffer_product_no);
-        editor.putInt("tag",0);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("bufferProject", buffer);
+        editor.putString("buffer_product_no", buffer_product_no);
+        editor.putInt("tag", 0);
         editor.commit();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -334,10 +333,10 @@ public class AddProjectActivity extends BaseActivity {
 
     /**
      * 网络问题，重新加载
+     *
      * @param view
      */
-    public void loadingMore(View view){
-        showShortDialog();
+    public void loadingMore(View view) {
         initData();
     }
 }

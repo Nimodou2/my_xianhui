@@ -18,10 +18,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.adapter.XiangMuPlanAdapter;
+import com.maibo.lvyongsheng.xianhui.constants.Constants;
 import com.maibo.lvyongsheng.xianhui.entity.Card;
 import com.maibo.lvyongsheng.xianhui.entity.Consume;
 import com.maibo.lvyongsheng.xianhui.entity.CustemProducts;
 import com.maibo.lvyongsheng.xianhui.entity.CustemProjects;
+import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.entity.Product;
 import com.maibo.lvyongsheng.xianhui.entity.Project;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
+import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
 /**
@@ -52,7 +55,7 @@ public class ProjectPlanActivity extends BaseActivity {
     List<String> listArray2;
     //    ProgressDialog dialog;
     //用于判断View使第几次创建
-    int m = 0;
+//    int m = 0;
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
     @Bind(R.id.tv_customer_plan)
@@ -114,7 +117,7 @@ public class ProjectPlanActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        m = 1;
+//        m = 1;
         setContentView(R.layout.activity_xiangmu_plan);
         adapterLitterBar(ll_head);
         setCurrentHeightAndWidth();
@@ -137,19 +140,23 @@ public class ProjectPlanActivity extends BaseActivity {
             }
         });
         //增加项目点击事件
-        iv_add.setOnClickListener(new View.OnClickListener() {
+        ll_add_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent1 = getIntent();
                 //获取顾客ID
                 int cusId = intent1.getIntExtra("customer_id", 0);
+                String fullName = intent1.getStringExtra("customer_name");
                 Intent intent = new Intent(ProjectPlanActivity.this, AddTabActivity.class);
+                intent.putExtra("customer_name", fullName);
                 intent.putExtra("customer_id", cusId);
                 startActivity(intent);
             }
         });
         //初始化数据
+        EventBus.getDefault().register(this);
         initData();
+
     }
 
     /**
@@ -166,21 +173,6 @@ public class ProjectPlanActivity extends BaseActivity {
 
     }
 
-    //下面两个方法用于界面返回后刷新
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (m != 1) {
-            initData();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        m = 0;
-    }
 
     public void initData() {
         Intent intent = getIntent();
@@ -212,6 +204,12 @@ public class ProjectPlanActivity extends BaseActivity {
 
                     }
                 });
+    }
+
+    public void onEvent(EventDatas event) {
+        if (event.getTag().equals(Constants.PLAN_PROJECT)) {
+            initData();
+        }
     }
 
     /**
@@ -325,7 +323,7 @@ public class ProjectPlanActivity extends BaseActivity {
                         cards.add(new Card(fullname1, times, card_class, card_num, price, item_ids));
                     }
                 }
-                dataProject.add(new Project(cards, item_id, fullname, item_type));
+                dataProject.add(new Project(cards, item_id, fullname, item_type, ""));
             }
             //解析project中的consume中的数据
             JsonArray consume = project.get("consume").getAsJsonArray();
@@ -360,14 +358,16 @@ public class ProjectPlanActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         CloseAllActivity.getScreenManager().popActivity(this);
     }
 
     /**
      * 网络问题，重新加载
+     *
      * @param view
      */
-    public void loadingMore(View view){
+    public void loadingMore(View view) {
         showShortDialog();
         initData();
     }

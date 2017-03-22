@@ -1,47 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/weixin_lianxiren_gray">
+    android:background="@color/weixin_lianxiren_gray"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_head"
-        android:background="@color/bar_color"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:background="@color/bar_color">
+
         <TextView
             android:id="@+id/back"
             style="@style/bar_left"
-            android:text="返回"/>
+            android:text="返回" />
+
         <TextView
             android:id="@+id/cus_name"
             style="@style/bar_center"
-            android:text="进度"/>
+            android:text="进度" />
+
         <TextView
             android:id="@+id/tv_new_build"
             style="@style/bar_right"
-            android:text="新建"/>
+            android:text="新建" />
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <ListView
-        android:id="@+id/lv_progress"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    </ListView>
+        <ListView
+            android:id="@+id/lv_progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
 
         <include
             android:id="@+id/in_no_datas"
-            android:visibility="gone"
-            layout="@layout/incloud_no_datas"></include>
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
 
         <include
             android:id="@+id/in_loading_error"
-            android:visibility="gone"
-            layout="@layout/incloud_loading_error"></include>
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
 
     </FrameLayout>
 </LinearLayout>

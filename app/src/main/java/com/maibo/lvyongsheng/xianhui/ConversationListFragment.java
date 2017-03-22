@@ -12,6 +12,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -71,7 +72,7 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
     String apiURL;
     String token;
     TextView scanner, tv_qute_pc;
-    LinearLayout ll_scanner,ll_conversation;
+    LinearLayout ll_scanner, ll_conversation;
     ViewGroup contentView;
 
     View view;
@@ -128,6 +129,7 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
         recyclerView.addItemDecoration(new MyDividerItem(getContext(), MyDividerItem.VERTICAL_LIST));
         itemAdapter = new LCIMCommonListAdapter<>(ConversationItemHolder.class);
         recyclerView.setAdapter(itemAdapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         EventBus.getDefault().register(this);
         return view;
     }
@@ -155,28 +157,29 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
         scanner = (TextView) view.findViewById(R.id.scanner);
         ll_scanner = (LinearLayout) view.findViewById(R.id.ll_scanner);
         tv_qute_pc = (TextView) view.findViewById(R.id.tv_qute_pc);
-        ll_conversation= (LinearLayout) view.findViewById(R.id.ll_conversation);
-        TextView tv_head= (TextView) view.findViewById(R.id.tv_head);
-        MainActivity parentActivity=(MainActivity)getActivity();
+        ll_conversation = (LinearLayout) view.findViewById(R.id.ll_conversation);
+        TextView tv_head = (TextView) view.findViewById(R.id.tv_head);
+        MainActivity parentActivity = (MainActivity) getActivity();
         ViewGroup.LayoutParams params = ll_conversation.getLayoutParams();
         int llHeight = ((Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight()) / 35) * 2;
         params.height = llHeight;
         ll_conversation.setLayoutParams(params);
-        int headHeight=(Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight()-llHeight)/22;
-        ViewGroup.LayoutParams params1=tv_head.getLayoutParams();
-        params1.height=headHeight;
+        int headHeight = (Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight() - llHeight) / 22;
+        ViewGroup.LayoutParams params1 = tv_head.getLayoutParams();
+        params1.height = headHeight;
         tv_head.setLayoutParams(params1);
 
         ll_scanner.setOnClickListener(this);
         tv_qute_pc.setOnClickListener(this);
         titlePopup = new TitlePopup(getContext(), LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         titlePopup.addAction(new ActionItem(getContext(), "扫一扫", R.drawable.man_yes));
-        titlePopup.addAction(new ActionItem(getContext(),"发起群聊",R.drawable.man_yes));
+        titlePopup.addAction(new ActionItem(getContext(), "发起群聊", R.drawable.man_yes));
         //titlePopup条目点击事件
         if (!TextUtils.isEmpty(webToken)) {
             tv_qute_pc.setVisibility(View.VISIBLE);
         }
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -202,9 +205,9 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
                             }
                     );
 
-                }else if (position==1){
+                } else if (position == 1) {
                     //TODO
-                    startActivity(new Intent(getActivity(),CreateGroupChatActivity.class));
+                    startActivity(new Intent(getActivity(), CreateGroupChatActivity.class));
                 }
             }
         });
@@ -292,6 +295,7 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
 
     /**
      * 请求服务器登录PC端
+     *
      * @param result
      */
     private void callServiceToLoginPC(final String result) {
@@ -309,7 +313,7 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("ConversationList:",response);
+                        Log.e("ConversationList:", response);
 
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String status = "";
@@ -370,9 +374,13 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
      */
     public void onEvent(LCIMConversationItemLongClickEvent event) {
         if (null != event.conversation) {
+            //通过Conversation获取该条目之前的位置
+            int position = getConversationPosition(event.conversation);
             String conversationId = event.conversation.getConversationId();
             LCIMConversationItemCache.getInstance().deleteConversation(conversationId);
-            updateConversationList();
+            Log.e("position", position + "");
+            if (position != -1)
+                updateConversationList2(position);
         }
     }
 
@@ -405,6 +413,43 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
 
         itemAdapter.setDataList(conversationList);
         itemAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 只用于删除时刷新页面,拉取数据
+     */
+    private void updateConversationList2(int position) {
+
+        List<String> convIdList = LCIMConversationItemCache.getInstance().getSortedConversationList();
+        //获取新手通知
+        if (convIdList.size() == 0) {
+            ServiceDatas serviceDatas = new ServiceDatas(getContext());
+            serviceDatas.getSendNoviceTutorialNotice();
+        }
+        List<AVIMConversation> conversationList = new ArrayList<>();
+        //添加聊天数据
+        for (String convId : convIdList) {
+            conversationList.add(LCChatKit.getInstance().getClient().getConversation(convId));
+        }
+
+        itemAdapter.setDataList(conversationList);
+        itemAdapter.notifyItemRemoved(position);
+    }
+
+    /**
+     * 获取被删除项的位置
+     *
+     * @param conversation
+     * @return
+     */
+    private int getConversationPosition(AVIMConversation conversation) {
+        List<String> convIdList = LCIMConversationItemCache.getInstance().getSortedConversationList();
+        for (int i = 0; i < convIdList.size(); i++) {
+            if (conversation.getConversationId().equals(convIdList.get(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**

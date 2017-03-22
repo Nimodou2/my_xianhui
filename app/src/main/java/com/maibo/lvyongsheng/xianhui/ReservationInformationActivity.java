@@ -52,7 +52,7 @@ public class ReservationInformationActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
                     showToast(R.string.net_connect_error);
                     in_loading_error.setVisibility(View.VISIBLE);
@@ -62,7 +62,7 @@ public class ReservationInformationActivity extends BaseActivity {
                     //处理数据:lastDatas为处理后的数据
                     List<LastData> lastDatas = dealDatas();
                     //传递给适配器
-                    if (lastDatas.size()==0){
+                    if (lastDatas.size() == 0) {
                         in_no_datas.setVisibility(View.VISIBLE);
                         return;
                     }
@@ -96,7 +96,7 @@ public class ReservationInformationActivity extends BaseActivity {
         Intent intent = getIntent();
         customer_id = intent.getIntExtra("customer_id", -1);
         showShortDialog();
-        if (customer_id!=-1)
+        if (customer_id != -1)
             getYuyueMsg(customer_id);
         else {
             showToast(R.string.data_error);
@@ -118,7 +118,7 @@ public class ReservationInformationActivity extends BaseActivity {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         Message msg = Message.obtain();
-                        msg.what=0;
+                        msg.what = 0;
                         handler.sendMessage(msg);
                         dismissShortDialog();
                     }
@@ -127,15 +127,15 @@ public class ReservationInformationActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         List<YuyueTab> list = new ArrayList<YuyueTab>();
-                        String statuss=jsonObject.get("status").getAsString();
-                        String message=jsonObject.get("message").getAsString();
-                        if (statuss.equals("ok")){
+                        String statuss = jsonObject.get("status").getAsString();
+                        String message = jsonObject.get("message").getAsString();
+                        if (statuss.equals("ok")) {
                             analysisJson(jsonObject, list);
-                        }else{
+                        } else {
                             showToast(message);
                         }
                         Message msg = Message.obtain();
-                        msg.what=1;
+                        msg.what = 1;
                         msg.obj = list;
                         handler.sendMessage(msg);
                         dismissShortDialog();
@@ -145,6 +145,7 @@ public class ReservationInformationActivity extends BaseActivity {
 
     /**
      * 解析Json
+     *
      * @param jsonObject
      * @param list
      */
@@ -268,9 +269,9 @@ public class ReservationInformationActivity extends BaseActivity {
                 tv_message = (TextView) view.findViewById(R.id.tv_message);
                 tv_shiji = (TextView) view.findViewById(R.id.tv_shiji);
                 tv_jihua = (TextView) view.findViewById(R.id.tv_jihua);
-                ll_reservation_time= (LinearLayout) view.findViewById(R.id.ll_reservation_time);
-                ViewGroup.LayoutParams params=ll_reservation_time.getLayoutParams();
-                params.height=viewHeight*15/255;
+                ll_reservation_time = (LinearLayout) view.findViewById(R.id.ll_reservation_time);
+                ViewGroup.LayoutParams params = ll_reservation_time.getLayoutParams();
+                params.height = viewHeight * 15 / 255;
                 ll_reservation_time.setLayoutParams(params);
             }
         }
@@ -283,9 +284,9 @@ public class ReservationInformationActivity extends BaseActivity {
                 super(view);
                 tv_yuyue_name = (TextView) view.findViewById(R.id.tv_yuyue_name);
                 tv_start_end_time = (TextView) view.findViewById(R.id.tv_start_end_time);
-                ll_reservation_content= (LinearLayout) view.findViewById(R.id.ll_reservation_content);
-                ViewGroup.LayoutParams params=ll_reservation_content.getLayoutParams();
-                params.height=viewHeight*15/255;
+                ll_reservation_content = (LinearLayout) view.findViewById(R.id.ll_reservation_content);
+                ViewGroup.LayoutParams params = ll_reservation_content.getLayoutParams();
+                params.height = viewHeight * 15 / 255;
                 ll_reservation_content.setLayoutParams(params);
 
             }
@@ -334,14 +335,16 @@ public class ReservationInformationActivity extends BaseActivity {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
     }
+
     /**
      * 网络问题，重新加载
+     *
      * @param view
      */
-    public void loadingMore(View view){
+    public void loadingMore(View view) {
         showShortDialog();
         in_loading_error.setVisibility(View.GONE);
-        if (customer_id!=-1)
+        if (customer_id != -1)
             getYuyueMsg(customer_id);
         else {
             showToast(R.string.data_error);

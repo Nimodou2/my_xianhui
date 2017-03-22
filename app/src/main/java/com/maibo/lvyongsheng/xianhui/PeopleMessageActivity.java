@@ -7,20 +7,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.constants.Constants;
 import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.entity.HelperCustomer;
-import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.utils.NetWorkUtils;
 import com.squareup.picasso.Picasso;
@@ -43,7 +39,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
     int customer_id = -1;
     String customer_name;
     List<HelperCustomer> list1;
-//    List<Order> orderList;
+    //    List<Order> orderList;
     ImageView cus_head;
     LinearLayout ll_cards, tv_consume_record, ll_plan_project, ll_yuyue, ll_kefu_manager, ll_order;
     TextView cus_name, cus_grade, cus_files_num, cus_manager,
@@ -67,11 +63,6 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             switch (msg.what) {
                 case 0:
                     dealCustomerHandleMessage(msg);
-                    break;
-                case 1:
-//                    orderList = (List<Order>) msg.obj;
-//                    if (orderList.size() != 0) cus_dingdan.setText(orderList.get(0).getStatus());
-//                    else cus_dingdan.setText("暂无");
                     break;
             }
         }
@@ -112,6 +103,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         if (customer.getSchedule_status().equals("0")) cus_dingdan.setText("未开始");
         else if (customer.getSchedule_status().equals("1")) cus_dingdan.setText("进行中");
         else if (customer.getSchedule_status().equals("2")) cus_dingdan.setText("已结束");
+        else if (customer.getSchedule_status().equals("3")) cus_dingdan.setText("已结单");
         else cus_dingdan.setText("暂无");
     }
 
@@ -126,7 +118,6 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             initListener();
             if (customer_id != -1) {
                 getServicerData(customer_id);
-//                getCustomerOrder(customer_id);
             } else {
                 showToast("数据异常");
                 dismissShortDialog();
@@ -236,6 +227,7 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                         String message = jsonObject.get("message").getAsString();
                         if (status.equals("ok")) {
                             analysisJson(jsonObject);
+
                         } else {
                             showToast(message);
                         }
@@ -308,96 +300,6 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
 
     }
 
-    /**
-     * 获取客户订单
-     *
-     * @param customer_id
-     */
-    public void getCustomerOrder(int customer_id) {
-        OkHttpUtils
-                .post()
-                .url(apiURL + "/rest/employee/gethelpercustomerschedulelist")
-                .addParams("token", token)
-                .addParams("customer_id", customer_id + "")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-//                        Log.e("PeopleMessage",response);
-                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
-                        String statuss = jsonObject.get("status").getAsString();
-                        String message = jsonObject.get("message").getAsString();
-                        if (statuss.equals("ok")) {
-                            JsonObject data = jsonObject.get("data").getAsJsonObject();
-                            if (!data.get("rows").isJsonNull()) {
-                                JsonArray rows = data.get("rows").getAsJsonArray();
-                                List<Order> list = new ArrayList<Order>();
-                                for (JsonElement jsonElement : rows) {
-                                    JsonObject jo = jsonElement.getAsJsonObject();
-                                    int schedule_id = -1;
-                                    String status = "";
-                                    String start_time = "";
-                                    String end_time = "";
-                                    String engineer_id = "";
-                                    String bed_name = "";
-                                    String project_code = "";
-                                    String project_name = "";
-                                    int customer_id = -1;
-                                    String customer_name = "";
-                                    String avator_url = "";
-                                    String guid = "";
-                                    String engineer_name = "";
-                                    String org_name = "";
-                                    int raw_status = -1;
-                                    if (!jo.get("schedule_id").isJsonNull())
-                                        schedule_id = jo.get("schedule_id").getAsInt();
-                                    if (!jo.get("start_time").isJsonNull())
-                                        status = jo.get("status").getAsString();
-                                    if (!jo.get("start_time").isJsonNull())
-                                        start_time = jo.get("start_time").getAsString();
-                                    if (!jo.get("end_time").isJsonNull())
-                                        end_time = jo.get("end_time").getAsString();
-                                    if (!jo.get("engineer_id").isJsonNull())
-                                        engineer_id = jo.get("engineer_id").getAsString();
-                                    if (!jo.get("bed_name").isJsonNull())
-                                        bed_name = jo.get("bed_name").getAsString();
-                                    if (!jo.get("project_code").isJsonNull())
-                                        project_code = jo.get("project_code").getAsString();
-                                    if (!jo.get("project_name").isJsonNull())
-                                        project_name = jo.get("project_name").getAsString();
-                                    if (!jo.get("avator_url").isJsonNull())
-                                        avator_url = jo.get("avator_url").getAsString();
-                                    if (!jo.get("guid").isJsonNull())
-                                        guid = jo.get("guid").getAsString();
-                                    if (!jo.get("customer_id").isJsonNull())
-                                        customer_id = jo.get("customer_id").getAsInt();
-                                    if (!jo.get("customer_name").isJsonNull())
-                                        customer_name = jo.get("customer_name").getAsString();
-                                    if (!jo.get("engineer_name").isJsonNull())
-                                        engineer_name = jo.get("engineer_name").getAsString();
-                                    if (!jo.get("org_name").isJsonNull())
-                                        org_name = jo.get("org_name").getAsString();
-                                    if (!jo.get("raw_status").isJsonNull())
-                                        raw_status = jo.get("raw_status").getAsInt();
-                                    list.add(new Order(schedule_id, status, start_time, end_time, engineer_id,
-                                            bed_name, project_code, project_name, avator_url, guid, customer_id,
-                                            customer_name, engineer_name, org_name, raw_status));
-                                }
-                                Message msg = Message.obtain();
-                                msg.what = 1;
-                                msg.obj = list;
-                                handler.sendMessage(msg);
-                            }
-                        }
-                    }
-                });
-    }
-
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -440,23 +342,17 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
             case R.id.tv_files:
                 //跳到订单界面
                 Intent intent5 = new Intent(this, OrderActivity.class);
-                Bundle bundle = new Bundle();
-//                bundle.putSerializable("customerOrder", (Serializable) orderList);
                 intent5.putExtra("customer_name", list1.get(0).getFullname());
                 intent5.putExtra("customer_id", customer_id);
                 intent5.putExtra("tag", 3);
-                intent5.putExtras(bundle);
                 startActivity(intent5);
                 break;
             case R.id.ll_order:
                 //跳到订单界面
                 Intent intent6 = new Intent(this, OrderActivity.class);
-                Bundle bundle1 = new Bundle();
-//                bundle1.putSerializable("customerOrder", (Serializable) orderList);
                 intent6.putExtra("customer_name", list1.get(0).getFullname());
                 intent6.putExtra("customer_id", customer_id);
                 intent6.putExtra("tag", 3);
-                intent6.putExtras(bundle1);
                 startActivity(intent6);
                 break;
 
@@ -499,12 +395,12 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
 
     //
     public void onEvent(EventDatas event) {
-        if (event.getTag().equals(Constants.ORDER_STATUS)){
-            String new_status=event.getResponse();
-            Log.e("new_statusss",new_status);
+        if (event.getTag().equals(Constants.ORDER_STATUS)) {
+            String new_status = event.getResponse();
             if (new_status.equals("0")) cus_dingdan.setText("未开始");
             else if (new_status.equals("1")) cus_dingdan.setText("进行中");
             else if (new_status.equals("2")) cus_dingdan.setText("已结束");
+            else if (new_status.equals("3")) cus_dingdan.setText("已结单");
             else cus_dingdan.setText("暂无");
         }
     }

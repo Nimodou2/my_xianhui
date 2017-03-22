@@ -38,14 +38,14 @@
             android:transcriptMode="normal"></com.maibo.lvyongsheng.xianhui.view.RefreshListView>
 
         <include
-    android:id="@+id/in_no_datas"
-    android:visibility="gone"
-    layout="@layout/incloud_no_datas"></include>
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
 
-    <include
-        android:id="@+id/in_loading_error"
-        android:visibility="gone"
-        layout="@layout/incloud_loading_error"></include>
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
 
-</FrameLayout>
+    </FrameLayout>
 </LinearLayout>

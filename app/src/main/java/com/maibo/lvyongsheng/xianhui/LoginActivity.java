@@ -213,7 +213,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     public void onResponse(String response, int id) {
                         SharedPreferences.Editor editor = sp.edit();
                         SharedPreferences.Editor editor1 = sp1.edit();
-                        Log.e("LoginActivity",response);
+//                        Log.e("LoginActivity",response);
                         //登录判断
                         JsonObject obj = new JsonParser().parse(response).getAsJsonObject();
                         String status = obj.get("status").getAsString().trim();
@@ -405,6 +405,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 String guid = jObject.get("guid").getAsString();
                                 String avator_url = jObject.get("avator_url").getAsString();
                                 CustomUserProvider.getInstance().partUsers.add(new LCChatKitUser(guid, names, avator_url));
+
                             }
                             Message msg = Message.obtain();
                             msg.what = 1;

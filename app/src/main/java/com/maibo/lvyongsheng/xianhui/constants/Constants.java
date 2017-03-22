@@ -18,8 +18,9 @@ public class Constants {
     public static final String GET_CONVERSATION_ID="get_conversation_id";
     public static final String GET_CONVERSATION_ID_SMS="get_conversation_id_sms";
     public static final String ORDER_STATUS="100";
-
-
-
+    public static final String PLAN_PROJECT="101";
+    public static final String PLAN_PROJECT_ADAPTER="102";
+    public static final String PLAN_PRODUCT_ADAPTER="103";
+    public static final String DELETE_CONVERSATION_ITEM="104";
 
 }

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
+    android:id="@+id/ll_first"
     android:padding="5dp">
 
     <LinearLayout
@@ -44,12 +45,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:background="@drawable/rect_text_blue_bg"
             android:clickable="false"
             android:gravity="center"
             android:padding="6dp"
             android:text="3次"
-            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:textColor="@color/text_color"
             android:visibility="invisible" />
 
     </LinearLayout>

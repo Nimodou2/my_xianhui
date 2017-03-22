@@ -59,7 +59,7 @@ import okhttp3.Call;
  */
 public class CustomerFragment extends Fragment implements WorkRefreshListView.OnRefreshListener {
     WorkRefreshListView lv_customer_list;
-    SharedPreferences sp,sp_db;
+    SharedPreferences sp, sp_db;
     String token, apiURL;
     CustomerAdapter myAdapter;
     List<HelperCustomer> list1;
@@ -119,6 +119,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
 
     /**
      * 接收顾客信息数据
+     *
      * @param msg
      */
     private void getCustomerMsg(Message msg) {
@@ -126,10 +127,10 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         currentPageNum = msg.arg1;
         totalPage = msg.arg2;
         //当加载第一页的时候保存数据
-        if (currentPageNum==1){
-            String current_db= gson.toJson(list);
-            SharedPreferences.Editor editor=sp_db.edit();
-            editor.putString("helpCustomer",current_db);
+        if (currentPageNum == 1) {
+            String current_db = gson.toJson(list);
+            SharedPreferences.Editor editor = sp_db.edit();
+            editor.putString("helpCustomer", current_db);
             editor.commit();
         }
         if (isLoadingMore && list != null) {
@@ -154,6 +155,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
 
     /**
      * 接收筛选结果
+     *
      * @param msg
      */
     private void getFilterDatasMsg(Message msg) {
@@ -201,16 +203,16 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         screenHeight = Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight();
 
         sp = getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
-        sp_db=getActivity().getSharedPreferences("dataBase",Context.MODE_PRIVATE);
+        sp_db = getActivity().getSharedPreferences("dataBase", Context.MODE_PRIVATE);
         token = sp.getString("token", null);
         apiURL = sp.getString("apiURL", null);
         //第一次进入时加载数据库的数据
-        gson=new Gson();
-        String dbHC=sp_db.getString("helpCustomer",null);
-        if (dbHC!=null){
-            List<HelperCustomer> lc=gson.fromJson(dbHC,new TypeToken<List<HelperCustomer>>() {
+        gson = new Gson();
+        String dbHC = sp_db.getString("helpCustomer", null);
+        if (dbHC != null) {
+            List<HelperCustomer> lc = gson.fromJson(dbHC, new TypeToken<List<HelperCustomer>>() {
             }.getType());
-            Log.e("customer.size",lc.size()+"");
+            Log.e("customer.size", lc.size() + "");
             lv_customer_list.setAdapter(new CustomerAdapter(getContext(), lc, screenHeight));
         }
         myDialog = new MyProgressDialog(getActivity());
@@ -220,7 +222,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         dialog.setCancelable(true);
         dialog.setIndeterminate(false);
         dialog.show();
-        getServiceData("", "", "", "","","", 1);
+        getServiceData("", "", "", "", "", "", 1);
         getChooseData("", "", "", "", 0);
         EventBus.getDefault().register(this);
         return view;
@@ -230,7 +232,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
     public void onPullRefresh() {
         //下拉刷新
         isLoadingMore = false;
-        getServiceData("", "", "", "","","", 1);
+        getServiceData("", "", "", "", "", "", 1);
     }
 
     @Override
@@ -238,15 +240,16 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         //上滑加载更多
         isLoadingMore = true;
         if (currentPageNum != totalPage) {
-            getServiceData("", "", "", "", "","",currentPageNum + 1);
+            getServiceData("", "", "", "", "", "", currentPageNum + 1);
         } else {
             App.showToast(getActivity(), "已加载全部!");
             lv_customer_list.completeRefresh();
         }
     }
+
     //获取客户详细资料
     public void getServiceData(String org_id, String adviser_id, String vip_star, String arrival_time,
-                               String arrival_time_ge,String arrival_time_le,int pageNum) {
+                               String arrival_time_ge, String arrival_time_le, int pageNum) {
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/gethelpercustomerlist")
@@ -255,8 +258,8 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                 .addParams("adviser_id", adviser_id)
                 .addParams("vip_star", vip_star)
                 .addParams("arrival_time", arrival_time)
-                .addParams("arrival_time_ge",arrival_time_ge)
-                .addParams("arrival_time_le",arrival_time_le)
+                .addParams("arrival_time_ge", arrival_time_ge)
+                .addParams("arrival_time_le", arrival_time_le)
                 .addParams("pageNumber", pageNum + "")
                 .build()
                 .execute(new StringCallback() {
@@ -265,6 +268,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                         App.showToast(getActivity(), "网络连接异常");
                         dialog.dismiss();
                     }
+
                     @Override
                     public void onResponse(String response, int id) {
 //                        Log.e("token:",token+" url:"+apiURL);
@@ -339,7 +343,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                 if (!job.get("status").isJsonNull())
                     status = job.get("status").getAsInt();
 
-                list.add(new HelperCustomer(org_name, vip_star, customer_id, fullname, avator_url, days, project_total, status,System.currentTimeMillis()));
+                list.add(new HelperCustomer(org_name, vip_star, customer_id, fullname, avator_url, days, project_total, status, System.currentTimeMillis()));
             }
             Message msg = Message.obtain();
             msg.what = 1;
@@ -723,7 +727,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
                     values44 = buffer4.substring(1);
                 }
                 isLoadingMore = false;
-                getServiceData(values11, values22, values33, values44,"","", 1);
+                getServiceData(values11, values22, values33, values44, "", "", 1);
                 popupWindow.dismiss();
 
             }
@@ -767,16 +771,16 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
     }
 
     public void onEvent(EventDatas event) {
-        if (event.getTag().equals(Constants.SELECT_DATA_ACTIVITY_RESET)){
+        if (event.getTag().equals(Constants.SELECT_DATA_ACTIVITY_RESET)) {
             //重置
-            getServiceData("","","","","","",1);
+            getServiceData("", "", "", "", "", "", 1);
 
-        }else if (event.getTag().equals(Constants.SELECT_DATA_ACTIVITY_CONFIRM)){
+        } else if (event.getTag().equals(Constants.SELECT_DATA_ACTIVITY_CONFIRM)) {
             //日期筛选
-            String select_date=event.getResponse();
+            String select_date = event.getResponse();
             if (TextUtils.isEmpty(select_date)) return;
-            String[] str_date=select_date.split(",");
-            getServiceData("","","","",str_date[0],str_date[1],1);
+            String[] str_date = select_date.split(",");
+            getServiceData("", "", "", "", str_date[0], str_date[1], 1);
 
         }
 

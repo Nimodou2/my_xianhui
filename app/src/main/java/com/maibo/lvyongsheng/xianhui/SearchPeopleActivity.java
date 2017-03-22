@@ -63,7 +63,7 @@ public class SearchPeopleActivity extends BaseActivity {
             try {
                 Field f=c.getDeclaredField("mSearchPlate");//通过反射，获得类对象的一个属性对象
                 f.setAccessible(true);//设置此私有属性是可访问的
-//                View v=(View) f.get(search_people);//获得属性的值
+                View v=(View) f.get(search_people);//获得属性的值
 //                v.setBackgroundResource(R.drawable.searchview_shap_all_white_bg);//设置此view的背景
             } catch (Exception e) {
                 e.printStackTrace();

@@ -139,6 +139,7 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
+//        Log.e("token",token);
         data2 = new ArrayList<>();
         data3 = new ArrayList<>();
         showLongDialog();
@@ -193,7 +194,7 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
 
                     @Override
                     public void onResponse(String response, int id) {
-                        // Log.e("助手：", response);
+//                         Log.e("助手：", response);
                         List<Notice> data1 = new ArrayList<Notice>();
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status = object.get("status").getAsString();

@@ -40,6 +40,7 @@ public class Project implements Serializable {
     private String card_discount;
     private String[] vipcard_type;
     private String avator_url;
+    private String date;
 
     public String getAvator_url() {
         return avator_url;
@@ -273,11 +274,20 @@ public class Project implements Serializable {
         this.fullname = fullname;
     }
 
-    public Project(List<Card> card_list, int item_id, String fullname, int item_type) {
+    public Project(List<Card> card_list, int item_id, String fullname, int item_type,String date) {
         this.card_list = card_list;
         this.item_id = item_id;
         this.fullname = fullname;
         this.item_type = item_type;
+        this.date=date;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public List<Card> getCard_list() {

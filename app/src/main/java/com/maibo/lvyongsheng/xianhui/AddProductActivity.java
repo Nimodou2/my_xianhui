@@ -22,15 +22,12 @@ import com.maibo.lvyongsheng.xianhui.entity.Consume;
 import com.maibo.lvyongsheng.xianhui.entity.CustemProducts;
 import com.maibo.lvyongsheng.xianhui.entity.Product;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
-import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/9/14.
@@ -47,9 +44,6 @@ public class AddProductActivity extends BaseActivity {
     List<Product> pro1;
     int cusId;
     private ProductAddListViewExpandAdapter adapter;
-    //    ProgressDialog dialog;
-    @Bind(R.id.ll_head)
-    LinearLayout ll_head;
     @Bind(R.id.in_no_datas)
     LinearLayout in_no_datas;
     @Bind(R.id.in_loading_error)
@@ -81,7 +75,7 @@ public class AddProductActivity extends BaseActivity {
      */
     private void setProductsAdapter(Message msg) {
         list1 = (List<CustemProducts>) msg.obj;
-        if (list1.size()==0){
+        if (list1.size() == 0) {
             ll_all_data.setVisibility(View.GONE);
             in_no_datas.setVisibility(View.VISIBLE);
             return;
@@ -127,6 +121,8 @@ public class AddProductActivity extends BaseActivity {
         pro1.addAll(pro2);
         pro1.addAll(pro3);
         pro1.addAll(pro4);
+        pro1.add(0, new Product(-1, "计划产品", -1, null));
+
         sel = list1.get(0).getSelected();
         initView();
     }
@@ -135,9 +131,7 @@ public class AddProductActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
-        setSingleViewHeightAndWidth(ll_head, viewHeight * 15 / 255, 0);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        showShortDialog();
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
@@ -156,36 +150,16 @@ public class AddProductActivity extends BaseActivity {
     public void initData() {
         Intent intent = getIntent();
         cusId = intent.getIntExtra("customer_id", 0);
-        OkHttpUtils
-                .post()
-                .url(apiURL + "/rest/employee/getplanaddlist")
-                .addParams("token", token)
-                .addParams("customer_id", cusId + "")
-                .build()
-                .execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        Message msg = Message.obtain();
-                        msg.what = 0;
-                        handler.sendMessage(msg);
-                        dismissShortDialog();
-                    }
-
-                    @Override
-                    public void onResponse(String response, int id) {
-                        JsonObject object = new JsonParser().parse(response).getAsJsonObject();
-                        //获取顾客使用项目的数据
-                        String status = object.get("status").getAsString();
-                        String message = object.get("message").getAsString();
-                        if (status.equals("ok")) {
-                            getProductData(object);
-                        } else {
-                            showToast(message);
-                        }
-                        dismissShortDialog();
-
-                    }
-                });
+        String response = intent.getStringExtra("response");
+        JsonObject object = new JsonParser().parse(response).getAsJsonObject();
+        //获取顾客使用项目的数据
+        String status = object.get("status").getAsString();
+        String message = object.get("message").getAsString();
+        if (status.equals("ok")) {
+            getProductData(object);
+        } else {
+            showToast(message);
+        }
     }
 
     /**
@@ -263,10 +237,10 @@ public class AddProductActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         //提交项目计划
-        if (adapter==null)
+        if (adapter == null)
             return;
         HashMap<Integer, Integer> itemID = adapter.getItemID();
-        if (itemID==null)
+        if (itemID == null)
             return;
         int j = 0;
         int k = -1;
@@ -308,10 +282,10 @@ public class AddProductActivity extends BaseActivity {
 
     /**
      * 网络问题，重新加载
+     *
      * @param view
      */
-    public void loadingMore(View view){
-        showShortDialog();
+    public void loadingMore(View view) {
         initData();
     }
 }

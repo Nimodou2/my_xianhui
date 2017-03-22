@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#E7E0D5"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp">
+
+    <ImageView
+        android:id="@+id/order_status"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:paddingBottom="3dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="3dp"
+        android:src="@mipmap/doing_img" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="20dp">
+
+        <TextView
+            android:id="@+id/tv_project_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:text="项目名"
+            android:textColor="@color/order_text_color"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/tv_tec_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:text="技师名"
+            android:textColor="@color/order_text_color"
+            android:textSize="14dp" />
+    </LinearLayout>
+</LinearLayout>

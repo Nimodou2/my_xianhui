@@ -129,8 +129,6 @@ public class AllMessageActivity extends BaseActivity {
                 //跳转到订单页面
                 Intent intent = new Intent(AllMessageActivity.this, OrderActivity.class);
                 Bundle bundle = new Bundle();
-//                bundle.putSerializable("collOrder", (Serializable) orderList);
-                //bundle.putSerializable("Employee",(Serializable) employee);
                 intent.putExtra("collName", employee.getDisplay_name());
                 intent.putExtras(bundle);
                 intent.putExtra("tag", 2);

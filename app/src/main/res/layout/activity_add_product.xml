@@ -15,23 +15,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-
-            <LinearLayout
-                android:id="@+id/ll_head"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@color/weixin_lianxiren_gray">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="计划产品"
-                    android:textSize="16dp" />
-
-            </LinearLayout>
-
             <ExpandableListView
                 android:id="@+id/lv_add_product"
                 android:layout_width="match_parent"

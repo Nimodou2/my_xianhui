@@ -73,4 +73,11 @@
     <color name="transparent_background">#50000000</color>
     <color name="textcolor2">#057AF0</color>
     <color name="weixingreen">#0FB00E</color>
+    <color name="textcolor3">#FF746464</color>
+    <color name="textcolor4">#FFD3B88D</color>
+    <color name="expend_first">#D3B88D</color>
+    <color name="expend_two">#89D3B88D</color>
+    <color name="text_orange">#FFED8520</color>
+    <color name="half_black">#80ADADAD</color>
+    <color name="order_text_color">#746464</color>
 </resources>

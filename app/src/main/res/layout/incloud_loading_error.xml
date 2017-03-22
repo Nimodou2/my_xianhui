@@ -20,6 +20,7 @@
         android:textSize="18dp" />
 
     <TextView
+        android:id="@+id/tv_retry"
         android:clickable="true"
         android:onClick="loadingMore"
         android:layout_width="wrap_content"

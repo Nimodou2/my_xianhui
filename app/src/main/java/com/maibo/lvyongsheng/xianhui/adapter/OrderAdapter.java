@@ -1,7 +1,6 @@
 package com.maibo.lvyongsheng.xianhui.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -109,14 +108,14 @@ public class OrderAdapter extends BaseAdapter {
         }else if(log==1){
           final Order order=list.get(i);
             holder.tv_cus_name.setText("顾客:"+order.getCustomer_name());
-            holder.tv_status.setText(order.getStatus());
+//            holder.tv_status.setText(order.getStatus());
             holder.tv_bianhao.setText("编号:"+order.getProject_code());
             holder.tv_start_time.setText("开始时间:"+order.getStart_time());
             holder.tv_pro_name.setText("品名:"+order.getProject_name());
             holder.tv_bed_num.setText("床位:"+order.getBed_name());
             holder.tv_jishi_name.setText("技师:"+order.getEngineer_name());
-            Log.e("Raw_status",order.getRaw_status()+"");
             if (order.getRaw_status()==0){
+                holder.tv_status.setText("未开始");
                 holder.ll_foot.setVisibility(View.VISIBLE);
                 holder.tv_start_cancel.setText("开始");
                 holder.tv_start_cancel.setEnabled(true);
@@ -124,14 +123,21 @@ public class OrderAdapter extends BaseAdapter {
                 holder.tv_finish.setEnabled(false);
                 holder.tv_finish.setAlpha(0.5f);
             }else if (order.getRaw_status()==1){
+                holder.tv_status.setText("进行中");
                 holder.ll_foot.setVisibility(View.VISIBLE);
                 holder.tv_start_cancel.setText("取消");
                 holder.tv_start_cancel.setEnabled(true);
                 holder.tv_start_cancel.setAlpha(1.0f);
                 holder.tv_finish.setEnabled(true);
                 holder.tv_finish.setAlpha(1.0f);
+            }else if (order.getRaw_status()==2){
+                holder.tv_status.setText("已结束");
+                holder.ll_foot.setVisibility(View.GONE);
+            }else if (order.getRaw_status()==3){
+                holder.tv_status.setText("已结单");
+                holder.ll_foot.setVisibility(View.GONE);
             }else{
-               holder.ll_foot.setVisibility(View.GONE);
+                holder.ll_foot.setVisibility(View.GONE);
             }
             holder.tv_start_cancel.setOnClickListener(new View.OnClickListener() {
                 @Override

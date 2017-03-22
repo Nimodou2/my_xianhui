@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@id/ll_head"
+        android:background="@color/bar_color"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:id="@+id/people_name"
+            style="@style/bar_center"
+            android:text="订单"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_head">
+
+        <TextView
+            android:id="@+id/tv_unfinish"
+            style="@style/WorkActivityHeadStyle"
+            android:textColor="@color/textcolor3"
+            android:text="未完成" />
+
+        <TextView
+            android:id="@+id/tv_finish"
+            style="@style/WorkActivityHeadStyle"
+            android:textColor="@color/textcolor4"
+            android:text="已完成" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_over"
+        android:layout_width="100dp"
+        android:layout_height="2dp"
+        android:layout_below="@+id/tab"
+        android:background="@color/textcolor3"></ImageView>
+    <TextView
+        android:id="@+id/tv_blad"
+        android:layout_below="@+id/iv_over"
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_mywork"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_blad"
+        android:layout_marginTop="1dp"></android.support.v4.view.ViewPager>
+</RelativeLayout>
