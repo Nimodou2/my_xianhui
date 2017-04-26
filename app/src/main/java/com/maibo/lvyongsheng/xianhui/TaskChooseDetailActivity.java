@@ -50,7 +50,7 @@ public class TaskChooseDetailActivity extends BaseActivity implements View.OnCli
 
     private void initView(){
         setContentView(R.layout.activity_choose_detail);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         tv_hand= (TextView) findViewById(R.id.tv_hand);
         rv_detail_list= (RecyclerView) findViewById(R.id.rv_detail_list);

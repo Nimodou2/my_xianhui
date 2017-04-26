@@ -8,7 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -40,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 
 import java.io.File;
@@ -185,6 +188,7 @@ public class AvatarImageView extends ImageView {
     protected void onDraw(Canvas canvas) {
         //从ImageView中获取drawable对象
         Drawable drawable = getDrawable();
+//        Log.e("test_ava",drawable.toString());
         /**
          * 以下情况不需要进行绘制:
          * 1.drawable 为空；
@@ -194,20 +198,25 @@ public class AvatarImageView extends ImageView {
         if (drawable == null || getWidth() == 0 || getHeight() == 0) {
             return;
         }
-        //将drawable转换成Bitmap格式
-        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        if(drawable!=null) {
+            Log.e("test  ava",drawable.toString());
+            //将drawable转换成Bitmap格式
+            BitmapDrawable bd = (BitmapDrawable) drawable;
+            Bitmap bitmap = bd.getBitmap();
+            //获得高度和宽度
+            int mHeight = getHeight();
+            int mWidth = getWidth();
 
-        //获得高度和宽度
-        int mHeight = getHeight();
-        int mWidth = getWidth();
+            //计算半径
+            int radius = (mWidth < mHeight ? mWidth : mHeight) / 2;
 
-        //计算半径
-        int radius = (mWidth < mHeight ? mWidth : mHeight) / 2;
+            //画圆形图像
+            Bitmap roundBitmap = cropBitmap(bitmap, radius);
+            //Log.e("test ava",roundBitmap.toString());
 
-        //画圆形图像
-        Bitmap roundBitmap = cropBitmap(bitmap, radius);
-        canvas.drawBitmap(roundBitmap, mWidth / 2 - radius,
-                mHeight / 2 - radius, null);
+            canvas.drawBitmap(roundBitmap, mWidth / 2 - radius,
+                    mHeight / 2 - radius, null);
+        }
     }
 
     /**
@@ -217,66 +226,73 @@ public class AvatarImageView extends ImageView {
      * @param radius 半径
      */
     public Bitmap cropBitmap(Bitmap bmp, int radius) {
+//        Log.e("ava_test",bmp.toString());
         Bitmap scaledSrcBmp;
-        //获得直径
-        int diameter = radius * 2;
+        Bitmap output=null;
+        if(bmp!=null) {
+            //获得直径
+            int diameter = radius * 2;
 
-        // 为了防止宽高不相等，造成圆形图片变形，因此截取长方形中处于中间位置最大的正方形图片
-        int bmpWidth = bmp.getWidth();
-        int bmpHeight = bmp.getHeight();
-        int squareWidth = 0, squareHeight = 0;
-        int x = 0, y = 0;
-        Bitmap squareBitmap;
-        if (bmpHeight > bmpWidth) {// 高大于宽
-            squareWidth = squareHeight = bmpWidth;
-            x = 0;
-            y = (bmpHeight - bmpWidth) / 2;
-            // 截取正方形图片
-            squareBitmap = Bitmap.createBitmap(bmp, x, y, squareWidth,
-                    squareHeight);
-        } else if (bmpHeight < bmpWidth) {// 宽大于高
-            squareWidth = squareHeight = bmpHeight;
-            x = (bmpWidth - bmpHeight) / 2;
-            y = 0;
-            squareBitmap = Bitmap.createBitmap(bmp, x, y, squareWidth,
-                    squareHeight);
-        } else {
-            squareBitmap = bmp;
+            // 为了防止宽高不相等，造成圆形图片变形，因此截取长方形中处于中间位置最大的正方形图片
+            int bmpWidth = bmp.getWidth();
+            int bmpHeight = bmp.getHeight();
+            int squareWidth = 0, squareHeight = 0;
+            int x = 0, y = 0;
+            Bitmap squareBitmap;
+            if (bmpHeight > bmpWidth) {// 高大于宽
+                squareWidth = squareHeight = bmpWidth;
+                x = 0;
+                y = (bmpHeight - bmpWidth) / 2;
+                // 截取正方形图片
+                squareBitmap = Bitmap.createBitmap(bmp, x, y, squareWidth,
+                        squareHeight);
+            } else if (bmpHeight < bmpWidth) {// 宽大于高
+                squareWidth = squareHeight = bmpHeight;
+                x = (bmpWidth - bmpHeight) / 2;
+                y = 0;
+                squareBitmap = Bitmap.createBitmap(bmp, x, y, squareWidth,
+                        squareHeight);
+            } else {
+                squareBitmap = bmp;
+            }
+            if (squareBitmap != null) {
+                //获得缩放后的bitmap
+                if (squareBitmap.getWidth() != diameter
+                        || squareBitmap.getHeight() != diameter) {
+                    scaledSrcBmp = Bitmap.createScaledBitmap(squareBitmap, diameter,
+                            diameter, true);
+                } else {
+                    scaledSrcBmp = squareBitmap;
+                }
+
+                //获得将画入画布的bitmap
+                output = Bitmap.createBitmap(scaledSrcBmp.getWidth(),
+                        scaledSrcBmp.getHeight(), Bitmap.Config.ARGB_8888);
+
+                Canvas canvas = new Canvas(output);
+                Paint paint = new Paint();
+                Rect rect = new Rect(0, 0, scaledSrcBmp.getWidth(),
+                        scaledSrcBmp.getHeight());
+
+                paint.setAntiAlias(true);
+                paint.setFilterBitmap(true);
+                paint.setDither(true);
+                canvas.drawARGB(0, 0, 0, 0);
+                canvas.drawCircle(scaledSrcBmp.getWidth() / 2,
+                        scaledSrcBmp.getHeight() / 2, scaledSrcBmp.getWidth() / 2,
+                        paint);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+                canvas.drawBitmap(scaledSrcBmp, rect, rect, paint);
+
+                //变量置空后等待系统回收
+                bmp = null;
+                squareBitmap = null;
+                scaledSrcBmp = null;
+            }
+            return output;
         }
-
-        //获得缩放后的bitmap
-        if (squareBitmap.getWidth() != diameter
-                || squareBitmap.getHeight() != diameter) {
-            scaledSrcBmp = Bitmap.createScaledBitmap(squareBitmap, diameter,
-                    diameter, true);
-        } else {
-            scaledSrcBmp = squareBitmap;
-        }
-
-        //获得将画入画布的bitmap
-        Bitmap output = Bitmap.createBitmap(scaledSrcBmp.getWidth(),
-                scaledSrcBmp.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-        Paint paint = new Paint();
-        Rect rect = new Rect(0, 0, scaledSrcBmp.getWidth(),
-                scaledSrcBmp.getHeight());
-
-        paint.setAntiAlias(true);
-        paint.setFilterBitmap(true);
-        paint.setDither(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        canvas.drawCircle(scaledSrcBmp.getWidth() / 2,
-                scaledSrcBmp.getHeight() / 2, scaledSrcBmp.getWidth() / 2,
-                paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(scaledSrcBmp, rect, rect, paint);
-
-        //变量置空后等待系统回收
-        bmp = null;
-        squareBitmap = null;
-        scaledSrcBmp = null;
-
-        return output;
+            Resources res = mContext.getResources();
+            return BitmapFactory.decodeResource(res, R.mipmap.testlogo);
     }
 
     /**
@@ -394,7 +410,7 @@ public class AvatarImageView extends ImageView {
                 if (data != null && data.getExtras() != null) {
 //                    Bitmap photo = data.getExtras().getParcelable("data");
                     Uri myUri=data.getData();
-                    Bitmap photo= Util.decodeUriAsBitmap(myUri,getContext());
+                    Bitmap photo= Util.decodeUriAsBitmap(myUri,mContext);
                     this.setImageBitmap(photo);
                     if (afterCropListener != null) {
                         afterCropListener.afterCrop(photo);

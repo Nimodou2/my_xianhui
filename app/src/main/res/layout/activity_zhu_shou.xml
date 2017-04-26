@@ -9,7 +9,7 @@
         android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/bar_color">
+        android:background="@color/main_color">
 
         <TextView
             android:id="@+id/back"
@@ -19,33 +19,37 @@
         <TextView
             android:id="@+id/cus_name"
             style="@style/bar_center"
-            android:text="助手" />
+            android:text="报表" />
 
         <TextView style="@style/bar_right" />
     </LinearLayout>
-
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.maibo.lvyongsheng.xianhui.view.RefreshListView
-            android:id="@+id/lv_zhushou"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:paddingTop="5dp"
-            android:stackFromBottom="true"
-            android:transcriptMode="normal"></com.maibo.lvyongsheng.xianhui.view.RefreshListView>
+            android:layout_height="match_parent">
+            <com.maibo.lvyongsheng.xianhui.view.RefreshListView
+                android:id="@+id/lv_zhushou"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null"
+                android:background="@color/white"
+                android:stackFromBottom="true"
+                android:transcriptMode="normal"></com.maibo.lvyongsheng.xianhui.view.RefreshListView>
 
-        <include
-            android:id="@+id/in_no_datas"
-            layout="@layout/incloud_no_datas"
-            android:visibility="gone"></include>
+            <include
+                android:id="@+id/in_no_datas"
+                layout="@layout/incloud_no_datas"
+                android:visibility="gone"></include>
 
-        <include
-            android:id="@+id/in_loading_error"
-            layout="@layout/incloud_loading_error"
-            android:visibility="gone"></include>
+            <include
+                android:id="@+id/in_loading_error"
+                layout="@layout/incloud_loading_error"
+                android:visibility="gone"></include>
 
-    </FrameLayout>
+        </FrameLayout>
+    </LinearLayout>
+
 </LinearLayout>

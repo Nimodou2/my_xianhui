@@ -12,9 +12,10 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.1"
             android:padding="5dp">
 
             <TextView
@@ -23,7 +24,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="卡名"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -31,7 +32,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="卡类型"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -39,7 +40,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="价格"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <TextView
                 android:layout_width="0dp"
@@ -47,8 +48,14 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="余次"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_cutting_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#fff" />
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -77,7 +77,7 @@ public class SplashActivity extends Activity {
         int isSuccess = sp.getInt("success", 0);
         // 如果不是第一次启动app，则正常显示启动屏
         if (isSuccess == 0) {
-//                setContentView(R.layout.activity_splash);
+               //setContentView(R.layout.activity_splash);
             new Handler().postDelayed(new Runnable() {
 
                 @Override

@@ -13,6 +13,18 @@ public class EventDatas {
     private int tag2;
     private String buffer;
     AVIMConversation conversation;
+    private int position;
+    private int product_total;
+    private int project_total;
+    private String result;
+
+    public EventDatas(String tag,int position, int project_total, int product_total, String result) {
+        this.tag=tag;
+        this.position = position;
+        this.project_total = project_total;
+        this.product_total = product_total;
+        this.result = result;
+    }
 
     public EventDatas() {
     }
@@ -38,6 +50,38 @@ public class EventDatas {
         this.response = response;
         this.messageStatus = messageStatus;
         this.buffer = buffer;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public int getProduct_total() {
+        return product_total;
+    }
+
+    public void setProduct_total(int product_total) {
+        this.product_total = product_total;
+    }
+
+    public int getProject_total() {
+        return project_total;
+    }
+
+    public void setProject_total(int project_total) {
+        this.project_total = project_total;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 
     public int getTag2() {

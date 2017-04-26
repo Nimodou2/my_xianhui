@@ -133,7 +133,7 @@ public class ItemDetailActivity extends BaseFragmentActivity implements View.OnC
         setContentView(R.layout.xian_jin);
         adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        showLongDialog();
+        //showLongDialog();
 
         sp = getSharedPreferences("baseDate", MODE_PRIVATE);
         token = sp.getString("token", null);

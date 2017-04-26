@@ -91,7 +91,7 @@ public class ProjectMessageActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_message);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         showShortDialog();
 

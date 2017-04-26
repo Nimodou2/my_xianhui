@@ -102,7 +102,7 @@ public class CustomerConsumeActivity extends BaseActivity implements RefreshList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_consume);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         showShortDialog();
         CloseAllActivity.getScreenManager().pushActivity(this);
         list22=new ArrayList<>();

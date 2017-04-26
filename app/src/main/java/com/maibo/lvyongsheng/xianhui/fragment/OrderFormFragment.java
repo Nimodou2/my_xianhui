@@ -135,8 +135,8 @@ public class OrderFormFragment extends Fragment implements View.OnClickListener 
      * 设置tab的字体颜色
      */
     private void setTabColor(TextView one,TextView two) {
-        one.setTextColor(getResources().getColor(R.color.textcolor3));
-        two.setTextColor(getResources().getColor(R.color.textcolor4));
+        one.setTextColor(getResources().getColor(R.color.main_color_version2));
+        two.setTextColor(getResources().getColor(R.color.order_slerct));
     }
 
     //ViewPager适配器

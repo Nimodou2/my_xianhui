@@ -14,100 +14,207 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
-        android:name="com.maibo.lvyongsheng.xianhui.App"
+        android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/testlogo"
         android:label="闲惠企业版"
         android:theme="@style/XianHuiTheme"
         tools:replace="android:icon,android:theme,android:label">
-
         <activity
-            android:name="com.maibo.lvyongsheng.xianhui.SplashActivity"
+            android:name=".SplashActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.maibo.lvyongsheng.xianhui.LoginActivity"
-            android:launchMode="singleTask" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.WelcomeGuideActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.HelperActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.DayTabActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ItemDetailActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.PlanWorkActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ProjectPlanActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.AddProjectActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.AddTabActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.AddProductActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ListDetailActivity" />
-        <activity android:name=".SearchPeopleActivity" />
+            android:name=".LoginActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".WelcomeGuideActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- 日报表 -->
+        <activity
+            android:name=".HelperActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- 日报表详情 -->
+        <activity
+            android:name=".DayTabActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ItemDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".PlanWorkActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- 日报表各部分详情数据 -->
+        <activity
+            android:name=".ListDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".SearchPeopleActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".MyCaptureActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-        <activity android:name=".StartProjectActivity" />
-        <activity android:name=".CreateGroupChatActivity" />
-        <!--<activity android:name=".ConversationListFragment"-->
-        <!--android:launchMode="singleTop"/>-->
-        <!--<activity android:name=".ContactPersonFragment"-->
-        <!--android:launchMode="singleTop"/>-->
-        <!--<activity android:name=".SettingFragment"-->
-        <!--android:launchMode="singleTop"/>-->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".StartProjectActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".CreateGroupChatActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- <activity android:name=".ConversationListFragment" -->
+        <!-- android:launchMode="singleTop"/> -->
+        <!-- <activity android:name=".ContactPersonFragment" -->
+        <!-- android:launchMode="singleTop"/> -->
+        <!-- <activity android:name=".SettingFragment" -->
+        <!-- android:launchMode="singleTop"/> -->
 
         <activity
-            android:name="com.maibo.lvyongsheng.xianhui.MainActivity"
+            android:name=".MainActivity"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="cn.leancloud.chatkit.chat_notification_action" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.maibo.lvyongsheng.xianhui.IdentifyActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.IDNumberActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.RemindActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.AgentActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.WorkActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.MaxSettingActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.DetailMessageActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.PeopleMessageActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.CustomerDetailsActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.AllMessageActivity" />
+        <activity
+            android:name=".IdentifyActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".IDNumberActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".RemindActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- 设置的activity -->
+        <activity
+            android:name=".AgentActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".MySelfInformationActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".UpdataPasswordActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".FeedbackProblemActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".IntrduceAppActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".WorkActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- 设置日报表详情的设置 -->
+        <activity
+            android:name=".MaxSettingActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".DetailMessageActivity" />
+
+        <!-- 客户资料 -->
+        <activity
+            android:name=".PeopleMessageActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <service android:name="com.avos.avoscloud.PushService" />
 
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ProjectMessageActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.OrderActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ProductMessageActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.CustomerManagerActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.AAAATestActivity" />
+        <!-- 这里是工作客户中的展示的activity -->
         <activity
-            android:name="com.maibo.lvyongsheng.xianhui.ChooseActivity"
+            android:name=".CustomerDetailsActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".CustomerManagerActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".CustomerConsumeActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ProjectPlanActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ReservationInformationActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".OrderActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".AddProjectActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".AddTabActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".AddProductActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- 这里是工作同事的activity -->
+        <activity
+            android:name=".AllMessageActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- 这里是工作项目的activity -->
+        <activity
+            android:name=".ProjectMessageActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- 这里是工作产品的activity -->
+        <activity
+            android:name=".ProductMessageActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".AAAATestActivity" />
+        <activity
+            android:name=".ChooseActivity"
             android:theme="@style/MyDialogActivityRight" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ReservationInformationActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.CustomerConsumeActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.UpdataPasswordActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.QuitPCActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.ClipPictureActivity" />
-        <activity android:name="com.maibo.lvyongsheng.xianhui.MySelfInformationActivity" />
-        <activity android:name=".TaskActivity" />
+        <!-- 退出登陆的 -->
+        <activity
+            android:name=".QuitPCActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- 剪裁 -->
+        <activity
+            android:name=".ClipPictureActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".TaskActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- 新建进度 -->
         <activity
             android:name=".NewBuildTaskActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".TaskChooseDetailActivity" />
-        <activity android:name=".TaskProgressDetailActivity" />
-        <activity android:name=".TaskPeopleDetailActivity" />
-        <activity android:name=".SearchWorkActivity" />
-        <activity android:name=".NewHandRemindActivity" />
+        <activity
+            android:name=".TaskChooseDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- 进度的详情 -->
+        <activity
+            android:name=".TaskProgressDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".TaskPeopleDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".SearchWorkActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".NewHandRemindActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".selectDataActivity"
-            android:theme="@style/Transparent" />
-        <activity android:name=".FeedbackProblemActivity" />
-        <activity android:name=".IntrduceAppActivity" />
-        <activity android:name=".FunctionIntrduceActivity" />
-        <activity android:name=".SystemNotificationActivity" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".FunctionIntrduceActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".SystemNotificationActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>
@@ -116,41 +223,55 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
         //下面这个Activity用于接收到聊天推送后跳转所用，目前Leancloud正在完善。
-        <!--<activity android:name="cn.leancloud.chatkit.activity.LCIMConversationActivity">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="cn.leancloud.chatkit.chat_notification_action"/>-->
-        <!--<category android:name="android.intent.category.DEFAULT"/>-->
-        <!--</intent-filter>-->
-        <!--</activity>-->
+        <!--
+        <activity android:name="cn.leancloud.chatkit.activity.LCIMConversationActivity">
+        <intent-filter>
+        <action android:name="cn.leancloud.chatkit.chat_notification_action"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        </intent-filter>
+        </activity>
+        -->
 
-        <!--<receiver android:name="com.maibo.lvyongsheng.xianhui.receiver.MyCustomReceiver"  android:exported="false" >-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
-        <!--<action android:name="android.intent.action.USER_PRESENT" />-->
-        <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
-        <!--<action android:name="com.avos.UPDATE_STATUS" />-->
-        <!--<action android:name="com.lys.receiver"/>-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
 
-        <!--<supports-screens-->
-        <!--android:smallScreens="true"-->
-        <!--android:normalScreens="true"-->
-        <!--android:largeScreens="true"-->
-        <!--android:resizeable="true"-->
-        <!--android:anyDensity="true" />-->
+        <!-- <receiver android:name="com.maibo.lvyongsheng.xianhui.receiver.MyCustomReceiver"  android:exported="false" > -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
+        <!-- <action android:name="android.intent.action.USER_PRESENT" /> -->
+        <!-- <action android:name="android.net.conn.CONNECTIVITY_CHANGE" /> -->
+        <!-- <action android:name="com.avos.UPDATE_STATUS" /> -->
+        <!-- <action android:name="com.lys.receiver"/> -->
+        <!-- </intent-filter> -->
+        <!-- </receiver> -->
+
+
+        <!-- <supports-screens -->
+        <!-- android:smallScreens="true" -->
+        <!-- android:normalScreens="true" -->
+        <!-- android:largeScreens="true" -->
+        <!-- android:resizeable="true" -->
+        <!-- android:anyDensity="true" /> -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="design_width"
-            android:value="375"></meta-data>
+            android:value="375" />
         <meta-data
             android:name="design_height"
-            android:value="667"></meta-data>
+            android:value="667" />
+
+        <activity
+            android:name=".FourStep_Activity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".Contact_OnlyActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".CustomerAddBeizhu_Activity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".BeizhuConversationActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>

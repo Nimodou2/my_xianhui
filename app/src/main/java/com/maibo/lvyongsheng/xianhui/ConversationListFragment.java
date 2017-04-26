@@ -33,7 +33,6 @@ import com.maibo.lvyongsheng.xianhui.entity.Task;
 import com.maibo.lvyongsheng.xianhui.implement.ConversationItemHolder;
 import com.maibo.lvyongsheng.xianhui.implement.MyDividerItem;
 import com.maibo.lvyongsheng.xianhui.implement.TitlePopup;
-import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.serviceholdermessage.ServiceDatas;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -114,8 +113,8 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
         //刷新页面
         refreshLayout.setEnabled(true);
         //设置卷内的颜色
-        refreshLayout.setColorSchemeResources(R.color.colorLightYellow,
-                R.color.colorLightYellow, R.color.colorLightYellow, R.color.colorLightYellow);
+        refreshLayout.setColorSchemeResources(R.color.main_color,
+                R.color.main_color, R.color.main_color, R.color.main_color);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -160,14 +159,16 @@ public class ConversationListFragment extends Fragment implements View.OnClickLi
         ll_conversation = (LinearLayout) view.findViewById(R.id.ll_conversation);
         TextView tv_head = (TextView) view.findViewById(R.id.tv_head);
         MainActivity parentActivity = (MainActivity) getActivity();
-        ViewGroup.LayoutParams params = ll_conversation.getLayoutParams();
-        int llHeight = ((Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight()) / 35) * 2;
-        params.height = llHeight;
-        ll_conversation.setLayoutParams(params);
-        int headHeight = (Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight() - llHeight) / 22;
-        ViewGroup.LayoutParams params1 = tv_head.getLayoutParams();
-        params1.height = headHeight;
-        tv_head.setLayoutParams(params1);
+
+        /*屏幕适配*/
+        //ViewGroup.LayoutParams params = ll_conversation.getLayoutParams();
+        //int llHeight = ((Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight()) / 35) * 2;
+        //params.height = llHeight;
+        //ll_conversation.setLayoutParams(params);
+       // int headHeight = (Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight() - llHeight) / 22;
+        //ViewGroup.LayoutParams params1 = tv_head.getLayoutParams();
+        //params1.height = headHeight;
+        //tv_head.setLayoutParams(params1);
 
         ll_scanner.setOnClickListener(this);
         tv_qute_pc.setOnClickListener(this);

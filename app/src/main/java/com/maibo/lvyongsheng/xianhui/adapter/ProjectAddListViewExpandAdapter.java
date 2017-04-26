@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -51,7 +52,7 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
         TextView tvName, tv_times;
         CheckBox cb;
         TextView card_name, card_style, price, yu_ci;
-        LinearLayout ll_all, ll_child_all;
+        LinearLayout ll_all, ll_child_all, ll_title;
     }
 
     public ProjectAddListViewExpandAdapter(Context context, List<Project> dataPr, int[] sel, ExpandableListView expandableListView,
@@ -139,7 +140,7 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
         //5、项目计划列表
         final Project bean = dataPr.get(i);
         LayoutInflater inflater = LayoutInflater.from(context);
-        if (bean.getItem_id() == -1) {
+        if (bean.getItem_id() == -1) {//消费记录标题
             TextView tv1 = new TextView(context);
             tv1.setPadding(20, 15, 0, 15);
             tv1.setTextSize(14);
@@ -148,7 +149,7 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             tv1.setText(bean.getFullname());
             return tv1;
 
-        } else if (bean.getItem_id() == -2) {
+        } else if (bean.getItem_id() == -2) {//消费记录的展示
             View view2 = inflater.inflate(R.layout.style_list_project_history, null);
             TextView name2 = (TextView) view2.findViewById(R.id.name);
             TextView number2 = (TextView) view2.findViewById(R.id.numbers);
@@ -156,7 +157,7 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             String newDate = bean.getDate().substring(5).replace(".", "/");
             number2.setText(newDate);
             return view2;
-        } else if (bean.getItem_id() == -3) {
+        } else if (bean.getItem_id() == -3) {//更多消费记录的跳转按钮
 
             TextView tv1 = new TextView(context);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -193,7 +194,7 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             });
 
             return tv1;
-        } else if (bean.getItem_id() == -4) {
+        } else if (bean.getItem_id() == -4) {//项目计划
 
             TextView tv1 = new TextView(context);
             tv1.setPadding(20, 15, 0, 15);
@@ -220,6 +221,7 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             CheckBox cb = (CheckBox) view3.findViewById(R.id.checkBox);
             TextView tvName = (TextView) view3.findViewById(R.id.tv_project_name);
             TextView tv_times = (TextView) view3.findViewById(R.id.tv_times);
+            final ImageView image_jiantou = (ImageView) view3.findViewById(R.id.style_add_project_item_plan_image_jiantou);
             LinearLayout ll_all = (LinearLayout) view3.findViewById(R.id.ll_all);
             ViewGroup.LayoutParams params = ll_all.getLayoutParams();
             params.height = viewHeight * 20 / 255;
@@ -232,9 +234,11 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
                     cardTimes += bean.getCard_list().get(p).getTimes();
                 }
                 tv_times.setVisibility(View.VISIBLE);
+                image_jiantou.setVisibility(View.VISIBLE);
                 tv_times.setText(cardTimes + "次");
             } else {
                 tv_times.setVisibility(View.INVISIBLE);
+                image_jiantou.setVisibility(View.INVISIBLE);
                 tvName.setTextColor(Color.BLACK);
             }
 
@@ -286,20 +290,62 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             final LinearLayout layout = (LinearLayout) view3.findViewById(R.id.groupExpand);
             final LinearLayout ll_first = (LinearLayout) view3.findViewById(R.id.ll_first);
             //处理被点击条目和子条目变色
-            if (what_view == i) {
-                ll_first.setBackgroundColor(context.getResources().getColor(R.color.expend_first));
-            } else {
-                ll_first.setBackgroundColor(Color.WHITE);
+
+            if(what_view==i){
+                if(b&&bean.getCard_list().size()!=0){
+                    image_jiantou.setImageResource(R.mipmap.expandlistview_up);
+                }else if(!b&&bean.getCard_list().size()!=0){
+                    image_jiantou.setImageResource(R.mipmap.expandlistview_down);
+                }
+            }else if(bean.getCard_list().size()!=0){
+                if(b){
+                    image_jiantou.setImageResource(R.mipmap.expandlistview_up);
+                }else {
+                    image_jiantou.setImageResource(R.mipmap.expandlistview_down);
+                }
             }
+            /*if (what_view == i) {
+               *//* ll_first.setBackgroundColor(context.getResources().getColor(R.color.main_color_version2));
+                tv_times.setTextColor(Color.WHITE);
+                tvName.setTextColor(Color.WHITE);*//*
+                if(bean.getCard_list().size()!=0&&b){
+                    image_jiantou.setImageResource(R.mipmap.expandlistview_up);
+                }else if(bean.getCard_list().size()!=0&&!b){
+                    image_jiantou.setImageResource(R.mipmap.expandlistview_down);
+                }
+            } else {
+                if (bean.getCard_list().size() != 0) {
+                    tvName.setTextColor(Color.rgb(15, 135, 255));
+                    int cardTimes = 0;
+                    for (int p = 0; p < bean.getCard_list().size(); p++) {
+                        cardTimes += bean.getCard_list().get(p).getTimes();
+                    }
+                    tv_times.setVisibility(View.VISIBLE);
+                    tv_times.setText(cardTimes + "次");
+                   // image_jiantou.setVisibility(View.VISIBLE);
+                   // image_jiantou.setImageResource(R.mipmap.expandlistview_down);
+                } else {
+                    tv_times.setVisibility(View.INVISIBLE);
+                    image_jiantou.setVisibility(View.INVISIBLE);
+                    tvName.setTextColor(Color.BLACK);
+                }
+                ll_first.setBackgroundColor(Color.WHITE);
+            }*/
 
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (b) {
                         expandableListView.collapseGroup(i);//折叠
+                       /* if(bean.getCard_list().size()!=0){
+                            image_jiantou.setImageResource(R.mipmap.expandlistview_down);
+                        }*/
                         what_view = i;
                     } else {
                         expandableListView.expandGroup(i);//展开
+                        /*if(bean.getCard_list().size()!=0){
+                            image_jiantou.setImageResource(R.mipmap.expandlistview_up);
+                        }*/
                         what_view = i;
                     }
                 }
@@ -321,24 +367,29 @@ public class ProjectAddListViewExpandAdapter extends BaseExpandableListAdapter {
             holder.price = (TextView) view.findViewById(R.id.price);
             holder.yu_ci = (TextView) view.findViewById(R.id.yu_ci);
             holder.ll_child_all = (LinearLayout) view.findViewById(R.id.ll_child_all);
-
+            holder.ll_title = (LinearLayout) view.findViewById(R.id.ll_title);
             view.setTag(holder);
         } else {
             holder = (ViewHolder) view.getTag();
         }
         ViewGroup.LayoutParams params = holder.ll_child_all.getLayoutParams();
-        params.height = viewHeight * 25 / 255;
+        if (i1 > 0) params.height = viewHeight * 25 / (255 * 2);
+        else params.height = viewHeight * 25 / 255;
         holder.ll_child_all.setLayoutParams(params);
 
         Card card = dataPr.get(i).getCard_list().get(i1);
         if (card == null) return null;
         //处理点击父条目，子条目按需求变色
         if (i == what_view) {
-            holder.ll_child_all.setBackgroundColor(context.getResources().getColor(R.color.expend_two));
+           // holder.ll_child_all.setBackgroundColor(context.getResources().getColor(R.color.main_color_slow_version1));
+           // holder.image_jiantou.setImageResource(R.mipmap.expandlistview_up);
         } else {
-            holder.ll_child_all.setBackgroundColor(Color.WHITE);
+           // holder.ll_child_all.setBackgroundColor(Color.WHITE);
+           // holder.image_jiantou.setImageResource(R.mipmap.expandlistview_up);
         }
 
+        if (i1 > 0) holder.ll_title.setVisibility(View.GONE);
+        else holder.ll_title.setVisibility(View.VISIBLE);
         holder.card_name.setText(card.getFullname());
         holder.card_style.setText(card.getCard_class());
         holder.price.setText(card.getPrice());

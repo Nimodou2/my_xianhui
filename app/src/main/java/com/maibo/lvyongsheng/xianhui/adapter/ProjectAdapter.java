@@ -64,7 +64,7 @@ public class ProjectAdapter extends BaseAdapter {
             holder=(ViewHolder) view.getTag();
         }
 
-        setHeightAndWidth(holder);
+        //setHeightAndWidth(holder);
         Project project=list1.get(i);
         if(project.getAvator_url().equals("")){
             //设置圆形头像

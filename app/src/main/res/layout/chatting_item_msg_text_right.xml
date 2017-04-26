@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="375px"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#f6f5ec">
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="335px"
+        android:layout_gravity="right"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5px"
+        android:layout_marginTop="10px" >
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/chatting_item_msg_text_left_image_useraval"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:focusable="false"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="20px"
+            android:src="@mipmap/cat_personal_1"/>
+        <TextView
+            android:id="@+id/chatting_item_msg_text_left_text_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="11px"
+            android:text="曹老师"
+            android:textColor="#FF686868"
+            android:textSize="10px"
+            android:layout_alignTop="@+id/chatting_item_msg_text_left_image_useraval"
+            android:layout_toLeftOf="@id/chatting_item_msg_text_left_image_useraval"/>
+        <TextView
+            android:id="@+id/chatting_item_msg_text_left_text_content"
+            android:layout_toLeftOf="@id/chatting_item_msg_text_left_image_useraval"
+            android:layout_below="@+id/chatting_item_msg_text_left_text_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14px"
+            android:textColor="#FF434242"
+            android:layout_marginRight="15px"
+            android:layout_marginTop="7px"
+            android:background="@drawable/conversation_one_right"
+            android:text="他家有条大狗"/>
+
+    </com.zhy.autolayout.AutoRelativeLayout>
+</com.zhy.autolayout.AutoLinearLayout>

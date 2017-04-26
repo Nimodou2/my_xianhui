@@ -24,16 +24,30 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:paddingLeft="10dp">
-
-            <TextView
-                android:id="@+id/tv_customer_name"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:gravity="bottom"
-                android:paddingBottom="3dp"
-                android:text="会员名"
-                android:textSize="16sp" />
+                
+                >
+                <TextView
+                    android:id="@+id/tv_customer_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_centerVertical="true"
+                    android:text="会员名"
+                    android:gravity="center"
+                    android:textSize="16sp" />
+                <ImageView
+                    android:layout_width="8dp"
+                    android:layout_height="13dp"
+                    android:layout_toRightOf="@+id/tv_customer_name"
+                    android:layout_marginLeft="10dp"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/right_jiantou"/>
+            </RelativeLayout>
+            
 
             <TextView
                 android:id="@+id/tv_time"
@@ -161,7 +175,7 @@
             android:paddingRight="10dp"
             android:paddingTop="5dp"
             android:text="本次建议"
-            android:textColor="#FFED8520"
+            android:textColor="@color/main_color_version2"
             android:textSize="14sp" />
 
         <TextView
@@ -176,7 +190,7 @@
             android:paddingRight="10dp"
             android:paddingTop="5dp"
             android:text="下次建议"
-            android:textColor="#FFED8520"
+            android:textColor="@color/main_color_version2"
             android:textSize="14sp" />
     </LinearLayout>
 

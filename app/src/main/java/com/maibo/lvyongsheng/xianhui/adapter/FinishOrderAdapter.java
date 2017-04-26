@@ -25,12 +25,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class FinishOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final String TAG="FinishOrderAdapter";
     Context mContext;
     LayoutInflater mLayoutInflater;
     OnUnFinishItemListener listener;
+    public List<UnFinishOrder.DataBean.RowsBean> getmRowsBean() {
+        return mRowsBean;
+    }
     List<UnFinishOrder.DataBean.RowsBean> mRowsBean;
-    int tag;
 
+    int tag;//0表示未完成的fragment   1表示已完成的fragment
     public FinishOrderAdapter(Context mContext, int tag) {
         this.mContext = mContext;
         this.tag = tag;
@@ -39,7 +43,7 @@ public class FinishOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public void setDatas(List<UnFinishOrder.DataBean.RowsBean> mRowsBean) {
         this.mRowsBean = mRowsBean;
-
+        notifyDataSetChanged();
     }
 
     @Override
@@ -58,6 +62,7 @@ public class FinishOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (!TextUtils.isEmpty(rb.getAdate()))
                 ((ItemViewHolder) holder).tv_time.setText(rb.getAdate());
             int scheduleSize = 0;
+
             if ((scheduleSize = rb.getSchedule_list().size()) > 0) {
                 ((ItemViewHolder) holder).ll_pro1.setVisibility(View.VISIBLE);
                 List<UnFinishOrder.DataBean.RowsBean.ScheduleListBean> sb = rb.getSchedule_list();
@@ -65,18 +70,26 @@ public class FinishOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     String statusText = sb.get(0).getStatus_text();
                     String proName = sb.get(0).getProject_name();
                     String techName = sb.get(0).getEngineer_name();
-                    if (!TextUtils.isEmpty(statusText))
+                    if (!TextUtils.isEmpty(statusText)){
                         ((ItemViewHolder) holder).tv_status.setText(statusText);
+                        if(tag==0&&statusText.equals("已结束")){
+                            ((ItemViewHolder) holder).tv_status.setText("未结单");
+                        }
+                    }
                     if (!TextUtils.isEmpty(proName))
                         ((ItemViewHolder) holder).tv_pro0.setText(proName);
                     if (!TextUtils.isEmpty(techName))
                         ((ItemViewHolder) holder).tv_tech0.setText(techName);
                     ((ItemViewHolder) holder).ll_pro1.setVisibility(View.GONE);
                 } else if (scheduleSize == 2) {
+                    int isFinish=0;
                     for (int i = 0; i < 2; i++) {
                         String statusText = sb.get(i).getStatus_text();
                         String proName = sb.get(i).getProject_name();
                         String techName = sb.get(i).getEngineer_name();
+                        if(tag==0&&statusText.equals("已结束")){
+                            isFinish=isFinish+1;
+                        }
                         if (i == 0) {
                             if (!TextUtils.isEmpty(statusText))
                                 ((ItemViewHolder) holder).tv_status.setText(statusText);
@@ -91,12 +104,31 @@ public class FinishOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 ((ItemViewHolder) holder).tv_tech1.setText(techName);
                         }
                     }
+                    if(isFinish==2&&tag==0){
+                        ((ItemViewHolder) holder).tv_status.setText("未结单");
+                    }
                 } else if (scheduleSize > 2) {
+                    int isFinish=0;
+
                     String statusText = sb.get(0).getStatus_text();
                     String proName = sb.get(0).getProject_name();
                     String techName = sb.get(0).getEngineer_name();
-                    if (!TextUtils.isEmpty(statusText))
+
+                    for(int i=0;i<scheduleSize;i++){
+                        String statusText2 = sb.get(i).getStatus_text();
+                        if (!TextUtils.isEmpty(statusText)){
+                            if(statusText.equals("已结束")&&tag==0){
+                                isFinish=isFinish+1;
+                            }
+                        }
+                    }
+
+                    if(isFinish==scheduleSize&&tag==0){
+                        ((ItemViewHolder) holder).tv_status.setText("未结单");
+                    }else {
                         ((ItemViewHolder) holder).tv_status.setText(statusText);
+                    }
+
                     if (!TextUtils.isEmpty(proName))
                         ((ItemViewHolder) holder).tv_pro0.setText(proName);
                     if (!TextUtils.isEmpty(techName))
@@ -105,15 +137,20 @@ public class FinishOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     ((ItemViewHolder) holder).tv_pro1.setText(proName2 + "等共" + scheduleSize + "项");
                     ((ItemViewHolder) holder).tv_tech1.setText("");
                 }
+
             }
+            /*改这里*/
             if (rb.getPlan_list() == null || rb.getPlan_list().size() == 0) {
                 ((ItemViewHolder) holder).tv_advise.setBackgroundResource(R.drawable.shap_side_weixin_gray_text_bg);
+                ((ItemViewHolder) holder).tv_advise.setText("本次建议(0)");
                 ((ItemViewHolder) holder).tv_advise.setTextColor(mContext.getResources().getColor(R.color.half_black));
-                ((ItemViewHolder) holder).tv_advise.setClickable(false);
-                ((ItemViewHolder) holder).tv_advise.setEnabled(false);
+                //可以点击显示无更多内容
+                ((ItemViewHolder) holder).tv_advise.setClickable(true);
+                ((ItemViewHolder) holder).tv_advise.setEnabled(true);
             } else {
                 ((ItemViewHolder) holder).tv_advise.setBackgroundResource(R.drawable.shap_side_oranger_text_bg);
-                ((ItemViewHolder) holder).tv_advise.setTextColor(mContext.getResources().getColor(R.color.text_orange));
+                ((ItemViewHolder) holder).tv_advise.setText("本次建议("+rb.getPlan_list().size()+")");
+                ((ItemViewHolder) holder).tv_advise.setTextColor(mContext.getResources().getColor(R.color.main_color_version2));
                 ((ItemViewHolder) holder).tv_advise.setClickable(true);
                 ((ItemViewHolder) holder).tv_advise.setEnabled(true);
             }
@@ -149,6 +186,15 @@ public class FinishOrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
             });
 
+            /*添加新的按钮*/
+            if(tag==1){
+                int count=rb.getPlan_product_total()+rb.getPlan_project_total();
+                if(count>0){
+                    ((ItemViewHolder) holder).tv_next_adviser.setText("下次建议("+count+")");
+                }else {
+                    ((ItemViewHolder) holder).tv_next_adviser.setText("下次建议(0)");
+                }
+            }
         }
 
     }

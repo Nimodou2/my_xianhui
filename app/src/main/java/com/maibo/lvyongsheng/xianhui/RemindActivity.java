@@ -116,7 +116,7 @@ public class RemindActivity extends BaseActivity implements RefreshListView.OnRe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remind);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         showLongDialog();
         data = new ArrayList<>();
@@ -165,7 +165,7 @@ public class RemindActivity extends BaseActivity implements RefreshListView.OnRe
             data.clear();
             Notice notice = new Notice(whatNotice.getNotice_id(), whatNotice.getNotice_type(),
                     whatNotice.getSubject(), whatNotice.getBody(),
-                    whatNotice.getCreat_time(), 1, whatNotice.getExtra_id(), whatNotice.getOrg_name(),
+                    whatNotice.getCreate_time(), 1, whatNotice.getExtra_id(), whatNotice.getOrg_name(),
                     whatNotice.getOrg_id(), whatNotice.getExtra_type(), whatNotice.getCustomer_id());
             for (int i = 0; i < data2.size(); i++) {
                 if (i == whatItem - 1) {
@@ -258,7 +258,7 @@ public class RemindActivity extends BaseActivity implements RefreshListView.OnRe
                 int status = 0;
                 String extra_id = "";
                 String org_name = "";
-                String org_id = "";
+                int org_id = -1;
                 String extra_type = "";
                 String customer_id = "";
                 if (!jsonObject.get("notice_id").isJsonNull())
@@ -278,7 +278,7 @@ public class RemindActivity extends BaseActivity implements RefreshListView.OnRe
                 if (!jsonObject.get("org_name").isJsonNull())
                     org_name = jsonObject.get("org_name").getAsString();
                 if (!jsonObject.get("org_id").isJsonNull())
-                    org_id = jsonObject.get("org_id").getAsString();
+                    org_id = jsonObject.get("org_id").getAsInt();
                 if (!jsonObject.get("extra_type").isJsonNull())
                     extra_type = jsonObject.get("extra_type").getAsString();
 
@@ -372,10 +372,10 @@ public class RemindActivity extends BaseActivity implements RefreshListView.OnRe
             holder.iv_picture.setLayoutParams(params);
 
             Notice not = data.get(i);
-            holder.create_time.setText(not.getCreat_time().substring(0, 10));
+            holder.create_time.setText(not.getCreate_time().substring(0, 10));
             holder.subject.setText(not.getSubject() + "(" + not.getOrg_name() + ")");
             // holder.extra_id.setText(not.getExtra_id());
-            holder.extra_id.setText(not.getCreat_time().substring(0, 10));
+            holder.extra_id.setText(not.getCreate_time().substring(0, 10));
             holder.body.setText(not.getBody());
             holder.tv_red_tag.setVisibility(View.INVISIBLE);
             if (not.getStatus() == 0 && not.getExtra_type().equals("schedule")) {

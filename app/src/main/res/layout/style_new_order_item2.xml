@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70px"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:id="@+id/auto_ll"
+        android:layout_width="325px"
+        android:layout_height="70px"
+        android:background="@drawable/order_item_autolinearlayout_normal"
+        >
+        <ImageView
+            android:layout_marginTop="10px"
+            android:layout_marginLeft="15px"
+            android:id="@+id/order_status"
+            android:layout_width="50px"
+            android:layout_height="50px"
+            android:src="@mipmap/order_logo_yyy" />
+            <TextView
+                android:id="@+id/tv_project_name"
+                android:layout_width="wrap_content"
+                android:layout_height="22px"
+                android:text="项目名"
+                android:layout_toRightOf="@+id/order_status"
+                android:layout_alignTop="@+id/order_status"
+                android:layout_marginLeft="7px"
+                android:textColor="#746464"
+                android:textSize="22px" />
+
+            <TextView
+                android:id="@+id/tv_tec_name"
+                android:layout_width="wrap_content"
+                android:layout_height="17px"
+                android:layout_weight="1"
+                android:text="技师名"
+                android:layout_toRightOf="@+id/order_status"
+                android:layout_below="@+id/tv_project_name"
+                android:layout_marginTop="11px"
+                android:layout_marginLeft="10px"
+                android:textColor="#746464"
+                android:textSize="17px" />
+    </com.zhy.autolayout.AutoRelativeLayout>
+</com.zhy.autolayout.AutoRelativeLayout>

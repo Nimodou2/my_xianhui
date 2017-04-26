@@ -1,12 +1,14 @@
 package com.maibo.lvyongsheng.xianhui.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,6 +32,8 @@ import com.maibo.lvyongsheng.xianhui.PeopleMessageActivity;
 import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.adapter.FinishOrderAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.OrderPlanAdapter;
+import com.maibo.lvyongsheng.xianhui.constants.Constants;
+import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.entity.UnFinishOrder;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.manager.OnRetryListener;
@@ -47,6 +51,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
 /**
@@ -54,7 +59,9 @@ import okhttp3.Call;
  */
 
 public class UnFinishedOrderFragment extends Fragment {
-
+    private static final String TAG="unfinishifrag";
+    private  Context mcontext;
+    private AlertDialog alertDialog;
     private View rootView;
     @Bind(R.id.xrecy_finish)
     XRecyclerView xrecy_finish;
@@ -90,6 +97,10 @@ public class UnFinishedOrderFragment extends Fragment {
                     if (mRowsBean.size() > 0) statusManager.showContent();
                     else statusManager.showEmptyData();
                     break;
+                case 2:
+                    alertDialog.dismiss();
+                    alertDialog=null;
+                    break;
             }
         }
     };
@@ -102,6 +113,12 @@ public class UnFinishedOrderFragment extends Fragment {
     private void setMyAdapter(List<UnFinishOrder.DataBean.RowsBean> mRowsBean) {
         adapter.setDatas(mRowsBean);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mcontext=context;
     }
 
     @Override
@@ -119,6 +136,7 @@ public class UnFinishedOrderFragment extends Fragment {
         initView();
         initListener();
         initDatas(10, 1);
+        EventBus.getDefault().register(this);
         return rootView;
     }
 
@@ -160,6 +178,8 @@ public class UnFinishedOrderFragment extends Fragment {
      * 初始化view
      */
     private void initView() {
+
+
         sp = getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
@@ -169,10 +189,13 @@ public class UnFinishedOrderFragment extends Fragment {
                 getResources().getColor(R.color.weixin_lianxiren_gray)));
         xrecy_finish.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         xrecy_finish.setLoadingMoreProgressStyle(ProgressStyle.BallSpinFadeLoader);
+
         MyRefreshHeadView myRefreshHeadView = new MyRefreshHeadView(getContext());
         myRefreshHeadView.setArrowImageView(R.mipmap.indicator_arrow);
         xrecy_finish.setRefreshHeader(myRefreshHeadView);
         xrecy_finish.setFootView(new MyFootView(getContext()));
+        View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.incloud_no_datas, null);
+        xrecy_finish.setEmptyView(emptyView);
         xrecy_finish.setAdapter(adapter = new FinishOrderAdapter(getContext(), 0));
         mRowsBeanMore = new ArrayList<>();
     }
@@ -187,6 +210,7 @@ public class UnFinishedOrderFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        token = sp.getString("token", null);
                         initDatas(10, 1);
                     }
                 }, 1000);
@@ -202,7 +226,8 @@ public class UnFinishedOrderFragment extends Fragment {
                         if (pagerNumber != 0 && totalPage != 0 && pagerNumber < totalPage) {
                             initDatas(10, pagerNumber + 1);
                         } else {
-                            App.showToast(getContext(), "无更多数据");
+                            xrecy_finish.setNoMore(true);
+                           // App.showToast(getContext(), "无更多数据");
                         }
 
                     }
@@ -212,16 +237,38 @@ public class UnFinishedOrderFragment extends Fragment {
         adapter.setOnClickUnFinishItem(new OnUnFinishItemListener() {
             @Override
             public void onAdviseListener(int position) {
-                if (mRowsBeanMore.get(position).getPlan_list() != null && mRowsBeanMore.get(position).getPlan_list().size() > 0)
+                if (mRowsBeanMore.get(position).getPlan_list() != null && mRowsBeanMore.get(position).getPlan_list().size() > 0) {
                     initPopWindow(mRowsBeanMore.get(position).getPlan_list(), mRowsBeanMore.get(position).getCustomer_name());
+                }else {
+                   /* Log.e(TAG,"点击执行了");
+                    if(alertDialog!=null){
+                        return;
+                    }*/
+                    AlertDialog.Builder alertBuilder=new AlertDialog.Builder(mcontext);
+                    alertBuilder.setTitle("提示:");
+                    alertBuilder.setIcon(R.mipmap.testlogo);
+                    alertBuilder.setMessage("暂无更多内容");
+                    alertBuilder.setCancelable(false);
+                    alertBuilder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+                    alertBuilder.create();
+                    alertDialog=alertBuilder.show();
+
+
+
+                   /* Message message=Message.obtain();
+                    message.what=2;
+                    handler.sendMessageDelayed(message,1000);*/
+                }
+
             }
 
             @Override
             public void onNextAdviserListener(int position, int customerID, String customerName) {
-//                Intent intent = new Intent(getActivity(), AddTabActivity.class);
-//                intent.putExtra("customer_id", customerID);
-//                intent.putExtra("customer_name", customerName);
-//                startActivity(intent);
             }
 
             @Override
@@ -231,6 +278,7 @@ public class UnFinishedOrderFragment extends Fragment {
                 intent.putExtra("customer_id", customerID);
                 intent.putExtra("date", mRowsBeanMore.get(position).getAdate());
                 intent.putExtra("tag", 4);
+                intent.putExtra("org_id",mRowsBeanMore.get(position).getOrg_id());
                 startActivity(intent);
             }
 
@@ -247,6 +295,7 @@ public class UnFinishedOrderFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         ButterKnife.unbind(this);
     }
 
@@ -266,8 +315,10 @@ public class UnFinishedOrderFragment extends Fragment {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         App.showToast(getContext(), "网络异常");
-                        xrecy_finish.refreshComplete();
-                        xrecy_finish.loadMoreComplete();
+                        if (xrecy_finish != null) {
+                            xrecy_finish.refreshComplete();
+                            xrecy_finish.loadMoreComplete();
+                        }
                         statusManager.showNetWorkError();
                     }
 
@@ -283,12 +334,13 @@ public class UnFinishedOrderFragment extends Fragment {
                             msg.what = 0;
                             msg.obj = mUFOrder;
                             handler.sendMessage(msg);
-
                         } else {
                             App.showToast(getContext(), message);
                         }
-                        xrecy_finish.refreshComplete();
-                        xrecy_finish.loadMoreComplete();
+                        if (xrecy_finish != null) {
+                            xrecy_finish.refreshComplete();
+                            xrecy_finish.loadMoreComplete();
+                        }
                     }
                 });
     }
@@ -303,8 +355,8 @@ public class UnFinishedOrderFragment extends Fragment {
         LinearLayout ll_close = (LinearLayout) popView.findViewById(R.id.ll_close);
         tv_customer_name.setText(customerName);
         final PopupWindow popupWindow = new PopupWindow(popView, 200, 300, true);
-        popupWindow.setWidth(Util.getScreenWidth(getContext()) * 3 / 4);
-        popupWindow.setHeight(Util.getScreenHeight(getContext()) * 3 / 5);
+        popupWindow.setWidth(Util.getScreenWidth(getContext()) * 4 / 5);
+        popupWindow.setHeight(Util.getScreenHeight(getContext()) * 29 / 50);
         popupWindow.showAtLocation(getLayoutInflater(getArguments()).inflate(R.layout.fragment_unfinished_order, null), Gravity.CENTER, 0, 50);
         backgroundAlpha(0.5f);
         ll_close.setOnClickListener(new View.OnClickListener() {
@@ -341,5 +393,18 @@ public class UnFinishedOrderFragment extends Fragment {
             backgroundAlpha(1f);
         }
 
+    }
+
+    /**
+     * 接收门店切换的通知
+     *
+     * @param eventDatas
+     */
+    public void onEvent(EventDatas eventDatas) {
+        if (eventDatas.getTag().equals(Constants.SWITCH_STORES)) {
+            token = sp.getString("token", null);
+            apiURL = sp.getString("apiURL", null);
+            initDatas(10, 1);
+        }
     }
 }

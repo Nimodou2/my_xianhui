@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -52,9 +53,10 @@ import butterknife.Bind;
 import okhttp3.Call;
 
 public class DayTabActivity extends BaseActivity implements View.OnClickListener {
-
+    private static final String TAG="DayTabActivity";
     private RadarChart mChart;
     private Typeface mTfLight;
+    private int color_id;
     SharedPreferences sp;
     TextView backs;
     String apiURL;
@@ -157,20 +159,19 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.day_table_new2);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
 
         initView();
-        aCache=ACache.get(this);
-        String mResponse=aCache.getAsString(notice_id+"");
-        if (TextUtils.isEmpty(mResponse)){
+        aCache = ACache.get(this);
+        String mResponse = aCache.getAsString(notice_id + "");
+        if (TextUtils.isEmpty(mResponse)) {
             showLongDialog();
             getServiceData();
-        }else{
+        } else {
             JsonObject object = new JsonParser().parse(mResponse).getAsJsonObject();
             analisysJsonDatas(object);
         }
-
 
 
     }
@@ -185,9 +186,9 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
         org_name = intent3.getStringExtra("org_name");
         org_id = intent3.getStringExtra("org_id");
         String create_time = intent3.getStringExtra("create_time");
+        color_id=intent3.getIntExtra("color_id",-1);
 
         lv_detail = (ListView) findViewById(R.id.lv_detail);
-
         btn_product = (TextView) findViewById(R.id.btn_product);
         btn_caozuo = (TextView) findViewById(R.id.btn_caozuo);
         btn_keliu = (TextView) findViewById(R.id.btn_keliu);
@@ -197,7 +198,6 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
         tv_club_name = (TextView) findViewById(R.id.tv_club_name);
         tv_time = (TextView) findViewById(R.id.tv_time);
         tv_setting = (TextView) findViewById(R.id.tv_setting);
-
 
         if (!TextUtils.isEmpty(org_name))
             tv_club_name.setText(org_name);
@@ -214,12 +214,47 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
         tv_setting.setOnClickListener(this);
 
         mChart = (RadarChart) findViewById(R.id.chart1);
-        mChart.setBackgroundColor(Color.rgb(231, 222, 205));
-
+        setRadarChartColor();
         initRanderChartStyle();
 
 
     }
+
+    private void setRadarChartColor() {
+        switch (color_id){
+            case 0://星期日
+                mChart.setBackgroundResource(R.color.zhushou_bg_7);
+                ll_head.setBackgroundResource(R.color.zhushou_bg2_7);
+                break;
+            case 1://星期一
+                mChart.setBackgroundResource(R.color.zhushou_bg_1);
+                ll_head.setBackgroundResource(R.color.zhushou_bg2_1);
+                break;
+            case 2://星期二
+                mChart.setBackgroundResource(R.color.zhushou_bg_2);
+                ll_head.setBackgroundResource(R.color.zhushou_bg2_2);
+                break;
+            case 3://星期三
+                mChart.setBackgroundResource(R.color.zhushou_bg_3);
+                ll_head.setBackgroundResource(R.color.zhushou_bg2_3);
+                break;
+            case 4://星期四
+                mChart.setBackgroundResource(R.color.zhushou_bg_4);
+                ll_head.setBackgroundResource(R.color.zhushou_bg2_4);
+                break;
+            case 5://星期五
+                mChart.setBackgroundResource(R.color.zhushou_bg_5);
+                ll_head.setBackgroundResource(R.color.zhushou_bg2_5);
+                break;
+            case 6://星期六
+                mChart.setBackgroundResource(R.color.zhushou_bg_6);
+                ll_head.setBackgroundResource(R.color.zhushou_bg2_6);
+                break;
+            default:break;
+        }
+
+    }
+
 
     /**
      * 初始化雷达图样式
@@ -229,11 +264,12 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
         description.setText("");
         mChart.setDescription(description);
 
-        mChart.setWebLineWidth(1f);
-        mChart.setWebColor(Color.rgb(186, 169, 141));
-        mChart.setWebLineWidthInner(1f);
-        mChart.setWebColorInner(Color.rgb(186, 169, 141));
-        mChart.setWebAlpha(255);
+        mChart.setWebLineWidth(0f);
+        mChart.setWebColor(Color.WHITE);
+        mChart.setWebLineWidthInner(0f);
+        mChart.setWebColorInner(Color.WHITE);
+        //这句话会决定看不看得到线
+        mChart.setWebAlpha(0);
         mChart.setRotationEnabled(false);
 
         XAxis xAxis = mChart.getXAxis();
@@ -249,7 +285,8 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
                 return mActivities[(int) value % mActivities.length];
             }
         });
-        xAxis.setTextColor(Color.rgb(97, 86, 80));
+
+        xAxis.setTextColor(Color.rgb(255, 255, 255));
 
 
         YAxis yAxis = mChart.getYAxis();
@@ -264,16 +301,52 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
         l.setEnabled(false);
     }
 
+
+    public void setColorInthis(RadarDataSet set){
+        if(set!=null){
+            switch (color_id){
+                case 0://星期日
+                    set.setColor(Color.rgb(130, 49, 129));
+                    set.setFillColor(Color.rgb(130, 49, 129));
+                    break;
+                case 1://星期一
+                    set.setColor(Color.rgb(195, 108, 102));
+                    set.setFillColor(Color.rgb(195, 108, 102));
+                    break;
+                case 2://星期二204,133,92,1
+                    set.setColor(Color.rgb(204, 133, 92));
+                    set.setFillColor(Color.rgb(204, 133, 92));
+                    break;
+                case 3://星期三204,159,49,1
+                    set.setColor(Color.rgb(204, 159, 49));
+                    set.setFillColor(Color.rgb(204, 159, 49));
+                    break;
+                case 4://星期四33,185,129,1
+                    set.setColor(Color.rgb(33, 185, 129));
+                    set.setFillColor(Color.rgb(33, 185, 129));
+                    break;
+                case 5://星期五28,170,170,1
+                    set.setColor(Color.rgb(28, 170, 170));
+                    set.setFillColor(Color.rgb(28, 170, 170));
+                    break;
+                case 6://星期六23,106,157,1
+                    set.setColor(Color.rgb(23, 106, 157));
+                    set.setFillColor(Color.rgb(23, 106, 157));
+                    break;
+                default:break;
+            }
+        }
+    }
     /**
      * 初始化雷达图样式
      */
-
     public void setData(Map<String, List<Radar>> ra) {
 
         ArrayList<RadarEntry> entries1 = new ArrayList<RadarEntry>();
         ArrayList<RadarEntry> entries2 = new ArrayList<RadarEntry>();
         ArrayList<RadarEntry> entries3 = new ArrayList<RadarEntry>();
-        List<Radar> ra1 = ra.get("7日均值");
+      /*  List<Radar> ra1 = ra.get("7日均值");
+
         TextView[] btn_text = {btn_money, btn_caozuo, btn_product, btn_keliu, btn_yuangong};
         for (int i = 0; i < ra1.size(); i++) {
             if (ra1.get(i).getScore() * 2 > 10) {
@@ -282,7 +355,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
                 entries1.add(new RadarEntry(ra1.get(i).getScore() * 2));
             }
 
-        }
+        }*/
 
         List<Radar> ra2 = ra.get("今日");
         for (int i = 0; i < ra2.size(); i++) {
@@ -296,29 +369,28 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
             entries3.add(new RadarEntry(10));
         }
 
-        RadarDataSet set1 = new RadarDataSet(entries1, "7日均值");
+       /* RadarDataSet set1 = new RadarDataSet(entries1, "7日均值");
         set1.setColor(Color.rgb(218, 182, 133));
         set1.setFillColor(Color.rgb(218, 182, 133));
         set1.setDrawFilled(true);
         set1.setFillAlpha(100);
         set1.setLineWidth(0f);
         set1.setDrawHighlightCircleEnabled(true);
-        set1.setDrawHighlightIndicators(false);
+        set1.setDrawHighlightIndicators(false);*/
 
         RadarDataSet set2 = new RadarDataSet(entries2, "今日");
-        set2.setColor(Color.rgb(118, 74, 55));
-        set2.setFillColor(Color.rgb(118, 74, 55));
+        setColorInthis(set2);
         set2.setDrawFilled(true);
-        set2.setFillAlpha(200);
+        set2.setFillAlpha(255);
         set2.setLineWidth(1f);
         set2.setDrawHighlightCircleEnabled(true);
         set2.setDrawHighlightIndicators(false);
 
         RadarDataSet set3 = new RadarDataSet(entries3, "");
-        set3.setColor(Color.rgb(224, 204, 177));
-        set3.setFillColor(Color.rgb(224, 204, 177));
+        set3.setColor(Color.argb(80,255,255,255));
+        set3.setFillColor(Color.argb(80,255,255,255));
         set3.setDrawFilled(true);
-        set3.setFillAlpha(100);
+        set3.setFillAlpha(80);
         set3.setLineWidth(0f);
         set3.setDrawHighlightCircleEnabled(true);
         set3.setDrawHighlightIndicators(false);
@@ -326,7 +398,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
 
         ArrayList<IRadarDataSet> sets = new ArrayList<IRadarDataSet>();
         sets.add(set2);
-        sets.add(set1);
+        //sets.add(set1);
         sets.add(set3);
 
         RadarData data = new RadarData(sets);
@@ -366,7 +438,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
                         String message = object.get("message").getAsString();
                         if (msg_status.equals("ok")) {
                             analisysJsonDatas(object);
-                            aCache.put(notice_id+"",response,10);
+                            aCache.put(notice_id + "", response, 10);
                         } else {
                             App.showToast(getApplicationContext(), message);
                         }
@@ -633,7 +705,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.tv_setting:
                 //判断网络是否可用
-                boolean isNetWork= NetWorkUtils.isNetworkConnected(this);
+                boolean isNetWork = NetWorkUtils.isNetworkConnected(this);
                 if (isNetWork)
                     //跳转到最大值设置界面
                     getServiceMaxData();
@@ -647,10 +719,12 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
     //获取最大值相关参数
     //获取日报表峰值设置
     public void getServiceMaxData() {
+        Log.e(TAG,"数据     "+org_id);
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getdailyreportsetting")
                 .addParams("token", token)
+                .addParams("org_id",org_id)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -660,6 +734,7 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e(TAG,"设置的返回值"+response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         JsonObject data = jsonObject.get("data").getAsJsonObject();
                         List<TabMax> list = new ArrayList<>();
@@ -721,9 +796,10 @@ public class DayTabActivity extends BaseActivity implements View.OnClickListener
 
     /**
      * 网络问题，重新加载
+     *
      * @param view
      */
-    public void loadingMore(View view){
+    public void loadingMore(View view) {
         showShortDialog();
         in_loading_error.setVisibility(View.GONE);
         ll_all_data.setVisibility(View.VISIBLE);

@@ -32,7 +32,7 @@ public class TaskPeopleDetailActivity extends BaseActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_people_detail);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
     }

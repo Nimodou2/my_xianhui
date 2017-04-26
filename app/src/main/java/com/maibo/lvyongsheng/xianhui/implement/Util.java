@@ -175,9 +175,9 @@ public class Util {
         Bitmap bitmap = null;
 
         try {
-
-            bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri));
-
+            if(uri!=null) {
+                bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri));
+            }
         } catch (FileNotFoundException e) {
 
             e.printStackTrace();

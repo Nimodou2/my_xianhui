@@ -64,7 +64,7 @@ public class ColleagueAdapter extends BaseAdapter {
         }else{
             holder=(ViewHolder) view.getTag();
         }
-        setHeightAndWidth(holder);
+        //setHeightAndWidth(holder);
 
         Employee employee=list1.get(i);
         Picasso.with(context).load(employee.getAvator_url()).into(holder.iv_avator);

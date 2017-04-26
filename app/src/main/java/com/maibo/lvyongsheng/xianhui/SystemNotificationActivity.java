@@ -29,7 +29,7 @@ public class SystemNotificationActivity extends BaseActivity implements View.OnC
      * 初始化View
      */
     private void initView() {
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         back.setOnClickListener(this);
     }
 

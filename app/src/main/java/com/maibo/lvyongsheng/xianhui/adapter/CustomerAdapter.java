@@ -51,6 +51,9 @@ public class CustomerAdapter extends BaseAdapter {
             holder=new ViewHolder();
             view=View.inflate(context, R.layout.style_customer_list,null);
             holder.iv_avator=(CircleImageView) view.findViewById(R.id.iv_avator);
+
+            holder.iv_avator.setImageResource(R.mipmap.circle_normal);
+
             holder.tv_name=(TextView) view.findViewById(R.id.tv_name);
             holder.tv_position=(TextView) view.findViewById(R.id.tv_position);
             holder.tv_times=(TextView) view.findViewById(R.id.tv_times);
@@ -63,9 +66,12 @@ public class CustomerAdapter extends BaseAdapter {
             holder=(ViewHolder) view.getTag();
         }
 
-        setHeightAndWidth(holder);
+        //setHeightAndWidth(holder);
 
         HelperCustomer customer=list1.get(i);
+
+
+
         Picasso.with(context).load(customer.getAvator_url()).into(holder.iv_avator);
 
         holder.tv_name.setText(customer.getFullname());

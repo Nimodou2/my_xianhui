@@ -88,7 +88,7 @@ public class CreateGroupChatActivity extends BaseActivity implements View.OnClic
      * 初始化View
      */
     private void initView() {
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         int id = et_search.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView hintText = (TextView) findViewById(id);
         hintText.setTextSize(14);

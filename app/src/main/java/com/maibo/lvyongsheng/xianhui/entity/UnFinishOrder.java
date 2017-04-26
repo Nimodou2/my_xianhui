@@ -118,6 +118,24 @@ public class UnFinishOrder {
             private String avator_url;
             private List<PlanListBean> plan_list;
             private List<ScheduleListBean> schedule_list;
+            private int plan_project_total;
+            private int plan_product_total;
+
+            public int getPlan_project_total() {
+                return plan_project_total;
+            }
+
+            public void setPlan_project_total(int plan_project_total) {
+                this.plan_project_total = plan_project_total;
+            }
+
+            public int getPlan_product_total() {
+                return plan_product_total;
+            }
+
+            public void setPlan_product_total(int plan_product_total) {
+                this.plan_product_total = plan_product_total;
+            }
 
             public String getAdate() {
                 return adate;

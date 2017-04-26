@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.maibo.lvyongsheng.xianhui.fragment.WorkAll_Fragment">
+    <LinearLayout
+        android:id="@+id/workall_fragment_head"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/main_color">
+        <TextView
+            android:id="@+id/workall_fragment_text_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="工作"
+            android:textColor="#fff"
+            android:textSize="18dp" />
+    </LinearLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider = "@null"
+        android:scrollbars="none"
+        android:id="@+id/workall_fragment_listview"></ListView>
+
+
+</LinearLayout>

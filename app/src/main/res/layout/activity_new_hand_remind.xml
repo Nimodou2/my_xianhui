@@ -9,7 +9,8 @@
         android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/bar_color">
+        android:orientation="horizontal"
+        android:background="@color/main_color">
 
         <TextView
             android:id="@id/back"
@@ -27,7 +28,8 @@
     <!--默认应用总色调Widget.DeviceDefault.ProgressBar.Horizontal-->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
         <LinearLayout
             android:visibility="gone"
             android:layout_width="match_parent"

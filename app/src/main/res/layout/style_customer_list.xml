@@ -14,12 +14,18 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/circleview_text_free"
+                />
             <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/iv_avator"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:src="@mipmap/cat_personal_1" />
+                android:src="@mipmap/choose_no"/>
 
             <TextView
                 android:id="@+id/tv_head"

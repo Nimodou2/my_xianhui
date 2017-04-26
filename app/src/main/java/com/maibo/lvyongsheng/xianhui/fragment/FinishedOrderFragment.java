@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -32,6 +34,8 @@ import com.maibo.lvyongsheng.xianhui.OrderActivity;
 import com.maibo.lvyongsheng.xianhui.PeopleMessageActivity;
 import com.maibo.lvyongsheng.xianhui.R;
 import com.maibo.lvyongsheng.xianhui.adapter.FinishOrderAdapter;
+import com.maibo.lvyongsheng.xianhui.constants.Constants;
+import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.entity.UnFinishOrder;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.manager.OnRetryListener;
@@ -51,7 +55,10 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import okhttp3.Call;
+
+import static com.maibo.lvyongsheng.xianhui.utils.ZzLetterSideBar.TAG;
 
 /**
  * Created by LYS on 2017/3/8.
@@ -121,6 +128,7 @@ public class FinishedOrderFragment extends Fragment {
         initView();
         initListener();
         initDatas(10, 1);
+        EventBus.getDefault().register(this);
         return rootView;
     }
 
@@ -139,9 +147,11 @@ public class FinishedOrderFragment extends Fragment {
                 getResources().getColor(R.color.weixin_lianxiren_gray)));
         xrecy_finish.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         xrecy_finish.setLoadingMoreProgressStyle(ProgressStyle.BallSpinFadeLoader);
+
         MyRefreshHeadView myRefreshHeadView = new MyRefreshHeadView(getContext());
         myRefreshHeadView.setArrowImageView(R.mipmap.indicator_arrow);
         xrecy_finish.setRefreshHeader(myRefreshHeadView);
+
         xrecy_finish.setFootView(new MyFootView(getContext()));
         View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.incloud_no_datas, null);
         xrecy_finish.setEmptyView(emptyView);
@@ -221,12 +231,14 @@ public class FinishedOrderFragment extends Fragment {
                 if (mRowsBeanMore.get(position).getPlan_list() != null)
                     initPopWindow(mRowsBeanMore.get(position).getPlan_list());
             }
-
+            //下次建议的点击反馈
             @Override
             public void onNextAdviserListener(int position, int customerID, String customerName) {
+                //这里拿到position，来设置相应的数据
                 Intent intent = new Intent(getActivity(), AddTabActivity.class);
                 intent.putExtra("customer_id", customerID);
                 intent.putExtra("customer_name", customerName);
+                intent.putExtra("position",position);
                 startActivity(intent);
             }
 
@@ -237,6 +249,7 @@ public class FinishedOrderFragment extends Fragment {
                 intent.putExtra("customer_id", customerID);
                 intent.putExtra("date", mRowsBeanMore.get(position).getAdate());
                 intent.putExtra("tag", 5);
+                intent.putExtra("org_id",mRowsBeanMore.get(position).getOrg_id());
                 startActivity(intent);
             }
 
@@ -254,6 +267,7 @@ public class FinishedOrderFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -272,8 +286,10 @@ public class FinishedOrderFragment extends Fragment {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         App.showToast(getContext(), "网络异常");
-                        xrecy_finish.refreshComplete();
-                        xrecy_finish.loadMoreComplete();
+                        if (xrecy_finish != null) {
+                            xrecy_finish.refreshComplete();
+                            xrecy_finish.loadMoreComplete();
+                        }
                         statusManager.showNetWorkError();
                     }
 
@@ -289,12 +305,13 @@ public class FinishedOrderFragment extends Fragment {
                             msg.what = 0;
                             msg.obj = mUFOrder;
                             handler.sendMessage(msg);
-
                         } else {
                             App.showToast(getContext(), message);
                         }
-                        xrecy_finish.refreshComplete();
-                        xrecy_finish.loadMoreComplete();
+                        if (xrecy_finish != null) {
+                            xrecy_finish.refreshComplete();
+                            xrecy_finish.loadMoreComplete();
+                        }
                     }
                 });
     }
@@ -353,6 +370,35 @@ public class FinishedOrderFragment extends Fragment {
         public void onDismiss() {
             backgroundAlpha(1f);
         }
+    }
 
+    /**
+     * 接收门店切换的通知
+     *
+     * @param eventDatas
+     */
+    public void onEvent(EventDatas eventDatas) {
+        if (eventDatas.getTag().equals(Constants.SWITCH_STORES)) {
+            token = sp.getString("token", null);
+            apiURL = sp.getString("apiURL", null);
+            initDatas(10, 1);
+        }else if(eventDatas.getTag().equals(Constants.GET_CHANGE_TOTAL)){
+            if(eventDatas.getResult().equals("ok")){
+                if(adapter!=null){
+                    Log.e(TAG,"这个是list的接收  "+eventDatas.getProduct_total()+eventDatas.getProject_total());
+                    List<UnFinishOrder.DataBean.RowsBean> mylist=adapter.getmRowsBean();
+                    UnFinishOrder.DataBean.RowsBean bean=mylist.get(eventDatas.getPosition());
+                    bean.setPlan_project_total(eventDatas.getProject_total());
+                    Log.e(TAG,"这个是list的接收project  "+eventDatas.getProject_total());
+                    bean.setPlan_product_total(eventDatas.getProduct_total());
+                    Log.e(TAG,"这个是list的接收product  "+eventDatas.getProduct_total());
+                    mylist.remove(eventDatas.getPosition());
+                    mylist.add(eventDatas.getPosition(),bean);
+                    adapter.setDatas(mylist);
+                }
+            }else {
+                Toast.makeText(getActivity(),"设置失败",Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

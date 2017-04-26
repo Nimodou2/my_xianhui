@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="375px"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#f6f5ec"
+    >
+    <com.zhy.autolayout.AutoRelativeLayout
+        android:layout_width="335px"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10px" >
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/chatting_item_msg_text_left_image_useraval"
+            android:layout_width="40px"
+            android:layout_height="40px"
+            android:focusable="false"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20px"
+            android:layout_alignParentTop="true"
+            android:src="@mipmap/cat_personal_1"/>
+        <TextView
+            android:id="@+id/chatting_item_msg_text_left_text_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="11px"
+            android:layout_toRightOf="@+id/chatting_item_msg_text_left_image_useraval"
+            android:layout_alignTop="@+id/chatting_item_msg_text_left_image_useraval"
+            android:textColor="#FF686868"
+            android:textSize="10px"
+            android:text="曹老师"
+           />
+        <TextView
+            android:id="@+id/chatting_item_msg_text_left_text_content"
+            android:layout_toRightOf="@id/chatting_item_msg_text_left_image_useraval"
+            android:layout_below="@+id/chatting_item_msg_text_left_text_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/conversation_one"
+            android:layout_marginTop="6px"
+            android:layout_marginRight="15px"
+            android:textColor="#FF434242"
+            android:textSize="14px"
+            android:text="他家有条大狗"/>
+
+    </com.zhy.autolayout.AutoRelativeLayout>
+</com.zhy.autolayout.AutoLinearLayout>

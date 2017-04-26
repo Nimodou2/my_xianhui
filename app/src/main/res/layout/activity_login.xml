@@ -19,7 +19,7 @@
                 android:id="@+id/ll_head"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@color/colorLightYellow">
+                android:background="@color/main_color">
 
                 <TextView
                     android:id="@+id/tv_back"
@@ -46,7 +46,7 @@
                 android:layout_height="115dp"
                 android:layout_marginBottom="34dp"
                 android:layout_marginTop="15dp"
-                android:src="@mipmap/single_one" />
+                android:src="@mipmap/testlogo" />
 
             <EditText
                 android:id="@+id/activity_login_et_username"
@@ -80,13 +80,13 @@
             <TextView
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
-                android:background="@drawable/shap_all_yellow_edittext_bg"
+                android:background="@drawable/login_text_selector"
                 android:gravity="center"
                 android:text="登录"
-                android:textColor="#998481"
+                android:textColor="#fff"
                 android:textSize="18dp" />
 
             <TextView
@@ -137,8 +137,13 @@
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone">
-
-            <TextView
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/zhuanchangimage"
+                android:scaleType="fitXY"
+                />
+           <!-- <TextView
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -149,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1.6"
-                android:src="@mipmap/single_one" />
+                android:src="@mipmap/zhuanchangimage" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -185,15 +190,8 @@
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4" />
+                android:layout_weight="4" />-->
         </LinearLayout>
 
-        <!--<ImageView-->
-        <!--android:id="@+id/tv_change_shop"-->
-        <!--android:visibility="visible"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:src="@mipmap/start_bg"-->
-        <!--/>-->
     </FrameLayout>
 </LinearLayout>

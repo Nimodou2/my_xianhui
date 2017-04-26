@@ -87,7 +87,7 @@ public class FeedbackProblemActivity extends BaseActivity implements View.OnClic
      */
     private void initView() {
         //适配UI
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         //监听点击事件
         back.setOnClickListener(this);
         tv_confirm.setOnClickListener(this);
@@ -192,6 +192,7 @@ public class FeedbackProblemActivity extends BaseActivity implements View.OnClic
                             message = jsonObject.get("message").getAsString();
                         if (status.equals("ok")) {
                             showToast("提交成功");
+                            finish();
                         } else {
                             showToast(message);
                         }

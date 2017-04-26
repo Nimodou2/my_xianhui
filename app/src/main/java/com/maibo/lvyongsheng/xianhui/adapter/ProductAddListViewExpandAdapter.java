@@ -29,7 +29,6 @@ import de.greenrobot.event.EventBus;
  * Created by LYS on 2016/9/17.
  */
 public class ProductAddListViewExpandAdapter extends BaseExpandableListAdapter {
-
     private Context context;
     private List<Product> dataPr;
     private int[] sel;
@@ -203,21 +202,31 @@ public class ProductAddListViewExpandAdapter extends BaseExpandableListAdapter {
             });
 
             //处理被点击条目和子条目变色
-            if (what_view == i) {
-                ll_first.setBackgroundColor(context.getResources().getColor(R.color.expend_first));
+            /*if (what_view == i) {
+                ll_first.setBackgroundColor(context.getResources().getColor(R.color.main_color_version2));
+                tvName.setTextColor(Color.WHITE);
+
             } else {
                 ll_first.setBackgroundColor(Color.WHITE);
-            }
+                tvName.setTextColor(Color.GRAY);
+                if (bean.getCard_list().size() != 0) {
+                    tvName.setTextColor(Color.GREEN);
+                }else {
+                    tvName.setTextColor(Color.GRAY);
+                }
+            }*/
             //可有效解决Groupview被抢夺焦点的问题
             LinearLayout layout = (LinearLayout) view2.findViewById(R.id.groupExpand);
             layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (b) {
+                        //折叠子分组
                         expandableListView.collapseGroup(i);
                         what_view = i;
 
                     } else {
+                        //展示子分组
                         expandableListView.expandGroup(i);
                         what_view = i;
                     }
@@ -254,13 +263,11 @@ public class ProductAddListViewExpandAdapter extends BaseExpandableListAdapter {
         if (card == null) return null;
 
         //处理点击父条目，子条目按需求变色
-        if (i == what_view) {
-            holder.ll_child_all.setBackgroundColor(context.getResources().getColor(R.color.expend_two));
+       /* if (i == what_view) {
+            holder.ll_child_all.setBackgroundColor(context.getResources().getColor(R.color.main_color_slow_version1));
         } else {
             holder.ll_child_all.setBackgroundColor(Color.WHITE);
-        }
-
-        holder.card_name.setText(card.getFullname());
+        }*/
         holder.card_style.setText(card.getCard_class());
         holder.price.setText(card.getPrice());
         holder.yu_ci.setText(card.getTimes() + "");

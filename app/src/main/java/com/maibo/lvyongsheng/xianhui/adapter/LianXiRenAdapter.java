@@ -42,6 +42,7 @@ import static com.maibo.lvyongsheng.xianhui.R.id.imageView3;
  * Created by LYS on 2016/10/25.
  */
 public class LianXiRenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     private LayoutInflater mLayoutInflater;
     private Context mContext;
     private int screenHeight;

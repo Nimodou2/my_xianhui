@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zhy.autolayout.AutoLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.zhy.autolayout.AutoLinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/shap_side_yellow_text_bg2"
         android:orientation="vertical">
@@ -15,13 +15,12 @@
         <TextView
             android:id="@+id/tv_customer_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60px"
             android:background="@drawable/shap_side_yellow_text_bg3"
             android:gravity="center"
-            android:padding="15dp"
             android:text="会员名"
             android:textColor="#fff"
-            android:textSize="26dp" />
+            android:textSize="24px" />
 
 
         <ListView
@@ -29,23 +28,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
-            android:dividerHeight="10dp"
-            android:padding="10dp">
+            android:dividerHeight="30px"
+            android:paddingLeft="20px"
+            android:paddingRight="20px"
+            android:paddingTop="20px">
 
         </ListView>
-    </LinearLayout>
+    </com.zhy.autolayout.AutoLinearLayout>
 
-    <LinearLayout
+    <com.zhy.autolayout.AutoLinearLayout
         android:id="@+id/ll_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#00000000"
         android:gravity="center"
-        android:paddingTop="20dp">
+        android:paddingTop="16px">
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
             android:src="@mipmap/close_mark" />
-    </LinearLayout>
-</LinearLayout>
+    </com.zhy.autolayout.AutoLinearLayout>
+</com.zhy.autolayout.AutoLinearLayout>

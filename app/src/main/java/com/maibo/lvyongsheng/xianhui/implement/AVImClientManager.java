@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMClientEventHandler;
@@ -31,11 +32,11 @@ public class AVImClientManager extends AVIMClientEventHandler {
     Activity mow_activity;
     String apiURL;
     String token;
-    SharedPreferences sp1, sp2, sp3, sp4, sp5,sp6;
+    SharedPreferences sp1, sp2, sp3, sp4, sp5, sp6;
     Context appContext;
 
     public AVImClientManager(Context appContext) {
-        this.appContext=appContext;
+        this.appContext = appContext;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class AVImClientManager extends AVIMClientEventHandler {
         sp4 = appContext.getSharedPreferences("changeAccount", MODE_PRIVATE);
         sp5 = appContext.getSharedPreferences("app", MODE_PRIVATE);
         sp6 = appContext.getSharedPreferences("dataBase", Context.MODE_PRIVATE);
-
+        Log.e("avimCLient", i + "");
         if (i == 4111) {
             if (!sp1.getBoolean("isDestroyMainActivity", false)) {
                 mow_activity = CloseAllActivity.getScreenManager().getFirstActivity();

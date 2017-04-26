@@ -9,7 +9,7 @@
         android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/bar_color">
+        android:background="@color/main_color">
 
         <TextView
             android:id="@+id/back"
@@ -23,7 +23,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="资料"
+            android:text="用户资料"
             android:textColor="#fff"
             android:textSize="18dp" />
 
@@ -220,7 +220,30 @@
                     android:id="@+id/cus_dingdan"
                     style="@style/peopleMessageRightText" />
             </LinearLayout>
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+            <LinearLayout
+                android:id="@+id/ll_beizhu"
+                android:visibility="visible"
+                style="@style/message_item">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="6"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="详细资料"
+                    android:textSize="16dp" />
+                <!--这个显示备注的最新信息-->
+                <TextView
+                    android:id="@+id/cus_beizhunew"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:text="最新"
+                    style="@style/peopleMessageRightText" />
+            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

@@ -31,7 +31,7 @@ public class ListDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_detail);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         lv_detail_list=(ListView)findViewById(R.id.lv_detail_list);
         tv_item_name=(TextView)findViewById(R.id.tv_item_name);

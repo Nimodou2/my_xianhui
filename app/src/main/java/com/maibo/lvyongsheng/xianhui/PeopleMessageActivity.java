@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,6 +35,7 @@ import okhttp3.Call;
  * Created by LYS on 2016/10/6.
  */
 public class PeopleMessageActivity extends BaseActivity implements View.OnClickListener {
+    private int tag;
     SharedPreferences sp;
     String token, apiURL;
     int customer_id = -1;
@@ -41,9 +43,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
     List<HelperCustomer> list1;
     //    List<Order> orderList;
     ImageView cus_head;
-    LinearLayout ll_cards, tv_consume_record, ll_plan_project, ll_yuyue, ll_kefu_manager, ll_order;
+    LinearLayout ll_cards, tv_consume_record, ll_plan_project, ll_yuyue, ll_kefu_manager, ll_order,ll_beizhu;
     TextView cus_name, cus_grade, cus_files_num, cus_manager,
-            cus_cards_num, cus_record, cus_plan, cus_order, back, tv_files, cus_dingdan;
+            cus_cards_num, cus_record, cus_plan, cus_order, back, tv_files, cus_dingdan,cus_beizhunew;
 
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
@@ -105,6 +107,8 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         else if (customer.getSchedule_status().equals("2")) cus_dingdan.setText("已结束");
         else if (customer.getSchedule_status().equals("3")) cus_dingdan.setText("已结单");
         else cus_dingdan.setText("暂无");
+        /*假数据 显示备注的最新反馈*/
+        cus_beizhunew.setText("最新");
     }
 
     @Override
@@ -142,6 +146,14 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         ll_yuyue.setOnClickListener(this);
         ll_kefu_manager.setOnClickListener(this);
         ll_order.setOnClickListener(this);
+        ll_beizhu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent =new Intent(PeopleMessageActivity.this,CustomerAddBeizhu_Activity.class);
+                intent.putExtra("customer_id",customer_id);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -150,9 +162,10 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
     private void initView() {
         setContentView(R.layout.activity_people_message);
         Intent intent = getIntent();
+        tag=intent.getIntExtra("tag",-1);
         customer_id = intent.getIntExtra("customer_id", -1);
 //        Log.e("customer_id1111",customer_id+"");
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         token = sp.getString("token", null);
@@ -173,6 +186,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         cus_plan = (TextView) findViewById(R.id.cus_plan);
         cus_order = (TextView) findViewById(R.id.cus_order);
         cus_dingdan = (TextView) findViewById(R.id.cus_dingdan);
+        /*新增加的备注*/
+        cus_beizhunew=(TextView)findViewById(R.id.cus_beizhunew);
+        ll_beizhu=(LinearLayout)findViewById(R.id.ll_beizhu);
 
         ll_cards = (LinearLayout) findViewById(R.id.ll_cards);
         tv_consume_record = (LinearLayout) findViewById(R.id.tv_consume_record);
@@ -182,6 +198,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
         ll_order = (LinearLayout) findViewById(R.id.ll_order);
         back = (TextView) findViewById(R.id.back);
         tv_files = (TextView) findViewById(R.id.tv_files);
+        if(tag!=-1){
+            tv_files.setVisibility(View.INVISIBLE);
+        }
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,6 +226,9 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
      * 获取顾客基本资料
      */
     public void getServicerData(int customer_id) {
+
+        Log.e("PeopleMessageActivity",apiURL+"    "+customer_id+"    "+token);
+
         OkHttpUtils
                 .post()
                 .url(apiURL + "/rest/employee/getcustomerdetail")
@@ -341,11 +363,15 @@ public class PeopleMessageActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.tv_files:
                 //跳到订单界面
-                Intent intent5 = new Intent(this, OrderActivity.class);
-                intent5.putExtra("customer_name", list1.get(0).getFullname());
-                intent5.putExtra("customer_id", customer_id);
-                intent5.putExtra("tag", 3);
-                startActivity(intent5);
+                if(tag==-1){
+                    Intent intent5 = new Intent(this, OrderActivity.class);
+                    if(list1!=null){
+                        intent5.putExtra("customer_name", list1.get(0).getFullname());
+                        intent5.putExtra("customer_id", customer_id);
+                        intent5.putExtra("tag", 3);
+                        startActivity(intent5);
+                    }
+                }
                 break;
             case R.id.ll_order:
                 //跳到订单界面

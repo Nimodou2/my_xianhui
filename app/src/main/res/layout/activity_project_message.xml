@@ -1,223 +1,251 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/weixin_lianxiren_gray">
+    android:background="@color/weixin_lianxiren_gray"
+    android:orientation="vertical">
+
     <LinearLayout
         android:id="@+id/ll_head"
-        android:background="@color/bar_color"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:background="@color/main_color">
+
         <TextView
             android:id="@+id/back"
             style="@style/bar_left"
-            android:text="返回"/>
+            android:text="返回" />
+
         <TextView
             style="@style/bar_center"
-            android:text="资料"/>
+            android:text="资料" />
+
         <TextView
             android:id="@+id/tv_order"
             style="@style/bar_right"
-            android:text="订单"/>
+            android:text="订单" />
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/ll_all_data"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-
-    <LinearLayout
-        style="@style/message_head">
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tv_head_picture"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:gravity="center"
-                android:visibility="gone"
-                android:background="@drawable/yello_circle"
-                android:text=""/>
-            <ImageView
-                android:id="@+id/cus_head"
-                android:layout_width="60dp"
-                android:layout_height="60dp" />
-        </FrameLayout>
-
         <LinearLayout
-            android:paddingLeft="10dp"
+            android:id="@+id/ll_all_data"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+
+            <LinearLayout style="@style/message_head">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_head_picture"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/yello_circle"
+                        android:gravity="center"
+                        android:text=""
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/cus_head"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingLeft="10dp">
+
+                    <TextView
+                        android:id="@+id/cus_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text=""
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/cus_grade"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/lcim_common_gray"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/cus_files_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/lcim_common_gray"
+                        android:textSize="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+
             <TextView
-                android:id="@+id/cus_name"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:layout_weight="1"
-                android:textSize="16dp"
-                android:text=""/>
+                style="@style/message_spacing"
+                android:text="信息与设置" />
+
             <TextView
-                android:id="@+id/cus_grade"
-                android:textColor="@color/lcim_common_gray"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="16dp"
-                android:text=""/>
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
             <TextView
-                android:id="@+id/cus_files_num"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_detal_msg"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textSize="16dp"
-                android:gravity="center"
-                android:textColor="@color/lcim_common_gray"
-                android:text=""/>
+                android:layout_weight="2"
+                android:background="#fff"
+                android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                android:gravity="center|left"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="详细信息"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <TextView
+                android:id="@+id/tv_baobiao"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:background="#fff"
+                android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                android:gravity="center|left"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="报表参数"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <TextView
+                android:id="@+id/tv_power"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:background="#fff"
+                android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                android:gravity="center|left"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="销售权限"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.5"
+                android:background="@color/weixin_lianxiren_gray"
+                android:gravity="center|left"
+                android:paddingLeft="10dp"
+                android:text="数据"
+                android:textSize="16dp" />
+
+            <LinearLayout
+                android:id="@+id/ll_have_cards_cus"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:background="#fff">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="8"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="持卡顾客"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_people_num"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:drawableRight="@mipmap/nav_to_message_arrow_dark"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/weixin_lianxiren_gray" />
+
+            <LinearLayout
+                android:id="@+id/ll_satisfy"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:background="#fff">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="8"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:text="满意率"
+                    android:textSize="16dp" />
+
+                <TextView
+                    android:id="@+id/tv_percent"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="center|left"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textSize="16dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8.5"
+                android:background="@color/weixin_lianxiren_gray" />
         </LinearLayout>
-    </LinearLayout>
-    <TextView
-        style="@style/message_spacing"
-        android:text="信息与设置"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <TextView
-        android:id="@+id/tv_detal_msg"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:paddingLeft="10dp"
-        android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-        android:paddingRight="10dp"
-        android:textSize="16dp"
-        android:gravity="center|left"
-        android:background="#fff"
-        android:text="详细信息"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <TextView
-        android:id="@+id/tv_baobiao"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:paddingLeft="10dp"
-        android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-        android:paddingRight="10dp"
-        android:textSize="16dp"
-        android:background="#fff"
-        android:gravity="center|left"
-        android:text="报表参数"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <TextView
-        android:id="@+id/tv_power"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:paddingLeft="10dp"
-        android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-        android:paddingRight="10dp"
-        android:background="#fff"
-        android:textSize="16dp"
-        android:gravity="center|left"
-        android:text="销售权限"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.5"
-        android:paddingLeft="10dp"
-        android:gravity="center|left"
-        android:text="数据"
-        android:textSize="16dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <LinearLayout
-        android:id="@+id/ll_have_cards_cus"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="#fff">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="8"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:textSize="16dp"
-            android:gravity="center|left"
-            android:text="持卡顾客"/>
-        <TextView
-            android:id="@+id/tv_people_num"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="match_parent"
-            android:paddingLeft="10dp"
-            android:drawableRight="@mipmap/nav_to_message_arrow_dark"
-            android:paddingRight="10dp"
-            android:textSize="16dp"
-            android:gravity="center|left"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/weixin_lianxiren_gray"/>
-    <LinearLayout
-        android:id="@+id/ll_satisfy"
-        android:layout_width="match_parent"
-        android:background="#fff"
-        android:layout_height="0dp"
-        android:layout_weight="2">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="8"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:paddingLeft="10dp"
-            android:gravity="center|left"
-            android:text="满意率"/>
-        <TextView
-            android:id="@+id/tv_percent"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="match_parent"
-            android:textSize="16dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:gravity="center|left"
-            android:text=""/>
-    </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="8.5"
-        android:background="@color/weixin_lianxiren_gray"/>
-    </LinearLayout>
+
         <include
             android:id="@+id/in_no_datas"
-            android:visibility="gone"
-            layout="@layout/incloud_no_datas"></include>
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
 
         <include
             android:id="@+id/in_loading_error"
-            android:visibility="gone"
-            layout="@layout/incloud_loading_error"></include>
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
 
     </FrameLayout>
 </LinearLayout>

@@ -33,6 +33,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import com.maibo.lvyongsheng.xianhui.constants.Constants;
 import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.fragment.OrderFormFragment;
+import com.maibo.lvyongsheng.xianhui.fragment.WorkAll_Fragment;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.myinterface.SampleMultiplePermissionListener;
@@ -53,7 +54,8 @@ public class MainActivity extends BaseFragment implements View.OnClickListener {
     private int mIndex;
     Fragment[] mFragments;
     ConversationListFragment converFragment;
-    ContactPersonFragment LianFragment;
+   // ContactPersonFragment LianFragment;
+    WorkAll_Fragment workAll_fragment;
     OrderFormFragment orderFormFragment;
     SettingFragment settingFragment;
     String apiURL, token;
@@ -173,7 +175,7 @@ public class MainActivity extends BaseFragment implements View.OnClickListener {
             case R.id.ll_order:
                 setIndexSelected(2);
                 selectImageResouse(imageview_msg, imageview_man, imageview_order, imageview_setting, 2);
-                selectTextColor(textview_order, textview_man, textview_msg,textview_setting);
+                selectTextColor(textview_order, textview_man, textview_msg, textview_setting);
                 break;
             case R.id.ll_setting:
                 setIndexSelected(3);
@@ -186,8 +188,8 @@ public class MainActivity extends BaseFragment implements View.OnClickListener {
     /**
      * 导航栏文字颜色选择器
      */
-    private void selectTextColor(TextView a, TextView b, TextView c,TextView d) {
-        a.setTextColor(getResources().getColor(R.color.colorLightYellow));
+    private void selectTextColor(TextView a, TextView b, TextView c, TextView d) {
+        a.setTextColor(getResources().getColor(R.color.main_color));
         b.setTextColor(getResources().getColor(R.color.gray_weixin));
         c.setTextColor(getResources().getColor(R.color.gray_weixin));
         d.setTextColor(getResources().getColor(R.color.gray_weixin));
@@ -198,27 +200,27 @@ public class MainActivity extends BaseFragment implements View.OnClickListener {
      */
     private void selectImageResouse(ImageView a, ImageView b, ImageView c, ImageView d, int e) {
         if (e == 0) {
-            a.setImageResource(R.drawable.msg_yes);
-            b.setImageResource(R.drawable.man_no);
-            c.setImageResource(R.drawable.setting_no);
-            d.setImageResource(R.drawable.setting_no);
+            a.setImageResource(R.drawable.messageicon_selected);
+            b.setImageResource(R.drawable.worklogo_normal3x);
+            c.setImageResource(R.drawable.ordericon_normal);
+            d.setImageResource(R.drawable.profileicon_normal);
         } else if (e == 1) {
-            a.setImageResource(R.drawable.msg_no);
-            b.setImageResource(R.drawable.man_yes);
-            c.setImageResource(R.drawable.setting_no);
-            d.setImageResource(R.drawable.setting_no);
+            a.setImageResource(R.drawable.messageicon_normal);
+            b.setImageResource(R.drawable.worklogo_selected3x);
+            c.setImageResource(R.drawable.ordericon_normal);
+            d.setImageResource(R.drawable.profileicon_normal);
 
         } else if (e == 2) {
-            a.setImageResource(R.drawable.msg_no);
-            b.setImageResource(R.drawable.man_no);
-            c.setImageResource(R.drawable.setting_yes);
-            d.setImageResource(R.drawable.setting_no);
+            a.setImageResource(R.drawable.messageicon_normal);
+            b.setImageResource(R.drawable.worklogo_normal3x);
+            c.setImageResource(R.drawable.ordericon_selected);
+            d.setImageResource(R.drawable.profileicon_normal);
 
         } else if (e == 3) {
-            a.setImageResource(R.drawable.msg_no);
-            b.setImageResource(R.drawable.man_no);
-            c.setImageResource(R.drawable.setting_no);
-            d.setImageResource(R.drawable.setting_yes);
+            a.setImageResource(R.drawable.messageicon_normal);
+            b.setImageResource(R.drawable.worklogo_normal3x);
+            c.setImageResource(R.drawable.ordericon_normal);
+            d.setImageResource(R.drawable.profileicon_selected);
         }
 
     }
@@ -226,20 +228,22 @@ public class MainActivity extends BaseFragment implements View.OnClickListener {
 
     private void initFragment() {
         converFragment = new ConversationListFragment();
-        LianFragment = new ContactPersonFragment();
+        //LianFragment = new ContactPersonFragment();
+        workAll_fragment=new WorkAll_Fragment();
         orderFormFragment = new OrderFormFragment();
         settingFragment = new SettingFragment();
 
         //添加到数组
-        mFragments = new Fragment[]{converFragment, LianFragment, orderFormFragment, settingFragment};
+        mFragments = new Fragment[]{converFragment, workAll_fragment, orderFormFragment, settingFragment};
 
         //开启事务
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         //添加首页
-        ft.add(R.id.tabcontent, LianFragment).commit();
+        ft.add(R.id.tabcontent, converFragment).commit();
         //默认设置为第1个
-        mIndex = 1;
-        setIndexSelected(1);
+        mIndex = 0;
+
+        setIndexSelected(0);
 
 
     }
@@ -249,6 +253,7 @@ public class MainActivity extends BaseFragment implements View.OnClickListener {
         if (mIndex == index) {
             return;
         }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         //隐藏
@@ -327,12 +332,12 @@ public class MainActivity extends BaseFragment implements View.OnClickListener {
 //        super.onAttachFragment(fragment);
         if (converFragment == null && fragment instanceof ConversationListFragment) {
             converFragment = (ConversationListFragment) fragment;
-        } else if (LianFragment == null && fragment instanceof ContactPersonFragment) {
-            LianFragment = (ContactPersonFragment) fragment;
+        } else if (workAll_fragment == null && fragment instanceof ContactPersonFragment) {
+            workAll_fragment = (WorkAll_Fragment) fragment;
         } else if (settingFragment == null && fragment instanceof SettingFragment) {
             settingFragment = (SettingFragment) fragment;
-        }else if (orderFormFragment==null&&fragment instanceof OrderFormFragment){
-            orderFormFragment= (OrderFormFragment) fragment;
+        } else if (orderFormFragment == null && fragment instanceof OrderFormFragment) {
+            orderFormFragment = (OrderFormFragment) fragment;
         }
     }
 

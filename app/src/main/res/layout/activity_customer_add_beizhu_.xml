@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_customer_add_beizhu_"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="#FFE2E2E2"
+    tools:context="com.maibo.lvyongsheng.xianhui.CustomerAddBeizhu_Activity">
+    <LinearLayout
+        android:id="@+id/ll_head"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/main_color">
+
+        <TextView
+            android:id="@+id/activity_customer_add_beizhu_text_back"
+            style="@style/bar_left"
+            android:text="返回" />
+
+        <TextView
+            android:id="@+id/activity_customer_add_beizhu_text_title"
+            style="@style/bar_center"
+            android:text="顾客信息" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:textColor="#fff"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="13px"
+                android:id="@+id/activity_customer_add_beizhu_text_change"
+                android:text="编辑"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/activity_customer_add_beizhu_xrecyclerview"
+        android:layout_weight="1"
+        >
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>

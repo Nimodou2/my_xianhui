@@ -33,7 +33,6 @@ import com.google.gson.reflect.TypeToken;
 import com.maibo.lvyongsheng.xianhui.App;
 import com.maibo.lvyongsheng.xianhui.PeopleMessageActivity;
 import com.maibo.lvyongsheng.xianhui.R;
-import com.maibo.lvyongsheng.xianhui.WorkActivity;
 import com.maibo.lvyongsheng.xianhui.adapter.CustomerAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.MyGridViewAdapter;
 import com.maibo.lvyongsheng.xianhui.constants.Constants;
@@ -43,7 +42,6 @@ import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntity;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntitys;
 import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
-import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -53,6 +51,8 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.Call;
+
+import static com.zhy.http.okhttp.OkHttpUtils.post;
 
 /**
  * Created by LYS on 2016/9/29.
@@ -139,7 +139,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         } else {
             list1.clear();
             list1 = list;
-            lv_customer_list.setAdapter(myAdapter = new CustomerAdapter(getContext(), list1, screenHeight));
+           lv_customer_list.setAdapter(myAdapter = new CustomerAdapter(getContext(), list1, 0));
         }
         lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -199,8 +199,11 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
         lv_customer_list.setOnRefreshListener(this);
 //        myAdapter=new CustomerAdapter(getContext(),list1);
         //屏幕高度
-        WorkActivity parentActivity = (WorkActivity) getActivity();
-        screenHeight = Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight();
+        /*WorkActivity parentActivity = (WorkActivity) getActivity();
+        screenHeight = Util.getScreenHeight(getContext()) - parentActivity.getStatusBarHeight();*/
+
+        //FourStep_Activity parent_activity= (FourStep_Activity) getActivity();
+       // screenHeight=Util.getScreenHeight(getContext()) - parent_activity.getStatusBarHeight();
 
         sp = getActivity().getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         sp_db = getActivity().getSharedPreferences("dataBase", Context.MODE_PRIVATE);
@@ -213,7 +216,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
             List<HelperCustomer> lc = gson.fromJson(dbHC, new TypeToken<List<HelperCustomer>>() {
             }.getType());
             Log.e("customer.size", lc.size() + "");
-            lv_customer_list.setAdapter(new CustomerAdapter(getContext(), lc, screenHeight));
+            lv_customer_list.setAdapter(new CustomerAdapter(getContext(), lc, 0));
         }
         myDialog = new MyProgressDialog(getActivity());
         dialog = new ProgressDialog(getActivity());
@@ -356,8 +359,7 @@ public class CustomerFragment extends Fragment implements WorkRefreshListView.On
 
     //获取筛选数据
     public void getChooseData(String org_id, String adviser_id, String vip_star, String arrival_time, final int isDialog) {
-        OkHttpUtils
-                .post()
+        post()
                 .url(apiURL + "/rest/employee/gethelpercustomerlistsearchinfo")
                 .addParams("token", token)
                 .addParams("org_id", org_id)

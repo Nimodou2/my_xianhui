@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="popuwindow_bar_bgm1_top">#ececeb</color>
+    <color name="popuwindow_bar_bgm1_btoom">#f3eaf1</color>
+
+    <color name="popuwindow_bar_bgm2_top">#e4e8ea</color>
+    <color name="popuwindow_bar_bgm2_btoom">#e3e8ea</color>
+
+    <color name="popuwindow_text">#1ba09d</color>
+
+    <color name="beizhu_gray">#E2E2E2</color>
+    <color name="gray_time">#FF848689</color>
+    <color name="noyanse">#50000000</color>
+    <color name="main_color_version2">#FF2F8FCA</color>
+    <color name="main_color_slow_version1">#FF6EA7CA</color>
     <color name="colorLightYellow">#D3B88D</color>
     <color name="colorDarkYello">#846048</color>
     <color name="colorOrange">#FD8001</color>
@@ -80,4 +93,31 @@
     <color name="text_orange">#FFED8520</color>
     <color name="half_black">#80ADADAD</color>
     <color name="order_text_color">#746464</color>
+    <color name="main_color">#2F8FCA</color>
+    <color name="order_slerct">#5D5D5D</color>
+    //浅色的
+    <color name="zhushou_bg_1">#FFE3756E</color>
+    <color name="zhushou_bg_2">#FFE78B55</color>
+    <color name="zhushou_bg_3">#FFEFBD41</color>
+    <color name="zhushou_bg_4">#FF1BD691</color>
+    <color name="zhushou_bg_5">#FF38D0D0</color>
+    <color name="zhushou_bg_6">#FF2F8FCA</color>
+    <color name="zhushou_bg_7">#FFB94FB7</color>
+
+    <color name="zhushou_text_1">#C36C66</color>
+    <color name="zhushou_text_2">#CC855C</color>
+    <color name="zhushou_text_3">#FECC52</color>
+    <color name="zhushou_text_4">#21B981</color>
+    <color name="zhushou_text_5">#1CAAAA</color>
+    <color name="zhushou_text_6">#176A9D</color>
+    <color name="zhushou_text_7">#B236AF</color>
+    //深色的
+    <color name="zhushou_bg2_1">#C36C66</color>
+    <color name="zhushou_bg2_2">#CC855C</color>
+    <color name="zhushou_bg2_3">#CC9F31</color>
+    <color name="zhushou_bg2_4">#21B981</color>
+    <color name="zhushou_bg2_5">#1CAAAA</color>
+    <color name="zhushou_bg2_6">#176A9D</color>
+    <color name="zhushou_bg2_7">#FF823181</color>
+    <color name="text_login_false">#cedde6</color>
 </resources>

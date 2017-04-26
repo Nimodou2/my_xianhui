@@ -36,12 +36,14 @@ import butterknife.Bind;
 import cn.leancloud.chatkit.LCChatKit;
 import cn.leancloud.chatkit.LCChatKitUser;
 import cn.leancloud.chatkit.cache.LCIMConversationItemCache;
+import de.greenrobot.event.EventBus;
 import okhttp3.Call;
 
 /**
  * Created by LYS on 2016/9/23.
  */
 public class IDNumberActivity extends BaseActivity {
+    private static final String TAG="IDNumberActivity";
     TextView phoneNumber, time;
     EditText IDNumber;
     TextView btn, back;
@@ -68,6 +70,7 @@ public class IDNumberActivity extends BaseActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:
+                    Log.e(TAG,"执行到了这里handleMessage");
                     final String guID = (String) msg.obj;
                     loginApp(guID);
                     break;
@@ -80,9 +83,11 @@ public class IDNumberActivity extends BaseActivity {
      * @param guID
      */
     private void loginApp(final String guID) {
+        Log.e(TAG,"执行到了这里loginApp");
         //预加载
         LCChatKit.getInstance().setProfileProvider(CustomUserProvider.getInstance());
-        AVIMClient currentClient = AVIMClient.getInstance(guID, "Mobile");
+       // AVIMClient currentClient = AVIMClient.getInstance(guID, "Mobile");
+        AVIMClient currentClient = AVIMClient.getInstance(guID);
         currentClient.open(new AVIMClientCallback() {
             @Override
             public void done(AVIMClient avimClient, AVIMException e) {
@@ -91,6 +96,7 @@ public class IDNumberActivity extends BaseActivity {
                         @Override
                         public void done(AVIMClient avimClient, AVIMException e) {
                             if (e == null) {
+                                Log.e(TAG,"执行了预加载中的");
                                 ServiceDatas serviceDatas = new ServiceDatas(getApplicationContext());
                                 serviceDatas.getConversationIDFromService();
                             } else {
@@ -100,23 +106,25 @@ public class IDNumberActivity extends BaseActivity {
                     });
 
                 } else {
+                    Log.e(TAG,"执行了错误loginApp");
                     App.showToast(getApplicationContext(), e.getMessage() + "");
                 }
             }
         });
+
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_id_number);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         dialog = new ProgressDialog(this);
         dialog.setMessage("加载中...");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setCancelable(true);
         dialog.setIndeterminate(false);
-
+        EventBus.getDefault().register(this);
         phoneNumber = (TextView) findViewById(R.id.tv_pnNmber);
         time = (TextView) findViewById(R.id.tv_daojishi);
         back = (TextView) findViewById(R.id.back);
@@ -187,7 +195,7 @@ public class IDNumberActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        //Log.e("登录成功",response);
+                        Log.e("登录成功",response);
                         SharedPreferences.Editor editor = sp.edit();
                         SharedPreferences.Editor editor1 = sp1.edit();
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
@@ -206,7 +214,8 @@ public class IDNumberActivity extends BaseActivity {
                             JsonObject agent_info=data.get("agent_info").getAsJsonObject();
                             String agent_id=agent_info.get("agent_id").getAsString();
                             String agent_name=agent_info.get("agent_name").getAsString();
-                            editor.commit();
+                            Log.e(TAG,"执行到了这里");
+                           // editor.commit();
                             if (init_login_password == 0) {
                                 //保存登录成功状态、基础数据
                                 editor.putString("userName", number);
@@ -223,7 +232,9 @@ public class IDNumberActivity extends BaseActivity {
                                 editor.putString("agent_name",agent_name);
                                 editor.commit();
                                 editor1.commit();
+                                Log.e(TAG,"执行到了这里getMyCustomerList");
                                 getMyCustomerList(apiURL, token, displayname, guID);
+
                             } else {
                                 Intent intent = new Intent(IDNumberActivity.this, UpdataPasswordActivity.class);
                                 intent.putExtra("userName", displayname);
@@ -330,23 +341,29 @@ public class IDNumberActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         //获取员工信息
-//                Log.e("getUserList:",response);
+                        Log.e("getUserList:", response);
                         CustomUserProvider.getInstance().partUsers.clear();
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
-                        JsonArray array = object.get("data").getAsJsonArray();
-                        for (JsonElement jsonElement : array) {
-                            JsonObject jObject = jsonElement.getAsJsonObject();
-                            String names = jObject.get("display_name").getAsString();
-                            String guid = jObject.get("guid").getAsString();
-                            String avator_url = jObject.get("avator_url").getAsString();
-                            CustomUserProvider.getInstance().partUsers.add(new LCChatKitUser(guid, names, avator_url));
+                        if (object.get("status").getAsString().equals("ok")) {
+                            Log.e(TAG,"执行到了这里getMyCustomerListobject.get(\"status\").getAsString().equals(\"ok\")");
+                            JsonArray array = object.get("data").getAsJsonArray();
+                            for (JsonElement jsonElement : array) {
+                                JsonObject jObject = jsonElement.getAsJsonObject();
+                                String names = jObject.get("display_name").getAsString();
+                                String guid = jObject.get("guid").getAsString();
+                                String avator_url = jObject.get("avator_url").getAsString();
+                                CustomUserProvider.getInstance().partUsers.add(new LCChatKitUser(guid, names, avator_url));
+                            }
+                            Log.e(TAG,"执行到了这里Message");
+                            Message msg = Message.obtain();
+                            msg.what = 0;
+                            msg.arg1 = 0;
+                            msg.obj = guid;
+                            handler.sendMessage(msg);
+
+                        }else{
+                            Log.e(TAG,"获取1员工信息出错");
                         }
-                        Message msg = Message.obtain();
-                        msg.what = 0;
-                        msg.arg1 = 0;
-                        msg.obj = guid;
-                        handler.sendMessage(msg);
-                        dialog.dismiss();
                     }
                 });
     }
@@ -399,6 +416,7 @@ public class IDNumberActivity extends BaseActivity {
             showProgressDialog(list_conver.size());
             uploadDatasToStorage(list_conver);
         } else {
+            dialog.dismiss();
             finish();
             Intent intent = new Intent(IDNumberActivity.this, MainActivity.class);
             startActivity(intent);
@@ -456,5 +474,11 @@ public class IDNumberActivity extends BaseActivity {
         // 设置ProgressDialog 是否可以按退回按键取消
         pdDialog.setCancelable(false);
         pdDialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

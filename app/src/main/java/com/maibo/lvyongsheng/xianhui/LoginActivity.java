@@ -2,6 +2,7 @@ package com.maibo.lvyongsheng.xianhui;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +10,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -25,10 +27,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.maibo.lvyongsheng.xianhui.constants.Constants;
-import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
-import com.maibo.lvyongsheng.xianhui.serviceholdermessage.ServiceDatas;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -44,7 +43,7 @@ import okhttp3.Call;
 /**
  * 登陆页面
  */
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     protected EditText nameView, passwordView;
     protected TextView loginButton;
@@ -61,7 +60,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @Bind(R.id.iv_icon)
     ImageView iv_icon;
     ProgressDialog pdDialog;
-
+    private boolean password_Edit=false;
+    private boolean username_Edit=false;
     int number = 0;
     int isSuccess;
 
@@ -98,7 +98,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        adapterLitterBar(ll_head);
+//        adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
         //适配界面
@@ -111,7 +111,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         //判断登录状态
         isSuccess = sp.getInt("success", 0);
         String guid = sp.getString("guid", null);
-
         //已成功登录
         if (isSuccess == 1) {
             ll_logig_interface.setVisibility(View.INVISIBLE);
@@ -151,6 +150,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
+
+
+
     /**
      * 初始化View
      */
@@ -164,14 +166,58 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
         sp = getSharedPreferences("baseDate", MODE_PRIVATE);
         sp1 = getSharedPreferences("changeAccount", MODE_PRIVATE);
+
         nameView = (EditText) findViewById(R.id.activity_login_et_username);
         passwordView = (EditText) findViewById(R.id.activity_login_et_password);
+        nameView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length()> 0) {//限制长度
+                    username_Edit=true;
+                } else {
+                    username_Edit=false;
+                }
+                if(username_Edit&&password_Edit){
+                    btnLogin.setEnabled(true);
+                }else {
+                    btnLogin.setEnabled(false);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        passwordView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length()> 0) {//限制长度
+                    password_Edit=true;
+                } else {
+                    password_Edit=false;
+                }
+                if(username_Edit&&password_Edit){
+                    btnLogin.setEnabled(true);
+                }else {
+                    btnLogin.setEnabled(false);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
         tv_back = (TextView) findViewById(R.id.tv_back);
         tv_back.setOnClickListener(this);
         nameView.setHintTextColor(Color.rgb(186, 186, 188));
         passwordView.setHintTextColor(Color.rgb(186, 186, 188));
         loginButton = (TextView) findViewById(R.id.activity_login_btn_login);
         btnLogin = (TextView) findViewById(R.id.btn_login);
+        btnLogin.setEnabled(false);
         ll_logig_interface = (LinearLayout) findViewById(R.id.ll_logig_interface);
         tv_change_shop = (LinearLayout) findViewById(R.id.tv_change_shop);
         ll_logig_interface.setVisibility(View.VISIBLE);
@@ -213,7 +259,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     public void onResponse(String response, int id) {
                         SharedPreferences.Editor editor = sp.edit();
                         SharedPreferences.Editor editor1 = sp1.edit();
-//                        Log.e("LoginActivity",response);
                         //登录判断
                         JsonObject obj = new JsonParser().parse(response).getAsJsonObject();
                         String status = obj.get("status").getAsString().trim();
@@ -242,12 +287,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             String avator_url = data.get("avator_url").getAsString();
                             int init_login_password = data.get("init_login_password").getAsInt();
                             String displayname = data.get("display_name").getAsString();
-                            JsonObject agent_info=data.get("agent_info").getAsJsonObject();
-                            String agent_id=agent_info.get("agent_id").getAsString();
-                            String agent_name=agent_info.get("agent_name").getAsString();
+                            JsonObject agent_info = data.get("agent_info").getAsJsonObject();
+                            String agent_id = agent_info.get("agent_id").getAsString();
+                            String agent_name = agent_info.get("agent_name").getAsString();
                             if (init_login_password == 0) {
                                 //保存登录成功状态、基础数据
-                                //Log.e("普通登录:",response);
                                 editor.putString("userName", name);
                                 editor.putString("password", password);
                                 editor1.putString("userName", name);
@@ -258,8 +302,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 editor.putString("guid", guID);
                                 editor.putString("avator_url", avator_url);
                                 editor.putString("displayname", displayname);
-                                editor.putString("agent_id",agent_id);
-                                editor.putString("agent_name",agent_name);
+                                editor.putString("agent_id", agent_id);
+                                editor.putString("agent_name", agent_name);
                                 editor.commit();
                                 editor1.commit();
                                 getMyCustomerList(apiURL, token, displayname, guID);
@@ -288,7 +332,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         final String[] buffer = str.split(",");
         //预加载
         LCChatKit.getInstance().setProfileProvider(CustomUserProvider.getInstance());
-        AVIMClient currentClient = AVIMClient.getInstance(buffer[0], "Mobile");
+        AVIMClient currentClient = AVIMClient.getInstance(buffer[0]);
         currentClient.open(new AVIMClientCallback() {
             @Override
             public void done(AVIMClient avimClient, AVIMException e) {
@@ -300,8 +344,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 /////////////////
                                 if (isSuccess == 0) {
                                     //获取conversation_id
-                                    ServiceDatas serviceDatas = new ServiceDatas(getApplicationContext());
-                                    serviceDatas.getConversationIDFromService();
+                                    getConversationIDFromService();
                                 } else {
                                     finish();
                                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -395,9 +438,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         //获取员工信息
                         CustomUserProvider.getInstance().partUsers.clear();
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
-                        String status=object.get("status").getAsString();
-                        String message=object.get("message").getAsString();
-                        if (status.equals("ok")){
+                        String status = object.get("status").getAsString();
+                        String message = object.get("message").getAsString();
+                        if (status.equals("ok")) {
                             JsonArray array = object.get("data").getAsJsonArray();
                             for (JsonElement jsonElement : array) {
                                 JsonObject jObject = jsonElement.getAsJsonObject();
@@ -405,14 +448,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                                 String guid = jObject.get("guid").getAsString();
                                 String avator_url = jObject.get("avator_url").getAsString();
                                 CustomUserProvider.getInstance().partUsers.add(new LCChatKitUser(guid, names, avator_url));
-
                             }
                             Message msg = Message.obtain();
                             msg.what = 1;
                             msg.arg1 = 0;
                             msg.obj = guid + "," + apiURL + "," + token;
                             handler.sendMessage(msg);
-                        }else{
+                        } else {
                             showToast(message);
                         }
                     }
@@ -423,30 +465,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     protected void onDestroy() {
         super.onDestroy();
         CloseAllActivity.getScreenManager().popActivity(this);
-
-    }
-
-    /**
-     * 获取会话ID
-     *
-     * @param event
-     */
-    public void onEvent(EventDatas event) {
-        Log.e("Login","event");
-
-        if (event.getTag().equals(Constants.GET_CONVERSATION_ID)) {
-            if (event.getMessageStatus().equals("error")) {
-                showToast(R.string.net_connect_error);
-            } else if (event.getMessageStatus().equals("right")) {
-                String response = event.getResponse();
-                //解析数据
-                analysisConversationDate(response);
-            } else if (event.getMessageStatus().equals("message")) {
-                showToast(event.getResponse());
-            }
-
-        }
-
     }
 
     /**
@@ -481,6 +499,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     /**
      * 加载聊天记录到内存和数据库
+     *
      * @param list_conver
      */
     private void uploadDatasToStorage(final List<String> list_conver) {
@@ -511,10 +530,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     /**
      * 展示带进度的进度条
+     *
      * @param max
      */
     private void showProgressDialog(int max) {
-        Log.e("max", max + "");
         pdDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         pdDialog.setTitle("提示");
         pdDialog.setMessage("正在加载数据……");
@@ -524,5 +543,45 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         // 设置ProgressDialog 是否可以按退回按键取消
         pdDialog.setCancelable(false);
         pdDialog.show();
+    }
+
+
+    /**
+     * 获取当前client对象的会话ID
+     */
+    public void getConversationIDFromService() {
+        SharedPreferences sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
+        String apiURL = sp.getString("apiURL", null);
+        String token = sp.getString("token", null);
+        OkHttpUtils
+                .post()
+                .url(apiURL + "/rest/employee/getconversationlist")
+                .addParams("token", token)
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showToast(R.string.net_connect_error);
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                        String status = "";
+                        String message = "";
+                        if (!jsonObject.get("status").isJsonNull())
+                            status = jsonObject.get("status").getAsString();
+                        if (!jsonObject.get("message").isJsonNull())
+                            message = jsonObject.get("message").getAsString();
+                        if (status.equals("ok")) {
+                            //解析数据
+                            analysisConversationDate(response);
+
+                        } else {
+                            showToast(message);
+                        }
+                    }
+                });
     }
 }

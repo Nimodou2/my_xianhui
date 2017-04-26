@@ -80,7 +80,7 @@ public class ReservationInformationActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_yuyue_message);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         rv_yuyue = (RecyclerView) findViewById(R.id.rv_yuyue);
         back = (TextView) findViewById(R.id.back);

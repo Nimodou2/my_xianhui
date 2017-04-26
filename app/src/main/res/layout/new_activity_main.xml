@@ -11,44 +11,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"></FrameLayout>
 
-    <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical">-->
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="1dp"-->
-    <!--android:background="#D1D1D1"/>-->
-    <!--<RadioGroup-->
-    <!--android:id="@+id/rg_menu"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="50dp"-->
-    <!--android:background="@color/colorLightYellow"-->
-    <!--android:orientation="horizontal" >-->
-
-    <!--<RadioButton-->
-    <!--android:id="@+id/button1"-->
-    <!--style="@style/RadioButtonStyle"-->
-    <!--android:drawableTop="@drawable/select_msg"-->
-    <!--android:text="会话"-->
-    <!--/>-->
-
-    <!--<RadioButton-->
-    <!--android:id="@+id/button2"-->
-    <!--style="@style/RadioButtonStyle"-->
-    <!--android:drawableTop="@drawable/select_man"-->
-    <!--android:text="联系人"-->
-    <!--android:checked="true"-->
-    <!--/>-->
-
-    <!--<RadioButton-->
-    <!--android:id="@+id/button3"-->
-    <!--style="@style/RadioButtonStyle"-->
-    <!--android:drawableTop="@drawable/select_setting"-->
-    <!--android:text="设置" />-->
-
-    <!--</RadioGroup>-->
-    <!--</LinearLayout>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,14 +41,14 @@
                     android:layout_height="30dp"
                     android:focusable="false"
                     android:padding="3dp"
-                    android:src="@drawable/msg_no"></ImageView>
+                    android:src="@drawable/messageicon_selected"></ImageView>
 
                 <TextView
                     android:id="@+id/textview_msg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="会话"
-                    android:textColor="@color/gray_weixin"
+                    android:text="消息"
+                    android:textColor="@color/main_color"
                     android:textSize="12sp"></TextView>
 
             </LinearLayout>
@@ -105,14 +67,14 @@
                     android:layout_height="30dp"
                     android:focusable="false"
                     android:padding="3dp"
-                    android:src="@drawable/man_yes"></ImageView>
+                    android:src="@drawable/worklogo_normal3x"></ImageView>
 
                 <TextView
                     android:id="@+id/textview_man"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="联系人"
-                    android:textColor="@color/colorLightYellow"
+                    android:text="工作"
+                    android:textColor="@color/gray_weixin"
                     android:textSize="12sp"></TextView>
 
             </LinearLayout>
@@ -131,7 +93,7 @@
                     android:layout_height="30dp"
                     android:focusable="false"
                     android:padding="3dp"
-                    android:src="@drawable/setting_no"></ImageView>
+                    android:src="@drawable/ordericon_normal"></ImageView>
 
                 <TextView
                     android:id="@+id/textview_order"
@@ -157,7 +119,7 @@
                     android:layout_height="30dp"
                     android:focusable="false"
                     android:padding="3dp"
-                    android:src="@drawable/setting_no"></ImageView>
+                    android:src="@drawable/profileicon_normal"></ImageView>
 
                 <TextView
                     android:id="@+id/textview_setting"

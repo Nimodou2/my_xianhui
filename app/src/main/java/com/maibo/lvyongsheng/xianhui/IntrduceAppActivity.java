@@ -42,7 +42,7 @@ public class IntrduceAppActivity extends BaseActivity implements View.OnClickLis
      * 初始化View
      */
     private void initView() {
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         back.setOnClickListener(this);
         tv_intrduce_function.setOnClickListener(this);
         tv_system_nitofication.setOnClickListener(this);

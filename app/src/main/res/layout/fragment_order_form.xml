@@ -6,7 +6,7 @@
     android:orientation="vertical">
     <LinearLayout
         android:id="@id/ll_head"
-        android:background="@color/bar_color"
+        android:background="@color/main_color"
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <TextView
@@ -25,13 +25,13 @@
         <TextView
             android:id="@+id/tv_unfinish"
             style="@style/WorkActivityHeadStyle"
-            android:textColor="@color/textcolor3"
+            android:textColor="@color/main_color_version2"
             android:text="未完成" />
 
         <TextView
             android:id="@+id/tv_finish"
             style="@style/WorkActivityHeadStyle"
-            android:textColor="@color/textcolor4"
+            android:textColor="@color/order_slerct"
             android:text="已完成" />
 
     </LinearLayout>
@@ -41,7 +41,7 @@
         android:layout_width="100dp"
         android:layout_height="2dp"
         android:layout_below="@+id/tab"
-        android:background="@color/textcolor3"></ImageView>
+        android:background="@color/main_color_version2"></ImageView>
     <TextView
         android:id="@+id/tv_blad"
         android:layout_below="@+id/iv_over"

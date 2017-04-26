@@ -2,7 +2,6 @@ package com.maibo.lvyongsheng.xianhui.serviceholdermessage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -25,8 +24,8 @@ public class ServiceDatas {
     String apiURL;
     String token;
 
-    public ServiceDatas(Context context){
-        this.context=context;
+    public ServiceDatas(Context context) {
+        this.context = context;
         sp = context.getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
@@ -35,11 +34,11 @@ public class ServiceDatas {
     /**
      * 获取新手通知
      */
-    public void getSendNoviceTutorialNotice(){
+    public void getSendNoviceTutorialNotice() {
         OkHttpUtils
                 .post()
-                .url(apiURL+"/rest/employee/sendnovicetutorialnotice")
-                .addParams("token",token)
+                .url(apiURL + "/rest/employee/sendnovicetutorialnotice")
+                .addParams("token", token)
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -49,7 +48,7 @@ public class ServiceDatas {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        EventDatas eventDatas=new EventDatas(Constants.SEND_NOVICE_TUTORIAL_NOTICE,response);
+                        EventDatas eventDatas = new EventDatas(Constants.SEND_NOVICE_TUTORIAL_NOTICE, response);
                         EventBus.getDefault().post(eventDatas);
                     }
                 });
@@ -57,6 +56,7 @@ public class ServiceDatas {
 
     /**
      * 上传当前client对象的会话ID
+     *
      * @param conv_id
      */
     public void uploadConversationIdToService(String conv_id) {
@@ -69,23 +69,24 @@ public class ServiceDatas {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        EventDatas eventDatas=new EventDatas(Constants.UPLOAD_CONVERSAYION_ID,"error");
+                        EventDatas eventDatas = new EventDatas(Constants.UPLOAD_CONVERSAYION_ID, "error");
                         EventBus.getDefault().post(eventDatas);
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        JsonObject jsonObject=new JsonParser().parse(response).getAsJsonObject();
-                        String status="";String message="";
+                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                        String status = "";
+                        String message = "";
                         if (!jsonObject.get("status").isJsonNull())
-                            status=jsonObject.get("status").getAsString();
+                            status = jsonObject.get("status").getAsString();
                         if (!jsonObject.get("message").isJsonNull())
-                            message=jsonObject.get("message").getAsString();
-                        if (status.equals("ok")){
-                            EventDatas eventDatas=new EventDatas(Constants.UPLOAD_CONVERSAYION_ID,"right");
+                            message = jsonObject.get("message").getAsString();
+                        if (status.equals("ok")) {
+                            EventDatas eventDatas = new EventDatas(Constants.UPLOAD_CONVERSAYION_ID, "right");
                             EventBus.getDefault().post(eventDatas);
-                        }else{
-                            EventDatas eventDatas=new EventDatas(Constants.UPLOAD_CONVERSAYION_ID,message);
+                        } else {
+                            EventDatas eventDatas = new EventDatas(Constants.UPLOAD_CONVERSAYION_ID, message);
                             EventBus.getDefault().post(eventDatas);
                         }
                     }
@@ -104,14 +105,13 @@ public class ServiceDatas {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                            EventDatas eventDatas=new EventDatas(Constants.GET_CONVERSATION_ID,"error","");
-                            EventBus.getDefault().post(eventDatas);
+                        EventDatas eventDatas = new EventDatas(Constants.GET_CONVERSATION_ID, "error", "");
+                        EventBus.getDefault().post(eventDatas);
 
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("Service",response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String status = "";
                         String message = "";
@@ -120,12 +120,12 @@ public class ServiceDatas {
                         if (!jsonObject.get("message").isJsonNull())
                             message = jsonObject.get("message").getAsString();
                         if (status.equals("ok")) {
-                                EventDatas eventDatas=new EventDatas(Constants.GET_CONVERSATION_ID,"right",response);
-                                EventBus.getDefault().post(eventDatas);
+                            EventDatas eventDatas = new EventDatas(Constants.GET_CONVERSATION_ID, "right", response);
+                            EventBus.getDefault().post(eventDatas);
 
                         } else {
-                                EventDatas eventDatas=new EventDatas(Constants.GET_CONVERSATION_ID,"message",message);
-                                EventBus.getDefault().post(eventDatas);
+                            EventDatas eventDatas = new EventDatas(Constants.GET_CONVERSATION_ID, "message", message);
+                            EventBus.getDefault().post(eventDatas);
                         }
                     }
                 });

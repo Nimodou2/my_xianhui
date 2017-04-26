@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_four_step_"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context="com.maibo.lvyongsheng.xianhui.FourStep_Activity">
+    <LinearLayout
+        android:id="@+id/fourstep_activity_headlinearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@color/main_color">
+
+        <TextView
+            android:id="@+id/fourstep_activity_text_back"
+            style="@style/bar_left"
+            android:text="返回" />
+
+        <TextView
+            android:id="@+id/fourstep_activity_text_title"
+            style="@style/bar_center"
+            android:layout_weight="0.5"
+            android:text="工作" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/fourstep_activity_image_choose_date"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:src="@mipmap/icon_date" />
+
+            <ImageView
+                android:id="@+id/fourstep_activity_image_search"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:src="@mipmap/search" />
+
+            <ImageView
+                android:id="@+id/fourstep_activity_image_choose"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="12dp"
+                android:src="@mipmap/choose" />
+        </LinearLayout>
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/fourstep_activity_framelayout_fragment_include"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/fourstep_activity_linearlayout_fragment_include"
+            >
+        </LinearLayout>
+        <include
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
+
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
+    </FrameLayout>
+
+</LinearLayout>

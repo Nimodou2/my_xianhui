@@ -3,6 +3,7 @@ package com.maibo.lvyongsheng.xianhui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,12 +26,12 @@ public class IdentifyActivity extends BaseActivity {
     TextView tv,back;
     @Bind(R.id.ll_head)
     LinearLayout ll_head;
-
+    private static final String TAG="IdentifyActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_identify);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
 
         CloseAllActivity.getScreenManager().pushActivity(this);
 
@@ -87,6 +88,7 @@ public class IdentifyActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
+                        Log.e(TAG," 短信验证的返回结果"+response);
                     }
                });
     }

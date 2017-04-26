@@ -71,7 +71,7 @@ public class AllMessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_message);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         setSingleViewHeightAndWidth(tv_spacing, viewHeight * 15 / 255, 0);
         setSingleViewHeightAndWidth(ll_head_message, viewHeight * 40 / 255, 0);
         CloseAllActivity.getScreenManager().pushActivity(this);

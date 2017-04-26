@@ -128,7 +128,7 @@ public class NewBuildTaskActivity extends BaseActivity implements View.OnClickLi
     private void initView() {
         setContentView(R.layout.activity_new_build_task);
 
-        adapterLitterBar(ll_head);
+       // adapterLitterBar(ll_head);
         scroll_view.smoothScrollTo(0,20);
         CloseAllActivity.getScreenManager().pushActivity(this);
         myDialog = new MyProgressDialog(this);
@@ -420,7 +420,10 @@ public class NewBuildTaskActivity extends BaseActivity implements View.OnClickLi
         intent.putExtras(bundle);
         startActivityForResult(intent, ma);
     }
+    //设置时间的方法
+    public void setDataWithDatePicker(){
 
+    }
     /**
      * 设置开始和结束时间
      */

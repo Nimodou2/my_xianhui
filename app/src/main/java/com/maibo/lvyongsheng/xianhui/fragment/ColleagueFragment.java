@@ -30,7 +30,6 @@ import com.maibo.lvyongsheng.xianhui.AllMessageActivity;
 import com.maibo.lvyongsheng.xianhui.App;
 import com.maibo.lvyongsheng.xianhui.OrderActivity;
 import com.maibo.lvyongsheng.xianhui.R;
-import com.maibo.lvyongsheng.xianhui.WorkActivity;
 import com.maibo.lvyongsheng.xianhui.adapter.ColleagueAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.MyGridViewAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.Employee;
@@ -38,7 +37,6 @@ import com.maibo.lvyongsheng.xianhui.entity.Order;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntity;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntitys;
 import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
-import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -97,7 +95,7 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
                    }else{
                        list1.clear();
                        list1=list;
-                       lv_customer_list.setAdapter(myAdapter=new ColleagueAdapter(getContext(),list1,screenHeight));
+                       lv_customer_list.setAdapter(myAdapter=new ColleagueAdapter(getContext(),list1,0));
                    }
                    lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                        @Override
@@ -163,8 +161,10 @@ public class ColleagueFragment extends Fragment implements WorkRefreshListView.O
         list1=new ArrayList<>();
         myDialog=new MyProgressDialog(getActivity());
         //屏幕高度
-        WorkActivity parentActivity= (WorkActivity) getActivity();
-        screenHeight= Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight();
+     /*   WorkActivity parentActivity= (WorkActivity) getActivity();
+        screenHeight= Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight();*/
+//        FourStep_Activity parent_activity= (FourStep_Activity) getActivity();
+      //  screenHeight=Util.getScreenHeight(getContext()) - parent_activity.getStatusBarHeight();
 //        WindowManager.LayoutParams params=myDialog.getWindow().getAttributes();
 ////        params.y=50;
 ////        params.x=50;

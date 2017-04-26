@@ -36,7 +36,6 @@ import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.App;
 import com.maibo.lvyongsheng.xianhui.ProjectMessageActivity;
 import com.maibo.lvyongsheng.xianhui.R;
-import com.maibo.lvyongsheng.xianhui.WorkActivity;
 import com.maibo.lvyongsheng.xianhui.adapter.MyGridViewAdapter;
 import com.maibo.lvyongsheng.xianhui.adapter.ProjectAdapter;
 import com.maibo.lvyongsheng.xianhui.entity.Order;
@@ -44,7 +43,6 @@ import com.maibo.lvyongsheng.xianhui.entity.Project;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntity;
 import com.maibo.lvyongsheng.xianhui.entity.SelectEntitys;
 import com.maibo.lvyongsheng.xianhui.implement.MyProgressDialog;
-import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.view.WorkRefreshListView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -101,7 +99,7 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
                     }else{
                         list1.clear();
                         list1=list;
-                        lv_customer_list.setAdapter(myAdapter=new ProjectAdapter(getContext(),list1,screenHeight));
+                        lv_customer_list.setAdapter(myAdapter=new ProjectAdapter(getContext(),list1,0));
                     }
                     lv_customer_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
@@ -111,6 +109,7 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
                             Intent intent=new Intent(getActivity(),ProjectMessageActivity.class);
                             intent.putExtra("project_id",project_id);
                             intent.putExtra("projectName",project_name);
+                            intent.putExtra("type",1);//项目的type为1
                             startActivity(intent);
                         }
                     });
@@ -154,8 +153,11 @@ public class ProjectFragment extends Fragment implements WorkRefreshListView.OnR
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_customer,container,false);
         //屏幕高度
-        WorkActivity parentActivity= (WorkActivity) getActivity();
-        screenHeight= Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight();
+/*        WorkActivity parentActivity= (WorkActivity) getActivity();
+        screenHeight= Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight();*/
+
+       // FourStep_Activity parent_activity= (FourStep_Activity) getActivity();
+      //  screenHeight=Util.getScreenHeight(getContext()) - parent_activity.getStatusBarHeight();
 
         list1=new ArrayList<>();
         myDialog=new MyProgressDialog(getActivity());

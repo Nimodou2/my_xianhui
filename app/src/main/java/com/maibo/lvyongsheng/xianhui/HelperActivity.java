@@ -3,22 +3,27 @@ package com.maibo.lvyongsheng.xianhui;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.avos.avoscloud.LogUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.Notice;
+import com.maibo.lvyongsheng.xianhui.helperutils.StringChange_Helper;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
 import com.maibo.lvyongsheng.xianhui.view.RefreshListView;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -35,7 +40,8 @@ import okhttp3.Call;
  * Created by LYS on 2016/9/11.
  */
 public class HelperActivity extends BaseActivity implements RefreshListView.OnRefreshListener {
-
+    private static final String TAG="HelperActivity";
+    private StringChange_Helper stringChange_helper=StringChange_Helper.getInstance();
     private RefreshListView lv_zhushou;
     SharedPreferences sp;
     String apiURL;
@@ -90,8 +96,15 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                         lv_zhushou.setAdapter(adapter = new MyAdapter(data2));
                     }
                     data3.addAll(0, data);
+                    //这里可以设置延迟完成
+                    Message message=Message.obtain();
+                    message.what=2;
+                    handler.sendMessageDelayed(message,1000);
+                    break;
+                case 2:
                     lv_zhushou.completeRefresh();
                     break;
+                default:break;
             }
         }
     };
@@ -114,9 +127,11 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                         //跳到日报表
                         Intent intent = new Intent(HelperActivity.this, DayTabActivity.class);
                         intent.putExtra("notice_id", data2.get(i - 1).getNotice_id());
-                        intent.putExtra("org_id", data2.get(i - 1).getOrg_id());
+                        intent.putExtra("org_id", data2.get(i - 1).getOrg_id()+"");
+                        Log.e(TAG,"传过去的org_id"+data2.get(i - 1).getOrg_id());
                         intent.putExtra("org_name", data2.get(i - 1).getOrg_name());
-                        intent.putExtra("create_time", data2.get(i - 1).getCreat_time());
+                        intent.putExtra("create_time", data2.get(i - 1).getCreate_time());
+                        intent.putExtra("color_id",Integer.parseInt(data2.get(i-1).getWeek()));
                         startActivity(intent);
                     } else if (data2.get(i - 1).getNotice_type().equals("project_plan")) {
                         //跳到项目计划
@@ -131,15 +146,20 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
     private void initView() {
         setContentView(R.layout.activity_zhu_shou);
         CloseAllActivity.getScreenManager().pushActivity(this);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
 
         //记录之前的Activity
         CloseAllActivity.getScreenManager().pushActivity(new MainActivity());
         lv_zhushou = (RefreshListView) findViewById(R.id.lv_zhushou);
+        lv_zhushou.setSelector(new ColorDrawable());//
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
         token = sp.getString("token", null);
-//        Log.e("token",token);
+
+        LogUtil.log.e("测试头"+apiURL);
+        Log.e("token",token);
+
+
         data2 = new ArrayList<>();
         data3 = new ArrayList<>();
         showLongDialog();
@@ -159,7 +179,7 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
         if (whatItem != -1) {
             data2.clear();
             Notice notice = new Notice(whatNotice.getNotice_id(), whatNotice.getNotice_type(), whatNotice.getSubject(), whatNotice.getBody(),
-                    whatNotice.getCreat_time(), 1, whatNotice.getExtra_id(), whatNotice.getOrg_name(), whatNotice.getOrg_id());
+                    whatNotice.getCreate_time(), 1, whatNotice.getExtra_id(), whatNotice.getOrg_id(), whatNotice.getOrg_name(),whatNotice.getWeek(),whatNotice.getWeek_text(),"");
             for (int i = 0; i < data3.size(); i++) {
                 if (i == whatItem - 1) {
                     data2.add(notice);
@@ -240,7 +260,9 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                 int status = -1;
                 String extra_id = "";
                 String org_name = "";
-                String org_id = "";
+                int org_id = -1;
+                String week="";
+                String week_text="";
                 if (!jsonObject.get("notice_id").isJsonNull())
                     notice_id = jsonObject.get("notice_id").getAsInt();
                 if (!jsonObject.get("notice_type").isJsonNull())
@@ -258,8 +280,12 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                 if (!jsonObject.get("org_name").isJsonNull())
                     org_name = jsonObject.get("org_name").getAsString();
                 if (!jsonObject.get("org_id").isJsonNull())
-                    org_id = jsonObject.get("org_id").getAsString();
-                data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id, org_name, org_id));
+                    org_id = jsonObject.get("org_id").getAsInt();
+                if(!jsonObject.get("week").isJsonNull())
+                    week=jsonObject.get("week").getAsString();
+                if(!jsonObject.get("week_text").isJsonNull())
+                    week_text=jsonObject.get("week_text").getAsString();
+                data1.add(new Notice(notice_id, notice_type, subject, body, create_time, status, extra_id,org_id, org_name, week,week_text,""));
             }
             Message msg = Message.obtain();
             msg.obj = data1;
@@ -270,7 +296,7 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
 
         }
     }
-
+    //下拉刷新更多
     @Override
     public void onPullRefresh() {
         //下拉加载更多
@@ -279,7 +305,9 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
             initData(currentPageNum + 1);
         } else {
             App.showToast(getApplicationContext(), "已加载全部!");
-            lv_zhushou.completeRefresh();
+            Message message=Message.obtain();
+            message.what=2;
+            handler.sendMessageDelayed(message,1000);
         }
     }
 
@@ -314,21 +342,49 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            ViewHolder holder;
+            ViewHolder_Version2 holder;
+
             if (view == null) {
-                holder = new ViewHolder();
-                view = View.inflate(HelperActivity.this, R.layout.zhu_shou_list_style, null);
+                holder = new ViewHolder_Version2();
+               /* view = View.inflate(HelperActivity.this, R.layout.zhu_shou_list_style, null);
                 holder.create_time = (TextView) view.findViewById(R.id.create_time);
                 holder.subject = (TextView) view.findViewById(R.id.subject);
                 holder.extra_id = (TextView) view.findViewById(R.id.extra_id);
                 holder.body = (TextView) view.findViewById(R.id.body);
                 holder.tv_red_tag = (TextView) view.findViewById(R.id.tv_red_tag);
-                holder.iv_picture = (ImageView) view.findViewById(R.id.iv_picture);
+                holder.iv_picture = (ImageView) view.findViewById(R.id.iv_picture);*/
+
+                view=View.inflate(HelperActivity.this,R.layout.zhushou_list_item_layout,null);
+                holder.text_number= (TextView) view.findViewById(R.id.zhushou_item_text_number);
+                holder.text_subject= (TextView) view.findViewById(R.id.zhushou_item_text_subject);
+                holder.text_org_name= (TextView) view.findViewById(R.id.zhushou_item_text_org_name);
+                holder.text_week= (TextView) view.findViewById(R.id.zhushou_item_week);
+                holder.relativeLayout= (RelativeLayout) view.findViewById(R.id.zhushou_item_realitive_view);
+                holder.linearLayout= (LinearLayout) view.findViewById(R.id.zhushou_item_linearlayout_view);
                 view.setTag(holder);
+
             } else {
-                holder = (ViewHolder) view.getTag();
+                holder = (ViewHolder_Version2) view.getTag();
             }
-            ViewGroup.LayoutParams params = holder.iv_picture.getLayoutParams();
+            Notice not=list.get(i);
+
+            holder.text_week.setText(not.getWeek_text());
+
+            holder.text_org_name.setText(not.getOrg_name());
+
+            holder.text_subject.setText(not.getSubject());
+
+            String num=stringChange_helper.getChangeDateNum(not.getExtra_id());
+
+            if(num!=null){
+                holder.text_number.setText(num);
+            }else {
+                holder.text_number.setText("20");
+            }
+            stringChange_helper.setBgColor(holder.relativeLayout,HelperActivity.this,null,0,Integer.parseInt(not.getWeek()));
+            stringChange_helper.setBgColor(null,HelperActivity.this,holder.text_number,1,Integer.parseInt(not.getWeek()));
+            stringChange_helper.setBgColor(null,HelperActivity.this,holder.text_week,2,Integer.parseInt(not.getWeek()));
+            /*ViewGroup.LayoutParams params = holder.iv_picture.getLayoutParams();
             params.height = screenHeight / 60;
             holder.iv_picture.setLayoutParams(params);
 
@@ -341,7 +397,7 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
                 holder.tv_red_tag.setVisibility(View.VISIBLE);
             } else if (not.getStatus() == 1 || not.getNotice_type().equals("project_plan")) {
                 holder.tv_red_tag.setVisibility(View.INVISIBLE);
-            }
+            }*/
 
             return view;
         }
@@ -352,6 +408,11 @@ public class HelperActivity extends BaseActivity implements RefreshListView.OnRe
         ImageView iv_picture;
     }
 
+    public class ViewHolder_Version2{
+        private TextView text_week,text_number,text_org_name,text_subject;
+        private RelativeLayout relativeLayout;
+        private LinearLayout linearLayout;
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

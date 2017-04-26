@@ -9,7 +9,7 @@
         android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/bar_color">
+        android:background="@color/main_color">
 
         <TextView
             android:id="@+id/back"
@@ -72,7 +72,7 @@
                                 android:gravity="center|left"
                                 android:paddingLeft="20dp"
                                 android:text="门店"
-                                android:textColor="#615650"
+                                android:textColor="@color/white"
                                 android:textSize="10sp" />
 
                             <TextView
@@ -82,7 +82,7 @@
                                 android:paddingLeft="20dp"
                                 android:paddingTop="5dp"
                                 android:text="11-28"
-                                android:textColor="#615650"
+                                android:textColor="@color/white"
                                 android:textSize="10sp" />
                         </LinearLayout>
 
@@ -99,7 +99,7 @@
                             android:orientation="vertical"
                             android:paddingTop="15dp">
 
-                            <LinearLayout
+                            <!--<LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
@@ -116,9 +116,9 @@
                                     android:text=" 七日均值"
                                     android:textColor="#615650"
                                     android:textSize="10dp" />
-                            </LinearLayout>
+                            </LinearLayout>-->
 
-                            <LinearLayout
+                            <!--<LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_vertical"
@@ -128,7 +128,8 @@
                                 <TextView
                                     android:layout_width="10dp"
                                     android:layout_height="10dp"
-                                    android:background="#704D3A" />
+                                    android:background="#704D3A"
+                                    android:id="@+id/day_table_new2_text"/>
 
                                 <TextView
                                     android:layout_width="match_parent"
@@ -136,7 +137,7 @@
                                     android:text=" 今日"
                                     android:textColor="#615650"
                                     android:textSize="10sp" />
-                            </LinearLayout>
+                            </LinearLayout>-->
 
                         </LinearLayout>
                     </LinearLayout>

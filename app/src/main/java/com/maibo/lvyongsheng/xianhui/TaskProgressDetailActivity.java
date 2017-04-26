@@ -124,7 +124,7 @@ public class TaskProgressDetailActivity extends BaseActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_progress_detail);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         initView();
         if (NetWorkUtils.isNetworkConnected(this)){

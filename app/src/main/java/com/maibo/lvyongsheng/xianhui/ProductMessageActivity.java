@@ -43,7 +43,7 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
     TextView tv_head_picture, cus_name, cus_grade, cus_files_num, tv_detal_msg, tv_baobiao, tv_power, tv_people_num, tv_percent, back, tv_order;
     LinearLayout ll_have_cards_cus, ll_satisfy;
     ImageView cus_head;
-
+    private int mytype;
     SharedPreferences sp;
     String token, apiURL;
 
@@ -96,7 +96,7 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_message);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         CloseAllActivity.getScreenManager().pushActivity(this);
         showShortDialog();
         initView();
@@ -104,7 +104,7 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
         Intent intent = getIntent();
         item_id = intent.getIntExtra("Item_id", -1);
         product_name = intent.getStringExtra("productName");
-
+        mytype=intent.getIntExtra("type",-1);//0是产品1是项目
         back.setOnClickListener(this);
         ll_satisfy.setVisibility(View.INVISIBLE);
         tv_detal_msg.setOnClickListener(this);
@@ -126,7 +126,6 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
             showToast(R.string.net_connect_error);
             dismissShortDialog();
         }
-
 
     }
 
@@ -158,20 +157,24 @@ public class ProductMessageActivity extends BaseActivity implements View.OnClick
      * @param product_name
      */
     private void setOrderListener(final int item_id, final String product_name) {
-        tv_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //跳转到订单界面
-                Intent intent = new Intent(ProductMessageActivity.this, OrderActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("productOrder", (Serializable) orderList);
-                intent.putExtra("item_id", item_id);
-                intent.putExtra("productName", product_name);
-                intent.putExtras(bundle);
-                intent.putExtra("tag", 0);
-                startActivity(intent);
-            }
-        });
+        if(mytype==1) {
+            tv_order.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //跳转到订单界面
+                    Intent intent = new Intent(ProductMessageActivity.this, OrderActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("productOrder", (Serializable) orderList);
+                    intent.putExtra("item_id", item_id);
+                    intent.putExtra("productName", product_name);
+                    intent.putExtras(bundle);
+                    intent.putExtra("tag", 0);
+                    startActivity(intent);
+                }
+            });
+        }else if (mytype==0){
+            tv_order.setVisibility(View.INVISIBLE);
+        }
     }
 
     //填充界面数据

@@ -9,7 +9,7 @@
         android:id="@+id/ll_head"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/bar_color">
+        android:background="@color/main_color">
 
         <TextView
             android:id="@+id/back"
@@ -23,100 +23,120 @@
             android:ellipsize="end"
             android:gravity="center"
             android:singleLine="true"
-            android:text="订单详情"
+            android:text="订单"
             android:textColor="#fff"
             android:textSize="18dp" />
 
         <TextView
             android:id="@+id/cus_name"
+            android:singleLine="true"
+            android:ellipsize="end"
             style="@style/bar_right"
             android:text="会员名" />
     </LinearLayout>
 
-    <!--<android.support.v4.widget.SwipeRefreshLayout-->
-        <!--android:id="@+id/swip_refresh"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
 
             <ListView
                 android:id="@+id/lv_order"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:cacheColorHint="#00000000"
+                android:listSelector="#00000000"
                 android:divider="#00000000"
                 android:dividerHeight="20dp"
-                android:paddingBottom="100dp"
-                android:paddingTop="20dp">
-
-            </ListView>
+                android:paddingTop="20dp"></ListView>
 
             <RelativeLayout
                 android:id="@+id/rl_foot"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
+                android:layout_height="80dp"
+                android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom"
                 android:gravity="bottom"
                 android:visibility="gone">
 
                 <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:layout_centerInParent="true"
-                    android:background="@mipmap/circle_bg" />
-
+                    android:background="@drawable/footview_imageview_bg_shap"/>
                 <TextView
+                    android:id="@+id/tv_strip_bg"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="50dp"
                     android:layout_alignParentBottom="true"
-                    android:background="@mipmap/rectangle" />
+                    android:background="#FFF3F3F3" />
+                <ImageView
+                    android:id="@+id/iv_start_or_finish"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="#0000"
+                    android:layout_centerInParent="true"
+                    android:src="@mipmap/order_begin_in" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开始"
+                    android:textSize="13dp"
+                    android:layout_below="@+id/iv_start_or_finish"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/tv_start_or_finish"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="bottom"
-                    android:gravity="bottom">
+                    android:gravity="bottom"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true">
 
                     <ImageView
                         android:id="@+id/iv_cancle"
                         android:layout_width="0dp"
-                        android:layout_height="55dp"
+                        android:layout_height="46dp"
                         android:layout_weight="1"
                         android:background="#0000"
                         android:paddingBottom="5dp"
-                        android:src="@mipmap/cancelbtn_disabl" />
+                        android:src="@mipmap/order_cancel_off" />
 
                     <ImageView
-                        android:id="@+id/iv_start_or_finish"
-                        android:layout_width="0dp"
-                        android:layout_height="85dp"
-                        android:layout_weight="1"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:background="#0000"
-                        android:paddingBottom="5dp"
-                        android:src="@mipmap/begain_btn" />
+                        android:layout_gravity="center_vertical"
+                        android:visibility="invisible"
+                        android:src="@mipmap/order_begin_in" />
 
                     <ImageView
                         android:id="@+id/iv_detail"
                         android:layout_width="0dp"
-                        android:layout_height="55dp"
+                        android:layout_height="46dp"
                         android:layout_weight="1"
                         android:background="#0000"
                         android:paddingBottom="5dp"
-                        android:src="@mipmap/details_btn" />
+                        android:src="@mipmap/order_detail_in" />
                 </LinearLayout>
             </RelativeLayout>
+        </RelativeLayout>
 
-            <include
-                android:id="@+id/in_no_datas"
-                layout="@layout/incloud_no_datas"
-                android:visibility="gone"></include>
+        <include
+            android:id="@+id/in_no_datas"
+            layout="@layout/incloud_no_datas"
+            android:visibility="gone"></include>
 
-            <include
-                android:id="@+id/in_loading_error"
-                layout="@layout/incloud_loading_error"
-                android:visibility="gone"></include>
-        </FrameLayout>
-    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+        <include
+            android:id="@+id/in_loading_error"
+            layout="@layout/incloud_loading_error"
+            android:visibility="gone"></include>
+    </FrameLayout>
 </LinearLayout>

@@ -48,7 +48,6 @@ public class SearchPeopleActivity extends BaseActivity {
 
     private void initView() {
         setContentView(R.layout.activity_search_people);
-
         ViewGroup.LayoutParams params=ll_head.getLayoutParams();
         params.height=((Util.getScreenHeight(this)-getStatusBarHeight())/35)*3;
         ll_head.setLayoutParams(params);

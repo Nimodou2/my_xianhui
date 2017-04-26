@@ -119,7 +119,7 @@ public class ProjectPlanActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 //        m = 1;
         setContentView(R.layout.activity_xiangmu_plan);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         setCurrentHeightAndWidth();
         CloseAllActivity.getScreenManager().pushActivity(this);
         showShortDialog();

@@ -10,25 +10,30 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.entity.TabMax;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
-import okhttp3.Call;
 
 
 /**
  * Created by LYS on 2016/9/29.
  */
 public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBarChangeListener {
-
+    private RequestQueue requestQueue;
     SharedPreferences sp;
     String apiURL;
     String token;
@@ -46,7 +51,8 @@ public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_max_setting);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
+        requestQueue=App.getMyapp().getRequestQueue();
         CloseAllActivity.getScreenManager().pushActivity(this);
         sp = getSharedPreferences("baseDate", Context.MODE_PRIVATE);
         apiURL = sp.getString("apiURL", null);
@@ -194,7 +200,8 @@ public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBa
     //提交最值
     public void submit(View view){
         showShortDialog();
-        OkHttpUtils
+
+       /* OkHttpUtils
                 .post()
                 .url(apiURL+"/rest/employee/setdailyreportsetting")
                 .addParams("token",token)
@@ -222,7 +229,40 @@ public class MaxSettingActivity extends BaseActivity implements SeekBar.OnSeekBa
                         finish();
                         dismissShortDialog();
                     }
-                });
+                });*/
+        StringRequest request=new StringRequest(Request.Method.POST, apiURL + "/rest/employee/setdailyreportsetting", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                JsonObject jo=new JsonParser().parse(response).getAsJsonObject();
+                String status=jo.get("status").getAsString();
+                String message=jo.get("message").getAsString();
+                App.showToast(getApplicationContext(),message);
+                setResult(16);
+                finish();
+                dismissShortDialog();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                dismissShortDialog();
+                showToast("网络异常,保存失败!");
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String ,String> map=new HashMap<>();
+                map.put("token",token);
+                map.put("org_id",org_id);
+                map.put("cash_amount",cash+"");
+                map.put("project_amount",project+"");
+                map.put("product_amount",product+"");
+                map.put("room_turnover",customer+"");
+                map.put("employee_hours",times+"");
+
+                return map;
+            }
+        };
+        requestQueue.add(request);
     }
     @Override
     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {

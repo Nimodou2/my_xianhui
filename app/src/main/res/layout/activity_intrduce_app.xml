@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 <LinearLayout
     android:id="@+id/ll_head"
-    android:background="@color/bar_color"
+    android:background="@color/main_color"
     android:layout_width="match_parent"
     android:layout_height="40dp">
     <TextView
@@ -19,13 +19,13 @@
     <TextView
         style="@style/bar_right" />
 </LinearLayout>
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="9"
         android:paddingTop="16dp"
         android:paddingBottom="2dp"
-        android:src="@mipmap/single_one"/>
+        android:src="@mipmap/testlogo"/>
     <TextView
         android:id="@+id/tv_app_version"
         android:layout_width="match_parent"

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -34,7 +35,12 @@ import okhttp3.Call;
  * Created by LYS on 2016/9/14.
  */
 public class AddTabActivity extends TabActivity implements View.OnClickListener {
-
+    private static final String TAG="AddTabActivity";
+    private int change_position;
+    private int product_choiced;
+    private int project_choiced;
+    private int totalProject;
+    private int totalProduct;
     LinearLayout ll_head;
     SharedPreferences sp;
     String apiURL;
@@ -59,8 +65,8 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener 
                     JsonObject data = jo.get("data").getAsJsonObject();
                     JsonObject project = data.get("project").getAsJsonObject();
                     JsonObject product = data.get("product").getAsJsonObject();
-                    int totalProject = 0;
-                    int totalProduct = 0;
+                    totalProject = 0;
+                    totalProduct = 0;
                     if (!project.get("total").isJsonNull()) {
                         totalProject = project.get("total").getAsInt();
                     }
@@ -116,9 +122,9 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener 
         Intent intent3 = getIntent();
         cusId = intent3.getIntExtra("customer_id", 0);
         customer_name = intent3.getStringExtra("customer_name");
-
+        change_position=intent3.getIntExtra("position",-1);
         ll_head = (LinearLayout) findViewById(R.id.ll_head);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
 
         tv_back = (TextView) findViewById(R.id.tv_back);
         tv_project = (TextView) findViewById(R.id.tv_project);
@@ -246,10 +252,19 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener 
 
                     @Override
                     public void onResponse(String response, int id) {
+                        //这个是保存后的返回值
+                        Log.e(TAG,"这个是保存后的数据回调   " +response);
                         JsonObject object = new JsonParser().parse(response).getAsJsonObject();
                         String status = object.get("status").getAsString();
                         dialog.dismiss();
-                        EventDatas eventDatas = new EventDatas(Constants.PLAN_PROJECT, "");
+                        //这里做回掉操作
+                        if(productStatus==0){
+                            product_choiced=totalProduct;
+                        }
+                        if(projectStatus==0){
+                            project_choiced=totalProject;
+                        }
+                        EventDatas eventDatas = new EventDatas(Constants.GET_CHANGE_TOTAL,change_position,project_choiced,product_choiced,status);
                         EventBus.getDefault().post(eventDatas);
                         finish();
                     }
@@ -273,16 +288,16 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener 
             case R.id.tv_project:
                 tab.setCurrentTabByTag("first");
                 tv_project.setBackgroundResource(R.drawable.shap_left_blue_bg);
-                tv_project.setTextColor(Color.WHITE);
+                tv_project.setTextColor(Color.parseColor("#FF2F8FCA"));
                 tv_product.setBackgroundResource(R.drawable.shap_right_blue_nochoose_bg);
-                tv_product.setTextColor(getResources().getColor(R.color.textcolor3));
+                tv_product.setTextColor(getResources().getColor(R.color.white));
                 break;
             case R.id.tv_product:
                 tab.setCurrentTabByTag("second");
                 tv_project.setBackgroundResource(R.drawable.shap_left_blue_nochoose_bg);
-                tv_project.setTextColor(getResources().getColor(R.color.textcolor3));
+                tv_project.setTextColor(getResources().getColor(R.color.white));
                 tv_product.setBackgroundResource(R.drawable.shap_right_blue_bg);
-                tv_product.setTextColor(Color.WHITE);
+                tv_product.setTextColor(Color.parseColor("#FF2F8FCA"));
                 break;
         }
     }
@@ -353,6 +368,11 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener 
             haveProject = 1;
             bufferProject = event.getBuffer();
             tv_project.setText("已选项目(" + event.getMessageStatus() + ")");
+            String thisproject=event.getMessageStatus();
+            if(thisproject!=null&&thisproject.length()>0){
+                project_choiced=Integer.parseInt(event.getMessageStatus());
+                Log.e(TAG,"这个是点击后回传的项目选择"+project_choiced);
+            }
         } else if (event.getTag().equals(Constants.PLAN_PRODUCT_ADAPTER)) {
             if (event.getResponse().equals("0") && projectStatus == 0) {
                 tv_back.setText("返回");
@@ -363,6 +383,11 @@ public class AddTabActivity extends TabActivity implements View.OnClickListener 
             }
             havaProduct = 1;
             tv_product.setText("已选产品(" + event.getMessageStatus() + ")");
+            String thisproduct=event.getMessageStatus();
+            if(thisproduct!=null&&thisproduct.length()>0){
+                product_choiced=Integer.parseInt(thisproduct);
+                Log.e(TAG,"这个是点击后回传的产品选择"+product_choiced);
+            }
             bufferProduct = event.getBuffer();
         }
     }

@@ -24,7 +24,6 @@ import com.google.gson.JsonParser;
 import com.maibo.lvyongsheng.xianhui.constants.Constants;
 import com.maibo.lvyongsheng.xianhui.entity.EventDatas;
 import com.maibo.lvyongsheng.xianhui.implement.CloseAllActivity;
-import com.maibo.lvyongsheng.xianhui.implement.Util;
 import com.maibo.lvyongsheng.xianhui.utils.Md5;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.BitmapCallback;
@@ -81,9 +80,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         tv_about_app= (TextView) view.findViewById(R.id.tv_about_app);
 
         MainActivity parentActivity=(MainActivity)getActivity();
-        ViewGroup.LayoutParams params=ll_setting.getLayoutParams();
+       /* ViewGroup.LayoutParams params=ll_setting.getLayoutParams();
         params.height=((Util.getScreenHeight(getContext())-parentActivity.getStatusBarHeight())/35)*2;
-        ll_setting.setLayoutParams(params);
+        ll_setting.setLayoutParams(params);*/
 
         tv_edite.setOnClickListener(this);
         tv_change_password.setOnClickListener(this);
@@ -131,6 +130,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
                 EventDatas eventDatas=new EventDatas(Constants.OPEN_CAMERA_AND_READ_EXTERNAL_STORAGE_PERMISSION,"");
                 EventBus.getDefault().post(eventDatas);
+
                 break;
             case R.id.tv_change_password:
                 //弹出密码验证框

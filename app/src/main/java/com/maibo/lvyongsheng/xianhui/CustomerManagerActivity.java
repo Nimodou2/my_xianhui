@@ -67,7 +67,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
                     ll_all_data.setVisibility(View.GONE);
                     in_loading_error.setVisibility(View.VISIBLE);
@@ -83,10 +83,12 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
 
     /**
      * 设置顾问选项
+     *
      * @param msg
      */
     private void setCustomerManagerAdapter(Message msg) {
         list1 = (List<Custemer>) msg.obj;
+        if (list1.size() == 0 || list1 == null) return;
         //初始化buffer
         buffer = new int[list1.size()];
         for (int i = 0; i < list1.size(); i++) {
@@ -127,7 +129,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_manager);
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         initHeightAndWidth();
         CloseAllActivity.getScreenManager().pushActivity(this);
         myDialog = new MyProgressDialog(this);
@@ -144,7 +146,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         Intent intent = getIntent();
         customer_id = intent.getIntExtra("customer_id", -1);
         String name = intent.getStringExtra("customer_name");
-        if (customer_id!=-1)
+        if (customer_id != -1)
             getAdviserList(customer_id);
         else {
             showToast(R.string.data_error);
@@ -156,20 +158,21 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
      * 初始化布局宽高
      */
     private void initHeightAndWidth() {
-        View views[]=new View[3];
-        views[0]=tv_spacing1;
-        views[1]=ll_change_date;
-        views[2]=tv_spacing2;
-        int height[]=new int[3];
-        height[0]=viewHeight*15/255;
-        height[1]=viewHeight*20/255;
-        height[2]=viewHeight*15/255;
-        int width[]=null;
-        setViewHeightAndWidth(views,height,width);
+        View views[] = new View[3];
+        views[0] = tv_spacing1;
+        views[1] = ll_change_date;
+        views[2] = tv_spacing2;
+        int height[] = new int[3];
+        height[0] = viewHeight * 15 / 255;
+        height[1] = viewHeight * 20 / 255;
+        height[2] = viewHeight * 15 / 255;
+        int width[] = null;
+        setViewHeightAndWidth(views, height, width);
     }
 
     /**
      * 获取客户经理列表
+     *
      * @param customer_id
      */
     public void getAdviserList(int customer_id) {
@@ -182,15 +185,15 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        Message msg=Message.obtain();
-                        msg.what=0;
+                        Message msg = Message.obtain();
+                        msg.what = 0;
                         handler.sendMessage(msg);
                         myDialog.dismiss();
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Log.e("顾问列表",response);
+                        Log.e("顾问列表", response);
                         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
                         String msg_status = jsonObject.get("status").getAsString();
                         String message = jsonObject.get("message").getAsString();
@@ -219,7 +222,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
                                 list.add(new Custemer(user_id, display_name, avator_url, guid, selected, update_time));
                             }
                             Message msg = Message.obtain();
-                            msg.what=1;
+                            msg.what = 1;
                             msg.obj = list;
                             handler.sendMessage(msg);
                         } else {
@@ -258,13 +261,13 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         public View getView(int i, View view, ViewGroup viewGroup) {
             View v = View.inflate(getApplicationContext(), R.layout.style_choose_adviser, null);
             TextView tv_adviser_name = (TextView) v.findViewById(R.id.tv_adviser_name);
-            LinearLayout ll_choose_adviser= (LinearLayout) v.findViewById(R.id.ll_choose_adviser);
-            setSingleViewHeightAndWidth(ll_choose_adviser,viewHeight*20/255,0);
+            LinearLayout ll_choose_adviser = (LinearLayout) v.findViewById(R.id.ll_choose_adviser);
+            setSingleViewHeightAndWidth(ll_choose_adviser, viewHeight * 20 / 255, 0);
             tv_adviser_name.setText(list1.get(i).getFullname());
             final ImageView iv_checked = (ImageView) v.findViewById(R.id.iv_checked);
             if (list1.get(i).getSelected()) {
                 iv_checked.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 iv_checked.setVisibility(View.INVISIBLE);
             }
             return v;
@@ -277,7 +280,7 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
         super.onPause();
         //保存更改的顾问
         int clickWhat = -1;
-        if (buffer!=null){
+        if (buffer != null) {
             for (int i = 0; i < buffer.length; i++) {
                 if (buffer[i] == 1) {
                     clickWhat = i;
@@ -286,9 +289,9 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
                     editor.commit();
                 }
             }
-            if (clickWhat!=-1){
+            if (clickWhat != -1) {
                 setCustomerAdviser(clickWhat);
-            }else{
+            } else {
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("adviserName", null);
                 editor.commit();
@@ -327,11 +330,12 @@ public class CustomerManagerActivity extends BaseActivity implements View.OnClic
 
     /**
      * 网络问题，重新加载
+     *
      * @param view
      */
-    public void loadingMore(View view){
+    public void loadingMore(View view) {
         myDialog.show();
-        if (customer_id!=-1)
+        if (customer_id != -1)
             getAdviserList(customer_id);
         else {
             showToast(R.string.data_error);

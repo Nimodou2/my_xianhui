@@ -35,7 +35,7 @@ public class NewHandRemindActivity extends BaseActivity {
     }
 
     private void initView() {
-        adapterLitterBar(ll_head);
+      //  adapterLitterBar(ll_head);
 //        initWebView();
 
     }

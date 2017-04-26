@@ -57,7 +57,7 @@ public class MySelfInformationActivity extends BaseActivity implements View.OnCl
     }
 
     private void initView() {
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         tv_name= (TextView) findViewById(R.id.tv_name);
         back= (TextView) findViewById(R.id.back);
         avatarImageView= (AvatarImageView) findViewById(R.id.avatarIv);
@@ -98,9 +98,11 @@ public class MySelfInformationActivity extends BaseActivity implements View.OnCl
     }
 
     private void setAfterCrop() {
+        //avatarImageView.setOnClickListener();
         avatarImageView.setAfterCropListener(new AvatarImageView.AfterCropListener() {
             @Override
             public void afterCrop(Bitmap photo) {
+                //Log.e("test self", photo.toString());
                 SharedPreferences.Editor editor=sp.edit();
                 editor.putInt("myName",1);
                 editor.commit();
@@ -115,6 +117,9 @@ public class MySelfInformationActivity extends BaseActivity implements View.OnCl
                 //上传头像
                 //file(url,filename,file,token);
                 post_file(url,map,file);
+                Drawable drawable =new BitmapDrawable(photo);
+                Log.e("test myself",drawable.toString());
+                avatarImageView.setImageDrawable(drawable);
             }
         });
     }

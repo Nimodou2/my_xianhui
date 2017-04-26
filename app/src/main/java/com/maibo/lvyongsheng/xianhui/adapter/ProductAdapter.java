@@ -65,7 +65,7 @@ public class ProductAdapter extends BaseAdapter {
             holder=(ViewHolder) view.getTag();
         }
 
-        setHeightAndWidth(holder);
+        //setHeightAndWidth(holder);
         Product product=list1.get(i);
         if(product.getAvator_url().equals("")){
             //设置圆形头像

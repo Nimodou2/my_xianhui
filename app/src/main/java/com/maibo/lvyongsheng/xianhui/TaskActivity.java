@@ -143,8 +143,9 @@ public class TaskActivity extends BaseActivity implements View.OnClickListener{
      * 初始化View
      */
     private void initView(){
+
         setContentView(R.layout.activity_progress);
-        adapterLitterBar(ll_head);
+       // adapterLitterBar(ll_head);
 
         CloseAllActivity.getScreenManager().pushActivity(this);
 

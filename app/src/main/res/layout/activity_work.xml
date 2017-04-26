@@ -2,8 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
     <LinearLayout
         android:id="@+id/tab"
         android:layout_width="match_parent"
@@ -68,15 +66,15 @@
         android:id="@+id/fl_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
         <LinearLayout
             android:id="@+id/ll_head"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/bar_color">
+            android:background="@color/main_color">
 
             <TextView
                 android:id="@+id/back"
@@ -94,15 +92,16 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center">
+
                 <ImageView
                     android:id="@+id/iv_choose_date"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
-                    android:src="@mipmap/icon_date"
-                    />
+                    android:src="@mipmap/icon_date" />
+
                 <ImageView
                     android:id="@+id/iv_search"
                     android:layout_width="0dp"

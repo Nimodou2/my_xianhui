@@ -20,7 +20,7 @@
                 android:id="@+id/ll_head"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@color/bar_color"
+                android:background="@color/main_color_version2"
                 android:gravity="center"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp">
@@ -51,8 +51,8 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="0.5dp"
+                    android:layout_marginTop="0.5dp"
                     android:layout_weight="2"
                     android:background="@drawable/blue_soild">
 
@@ -64,8 +64,8 @@
                         android:background="@drawable/shap_left_blue_bg"
                         android:gravity="center"
                         android:text="已选项目"
-                        android:textColor="#fff"
-                        android:textSize="16dp" />
+                        android:textColor="@color/main_color_version2"
+                        android:textSize="13dp" />
 
                     <TextView
                         android:id="@+id/tv_product"
@@ -74,8 +74,8 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:text="已选产品"
-                        android:textColor="@color/textcolor3"
-                        android:textSize="16dp" />
+                        android:textColor="#ffffff"
+                        android:textSize="13dp" />
                 </LinearLayout>
 
                 <TextView

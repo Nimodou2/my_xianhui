@@ -31,7 +31,7 @@ public class FunctionIntrduceActivity extends BaseActivity implements View.OnCli
      * 初始化View
      */
     private void initView() {
-        adapterLitterBar(ll_head);
+        //adapterLitterBar(ll_head);
         back.setOnClickListener(this);
     }
 

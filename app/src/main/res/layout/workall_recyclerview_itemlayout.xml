@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="375px"
+    android:layout_height="75px"
+    android:background="#fff"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:id="@+id/workall_recyclerview_itemlayout_linearlayout">
+
+    <ImageView
+        android:id="@+id/workall_recyclerview_itemlayout_textview_logo"
+        android:layout_width="40px"
+        android:layout_height="40px"
+        android:layout_marginLeft="12px"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/logo_work_1"/>
+    <TextView
+        android:layout_width="51px"
+        android:layout_height="18px"
+        android:layout_toRightOf="@id/workall_recyclerview_itemlayout_textview_logo"
+        android:textSize="17px"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12px"
+        android:textColor="#252525"
+        android:id="@+id/workall_recyclerview_itemlayout_textview_what"
+        android:text="工作"/>
+ <!--   <TextView
+        android:layout_width="77.2px"
+        android:layout_height="17px"
+        android:text="更新提醒"
+        android:textSize="17px"
+        android:layout_alignLeft="@+id/workall_recyclerview_itemlayout_textview_what"
+        android:layout_marginTop="9px"
+        android:layout_below="@+id/workall_recyclerview_itemlayout_textview_what"
+        android:textColor="#686868"
+        android:id="@+id/workall_recyclerview_itemlayout_textview_tixin"
+        />-->
+  <!--  <TextView
+        android:layout_width="38px"
+        android:layout_height="19px"
+        android:textSize="15px"
+        android:layout_marginTop="9px"
+        android:text="21:20"
+        android:textColor="#856049"
+        android:id="@+id/workall_recyclerview_itemlayout_textview_createtime"
+        android:visibility="visible"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30px"
+        />-->
+    <ImageView
+        android:layout_width="8px"
+        android:layout_height="13px"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/right_jiantou"
+        android:layout_marginRight="15px"/>
+</com.zhy.autolayout.AutoRelativeLayout>

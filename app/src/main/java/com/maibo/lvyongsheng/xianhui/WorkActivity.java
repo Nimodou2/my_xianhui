@@ -84,7 +84,7 @@ public class WorkActivity extends FragmentActivity implements View.OnClickListen
             }
         });
 
-        setHeightAndWidth();
+        //setHeightAndWidth();
 
         iv_choose.setOnClickListener(this);
         iv_search.setOnClickListener(this);
